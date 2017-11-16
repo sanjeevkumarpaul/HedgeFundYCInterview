@@ -15,6 +15,9 @@ namespace YorkCapitalConsole
             Console.WriteLine($"Prime check of 121 : {_console.IsPrime(121)}");
             Console.WriteLine($"Prime check of 3 : {_console.IsPrime(3)}");
 
+            Console.WriteLine($"Factorial of 12 : {_console.Factorial(12)}");
+            Console.WriteLine($"Factorial of 12 Recursive : {_console.FactorialRecursive(12)}");
+
             Console.ReadLine();
         }
     }
@@ -33,6 +36,20 @@ namespace YorkCapitalConsole
             return _flag;
         }
 
+        public long Factorial(int value)
+        {
+            long _fact = 1;
+            for (int index = 2; index <= value; index++) _fact *= index;
+
+            return _fact;
+        }
+
+        public long FactorialRecursive(int value)
+        {
+            if (value <= 1) return 1;            
+
+            return value * FactorialRecursive(value - 1);
+        }
     }
 
 }
