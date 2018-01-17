@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YorkCapitalConsole", "YorkC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interview Questions", "Interview Questions", "{E6495FE2-AF04-4605-A1D4-FE9085B6FF0B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{6B7BEC95-8E7F-419B-BD2E-186391C1657C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflections", "Reflections\Reflections.csproj", "{94446F19-7C94-4FC8-9E63-837903FFB251}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,12 +21,17 @@ Global
 		{13DB5E77-752B-49AD-8581-E473726791F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13DB5E77-752B-49AD-8581-E473726791F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13DB5E77-752B-49AD-8581-E473726791F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94446F19-7C94-4FC8-9E63-837903FFB251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94446F19-7C94-4FC8-9E63-837903FFB251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94446F19-7C94-4FC8-9E63-837903FFB251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94446F19-7C94-4FC8-9E63-837903FFB251}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{13DB5E77-752B-49AD-8581-E473726791F1} = {E6495FE2-AF04-4605-A1D4-FE9085B6FF0B}
+		{94446F19-7C94-4FC8-9E63-837903FFB251} = {6B7BEC95-8E7F-419B-BD2E-186391C1657C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D36F9F5-1A1A-42EF-914A-F4F59C268046}
