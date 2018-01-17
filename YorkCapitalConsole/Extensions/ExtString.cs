@@ -294,5 +294,10 @@ namespace Extensions
             else if (str.StartsWith("BEGIN")) return "TRANSACTION";
             else return "";
         }
+
+        public static string RemoveSpecialCharacters(this string str)
+        {
+            return str;
+        }
     }
 }
