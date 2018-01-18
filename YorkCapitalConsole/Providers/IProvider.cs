@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Providers
 {
-    public interface IProvider<Instance> where Instance : class;
+    public interface IProvider<Instance> where Instance : class
     {
         Instance CreateInstance();
         Instance Load(object dynvalues);
