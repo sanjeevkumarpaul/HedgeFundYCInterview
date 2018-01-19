@@ -54,30 +54,11 @@ namespace Providers
         public Instance Load(object dynvalues)
         {
             var instance = CreateInstance();
-
-            SetInstanceProperties(instance, dynvalues);
+            
+            instance.SetProperties(dynvalues); //Sets properties from Extension.
 
             return instance;
         }
-
-
-        private void SetInstanceProperties(Instance instance, object dynvalues)
-        {
-            if (dynvalues == null) return;
-
-            var dynType = dynvalues.GetType();
-            var insType = instance.GetType();
-
-            foreach (var prop in dynType.GetProperties())
-            {
-                try
-                {
-                    PropertyInfo property = insType.GetProperty(prop.Name);
-                    if (property != null)
-                        property.SetValue(instance, prop.GetValue(dynvalues, null).ToString(), null);
-                }
-                catch { }
-            }
-        }
+        
     }
 }

@@ -18,6 +18,25 @@ namespace Extensions
             }
         }
 
+        public static void SetProperties<T>(this T obj, object dynvalues)
+        {
+            if (dynvalues == null) return;
+
+            var dynType = dynvalues.GetType();
+            var insType = obj.GetType();
+
+            foreach (var prop in dynType.GetProperties())
+            {
+                try
+                {
+                    PropertyInfo property = insType.GetProperty(prop.Name);
+                    if (property != null)
+                        property.SetValue(obj, prop.GetValue(dynvalues, null).ToString(), null);
+                }
+                catch { }
+            }
+        }
+
         public static dynamic GetPropertyValueViaAttribute<A, T>(this object obj, T argument) where A : Attribute
 
         {
