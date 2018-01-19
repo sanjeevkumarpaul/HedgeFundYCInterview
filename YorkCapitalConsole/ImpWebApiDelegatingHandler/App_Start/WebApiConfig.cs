@@ -20,7 +20,7 @@ namespace ImpWebApiDelegatingHandler
                 name: "apiDefault",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional },
-                handler: new WebMvcRequestHandler<ApiKeyInterceptor>(config),
+                handler: new WebApiRequestHandler<ApiKeyInterceptor>(config),
                 constraints: null
             );
         }

@@ -15,10 +15,10 @@ namespace RequestMessageHandler
     /// <summary>
     /// Another way to Read headers and send global message to all responses.
     /// </summary>
-    public class WebMvcRequestHandler<Identity> : HttpControllerDispatcher where Identity : WebIdentity, new()
+    public class WebApiRequestHandler<Identity> : HttpControllerDispatcher where Identity : WebIdentity, new()
     {
 
-        public WebMvcRequestHandler(HttpConfiguration config)   : base(config)
+        public WebApiRequestHandler(HttpConfiguration config)   : base(config)
         {
         }
 

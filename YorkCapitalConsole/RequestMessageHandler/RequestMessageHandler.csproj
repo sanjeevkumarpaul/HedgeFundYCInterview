@@ -53,10 +53,10 @@
   <ItemGroup>
     <Compile Include="Entities\WebIdentity.cs" />
     <Compile Include="Entities\Principal.cs" />
-    <Compile Include="WebDelegateHandler.cs" />
+    <Compile Include="WebApiDelegateHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\WebIdentityExpando.cs" />
-    <Compile Include="WebMvcRequestHandler.cs" />
+    <Compile Include="WebApiRequestHandler.cs" />
     <Compile Include="WebProcessHeader.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -18,7 +18,7 @@ namespace RequestMessageHandler
     /// </summary>
     /// <typeparam name="Identity"></typeparam>
 
-    public class WebDelegateHandler<Identity> : DelegatingHandler where Identity : WebIdentity, new()
+    public class WebApiDelegateHandler<Identity> : DelegatingHandler where Identity : WebIdentity, new()
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
