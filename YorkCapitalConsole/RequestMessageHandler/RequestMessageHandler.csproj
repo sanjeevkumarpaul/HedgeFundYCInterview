@@ -55,6 +55,7 @@
     <Compile Include="Entities\WebCheckOptions.cs" />
     <Compile Include="Entities\WebIdentity.cs" />
     <Compile Include="Entities\Principal.cs" />
+    <Compile Include="Exceptions\WebRequestInterceptorException.cs" />
     <Compile Include="WebApiDelegateHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\WebIdentityExpando.cs" />
