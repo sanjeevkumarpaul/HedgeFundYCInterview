@@ -9,12 +9,13 @@ using System.Web;
 
 using Extensions;
 using RequestMessageHandler.Entities;
+using System.Threading;
 
-namespace RequestMessageHandler
+namespace RequestMessageHandler.Process
 {
     internal class WebProcessHeader
     {
-        internal static IPrincipal ReadHeaders<Identity>(HttpRequestMessage request) where Identity : WebIdentity, new()
+        internal static IPrincipal BindHeadersToPrincipal<Identity>(HttpRequestMessage request) where Identity : WebIdentity, new()
         {
             var headers = HttpContext.Current.Request.Headers;
 
@@ -27,14 +28,14 @@ namespace RequestMessageHandler
 
 
             WebIdentityExpando _identityExpando = new WebIdentityExpando { Expansions = "Identity Object for Web" };
-
-            foreach (var key in headers.AllKeys) _identityExpando[key.Replace("-","")] = headers[key];
-
-
+            foreach (var key in headers.AllKeys) _identityExpando[key.Replace("-","")] = headers[key];            
             _identityExpando.SetValuesToOtherType(identity);
 
-            return new Principal(identity);
+            var _principal = new Principal(identity);
+            Thread.CurrentPrincipal = _principal;
+            HttpContext.Current.User = _principal;
 
+            return _principal;
         }
 
     }

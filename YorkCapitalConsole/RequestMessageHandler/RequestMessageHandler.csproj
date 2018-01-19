@@ -57,7 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\WebIdentityExpando.cs" />
     <Compile Include="WebApiRequestHandler.cs" />
-    <Compile Include="WebProcessHeader.cs" />
+    <Compile Include="Process\WebProcessHeader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Enhancers\Wrappers.csproj">

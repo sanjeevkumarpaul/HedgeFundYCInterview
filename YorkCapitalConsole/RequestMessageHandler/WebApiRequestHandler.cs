@@ -1,4 +1,5 @@
 ﻿using RequestMessageHandler.Entities;
+using RequestMessageHandler.Process;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +25,8 @@ namespace RequestMessageHandler
 
         protected override Task<HttpResponseMessage> SendAsync( HttpRequestMessage request, CancellationToken cancellationToken)
         {
-
-            var principal = WebProcessHeader.ReadHeaders<Identity>(request);
-
-            Thread.CurrentPrincipal = principal;
-            HttpContext.Current.User = principal;
-
+            WebProcessHeader.BindHeadersToPrincipal<Identity>(request);
+            
             return base.SendAsync(request, cancellationToken);
         }
     }

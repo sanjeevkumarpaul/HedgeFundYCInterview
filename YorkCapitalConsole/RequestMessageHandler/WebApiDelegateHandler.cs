@@ -7,8 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
-using Extensions;
 using RequestMessageHandler.Entities;
+using RequestMessageHandler.Process;
 
 namespace RequestMessageHandler
 {
@@ -22,11 +22,8 @@ namespace RequestMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var principal = WebProcessHeader.ReadHeaders<Identity>(request);
+            WebProcessHeader.BindHeadersToPrincipal<Identity>(request);
             
-            Thread.CurrentPrincipal = principal;
-            HttpContext.Current.User = principal;
-
             return base.SendAsync(request, cancellationToken);
         }
 

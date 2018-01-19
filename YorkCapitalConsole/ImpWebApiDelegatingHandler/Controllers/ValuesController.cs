@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
+
+using ImpWebApiDelegatingHandler.MessageInterceptors;
 
 namespace ImpWebApiDelegatingHandler.Controllers
 {
@@ -12,7 +15,9 @@ namespace ImpWebApiDelegatingHandler.Controllers
         // GET api/values
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            var identity = (ApiKeyInterceptor)HttpContext.Current.User.Identity;   //Right Usage of getting Headers read through Expando to an Object.
+
+            return new string[] { "value1", "value2", identity.Host };
         }
 
         // GET api/values/5
