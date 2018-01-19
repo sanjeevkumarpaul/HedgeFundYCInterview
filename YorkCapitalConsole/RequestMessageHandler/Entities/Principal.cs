@@ -5,7 +5,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RequestMessageHandler
+namespace RequestMessageHandler.Entities
 {
     public class Principal : IPrincipal
     {

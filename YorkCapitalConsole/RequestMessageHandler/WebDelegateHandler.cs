@@ -8,33 +8,21 @@ using System.Threading.Tasks;
 using System.Web;
 
 using Extensions;
+using RequestMessageHandler.Entities;
 
 namespace RequestMessageHandler
 {
-    public class WebDelegateHandler<Identity> : DelegatingHandler where Identity : WebIdentity
+    /// <summary>
+    /// https://docs.microsoft.com/en-us/aspnet/web-api/overview/advanced/http-message-handlers    
+    /// This is mainly for WEB API and not for normal MVC
+    /// </summary>
+    /// <typeparam name="Identity"></typeparam>
+
+    public class WebDelegateHandler<Identity> : DelegatingHandler where Identity : WebIdentity, new()
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var headers = HttpContext.Current.Request.Headers;
-
-            var requestSourceIsWeb = bool.Parse(headers["requestSourceIsWeb"] ?? "true");
-
-            var customHeaderInformation = (headers["CustomHeaderInformation"] ?? string.Empty).Split(',').ToList();              //THIS iS WHAT to handle.
-
-            var identity = new WebIdentity
-            {
-                RequestSourceIsWeb = requestSourceIsWeb,
-
-                CustomHeaderInformation = customHeaderInformation
-            };
-
-            Dictionary<string, string> keyInfo = new Dictionary<string, string>();
-            //foreach (var key in headers.Keys) keyInfo.Add(key, headers[key]);
-
-
-            identity.SetProperties(this);
-
-            var principal = new Principal(identity);
+            var principal = WebProcessHeader.ReadHeaders<Identity>(request);
             
             Thread.CurrentPrincipal = principal;
             HttpContext.Current.User = principal;

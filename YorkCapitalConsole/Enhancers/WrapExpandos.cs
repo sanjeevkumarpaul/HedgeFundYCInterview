@@ -360,6 +360,22 @@ namespace Wrappers
             return false;
         }
 
+        public void SetValuesToOtherType<T>(T obj) where T : class
+        {
+            var insType = obj.GetType();
+
+            foreach (var prop in GetProperties())
+            {
+                try
+                {
+                    PropertyInfo property = insType.GetProperty(prop.Key);
+                    if (property != null)
+                        property.SetValue(obj, prop.Value.ToString(), null);
+                }
+                catch { }
+            }
+        }
+
     }
 
 }
