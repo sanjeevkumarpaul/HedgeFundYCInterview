@@ -18,14 +18,16 @@ namespace RequestMessageHandler
     /// </summary>
     public class WebApiRequestHandler<Identity> : HttpControllerDispatcher where Identity : WebIdentity, new()
     {
+        private WebCheckOptions Options;
 
-        public WebApiRequestHandler(HttpConfiguration config)   : base(config)
+        public WebApiRequestHandler(HttpConfiguration config, WebCheckOptions options = null)   : base(config)
         {
+            Options = options;
         }
 
         protected override Task<HttpResponseMessage> SendAsync( HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            WebProcessHeader.BindHeadersToPrincipal<Identity>(request);
+            WebProcessHeader.BindHeadersToPrincipal<Identity>(Options);
             
             return base.SendAsync(request, cancellationToken);
         }

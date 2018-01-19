@@ -9,14 +9,14 @@ namespace RequestMessageHandler.Entities
 {
     public class WebIdentity : IIdentity
     {
-        public List<string> CustomHeaderInformation { get; set; }
+        public List<string> CustomInformation { get; set; }
+        public string Token { get; set; }
         
 
         #region IIdentityProperties
         public string Name { get; set; }
         public bool IsAuthenticated { get; set; }
-        public string AuthenticationType { get; set; }
-        public bool RequestSourceIsWeb { get; set; }
+        public string AuthenticationType { get; set; }       
 	    #endregion
 
 	    #region Custom Properties

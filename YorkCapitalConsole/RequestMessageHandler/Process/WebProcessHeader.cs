@@ -9,26 +9,26 @@ using System.Web;
 
 using Extensions;
 using RequestMessageHandler.Entities;
+using RequestMessageHandler.Constants;
 using System.Threading;
+using System.Linq.Expressions;
 
 namespace RequestMessageHandler.Process
 {
     internal class WebProcessHeader
     {
-        internal static IPrincipal BindHeadersToPrincipal<Identity>(HttpRequestMessage request) where Identity : WebIdentity, new()
+        internal static IPrincipal BindHeadersToPrincipal<Identity>(WebCheckOptions options) where Identity : WebIdentity, new()
         {
             var headers = HttpContext.Current.Request.Headers;
 
-            var customHeaderInformation = (headers["CustomHeaderInformation"] ?? string.Empty).Split(',').ToList();              //THIS iS WHAT to handle.
-
             var identity = new Identity()
-            {               
-                CustomHeaderInformation = customHeaderInformation
+            {
+                CustomInformation = (headers[WebCustomHeaderKey.Key] ?? string.Empty).Split(',').ToList(),
+                Token = headers[WebCustomHeaderKey.Token] ?? string.Empty
             };
 
-
             WebIdentityExpando _identityExpando = new WebIdentityExpando { Expansions = "Identity Object for Web" };
-            foreach (var key in headers.AllKeys) _identityExpando[key.Replace("-","")] = headers[key];            
+            foreach (var key in headers.AllKeys.Where(k => !IsKnownKey(k))) _identityExpando[key.Replace("-", "")] = headers[key];
             _identityExpando.SetValuesToOtherType(identity);
 
             var _principal = new Principal(identity);
@@ -38,5 +38,14 @@ namespace RequestMessageHandler.Process
             return _principal;
         }
 
+
+        private static bool IsKnownKey(string key)
+        {
+            if (key.Equals(WebCustomHeaderKey.Key, StringComparison.CurrentCultureIgnoreCase) ||
+                key.Equals(WebCustomHeaderKey.Token, StringComparison.CurrentCultureIgnoreCase))
+                return true;
+
+            return false;
+        }
     }
 }

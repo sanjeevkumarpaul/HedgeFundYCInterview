@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Wrappers;
-
 namespace RequestMessageHandler.Entities
 {
-    internal class WebIdentityExpando : WrapExpandos
+    public class WebCheckOptions
     {
-        public string Expansions { get; set; }
+        public bool TokenMustExist { internal get; set; }
+
     }
 }
