@@ -82,7 +82,8 @@
     <Compile Include="Entities\WebIdentityExpando.cs" />
     <Compile Include="WebApiRequestHandler.cs" />
     <Compile Include="Process\WebProcessHeader.cs" />
-    <Compile Include="WebMvcGlobalFilter.cs" />
+    <Compile Include="WebMvcIControllerFactory.cs" />
+    <Compile Include="WebMvcDefaultControllerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Enhancers\Wrappers.csproj">

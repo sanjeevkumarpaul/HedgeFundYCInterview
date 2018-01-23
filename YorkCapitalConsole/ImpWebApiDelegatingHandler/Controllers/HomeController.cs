@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImpWebApiDelegatingHandler.MessageInterceptors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +11,9 @@ namespace ImpWebApiDelegatingHandler.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            var identity = (ApiKeyInterceptor)User.Identity;
+
+            ViewBag.Title = "Home Page And " + identity.Host;
 
             return View();
         }

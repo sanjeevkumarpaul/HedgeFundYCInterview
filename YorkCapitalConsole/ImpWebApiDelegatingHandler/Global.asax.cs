@@ -8,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 
 using RequestMessageHandler;
+using RequestMessageHandler.Entities;
 
 namespace ImpWebApiDelegatingHandler
 {
@@ -20,6 +21,10 @@ namespace ImpWebApiDelegatingHandler
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);            
             BundleConfig.RegisterBundles(BundleTable.Bundles);                  
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            ControllerBuilder.Current.SetControllerFactory(new WebMvcDefaultControllerFactory<MessageInterceptors.ApiKeyInterceptor>());
+            //OR//
+            //ControllerBuilder.Current.SetControllerFactory(new WebMvcIControllerFactory<MessageInterceptors.ApiKeyInterceptor>());
         }
     }
 }
