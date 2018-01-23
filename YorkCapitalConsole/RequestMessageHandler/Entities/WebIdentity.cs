@@ -17,12 +17,6 @@ namespace RequestMessageHandler.Entities
         public string Name { get; set; }
         public bool IsAuthenticated { get; set; }
         public string AuthenticationType { get; set; }       
-	    #endregion
-
-	    #region Custom Properties
-
-	    ///...
-
-	    #endregion
+	    #endregion	  
     }
 }
