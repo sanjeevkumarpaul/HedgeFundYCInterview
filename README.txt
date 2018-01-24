@@ -1,13 +1,7 @@
 # HedgeFundYCInterview
 Just Practice.
 
-class PageRange
-    {
-        public int Start { get; set; }
-        public int End { get; set; }
 
-        public PageRange(int start, int end) { if (end >= start || end == 0) { Start = start; End = end; } }
-    }
 
     class StartPDFGeneration
     {
