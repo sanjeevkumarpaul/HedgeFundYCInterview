@@ -170,6 +170,43 @@ Just Practice.
     }    
     
     
+    
+    
+    ------------
+    private void ContextMenu_ForFiles()
+       {
+           RegistryKey _key = Registry.ClassesRoot.OpenSubKey("Directory\\Background\\Shell", true);
+           RegistryKey newkey = _key.CreateSubKey("Your Application");
+           RegistryKey subNewkey = newkey.CreateSubKey("Command");
+           subNewkey.SetValue("", "C:\\yourApplication.exe");
+           subNewkey.Close();
+           newkey.Close();
+           _key.Close();
+       }
+       
+       private void RemoveContextMenu()
+       {
+           RegistryKey _key = Registry.ClassesRoot.OpenSubKey("Directory\\Background\\Shell\\", true);
+           _key.DeleteSubKey("Your Application");
+           _key.Close();
+        }
+        
+       private void ContextMenu_ForFolder()
+       {
+           RegistryKey _key = Registry.ClassesRoot.OpenSubKey("Folder\\Shell", true);
+           RegistryKey newkey = _key.CreateSubKey("Your Application");
+           RegistryKey subNewkey = newkey.CreateSubKey("Command");
+           subNewkey.SetValue("", "C:\\yourApplication.exe");
+           subNewkey.Close();
+           newkey.Close();
+           _key.Close();
+       }
+    private void RemoveContextMenu_FromFolder()
+       {
+           RegistryKey _key = Registry.ClassesRoot.OpenSubKey("Folder\\Shell\\", true);
+           _key.DeleteSubKey("Your Application");
+           _key.Close();
+        }
 
 
 
