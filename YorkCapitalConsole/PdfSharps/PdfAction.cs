@@ -30,7 +30,7 @@ namespace PdfSharps
         public void WriteFileNames()
         {
             StringBuilder _names = new StringBuilder();
-            foreach (FileInfo file in Files())
+            foreach (var file in Files())
             {                
                 _names.Append( Options.OutputText(file.Name));
             }
@@ -72,6 +72,17 @@ namespace PdfSharps
             catch { }
         }
 
+        /// <summary>
+        /// Deletes PDF files from folders or all Sub folders.
+        /// </summary>
+        public void DeleteFiles()
+        {
+            foreach (var file in Files())
+            {
+                WrapIOs.Delete(file.FullName);
+            }
+        }
+
         public void Compress()
         {
             //TODO: PdfSharp is yet to do much with compression.
@@ -91,14 +102,27 @@ namespace PdfSharps
             for(int i =0; i< from.PageCount; i++) to.AddPage(from.Pages[i]);            
         }
 
-        private FileInfo[] Files()
+        private IList<FileInfo> Files()
         {
-            return new System.IO.DirectoryInfo(Options.Folder)
-                   .GetFiles("*.pdf", Options.Subfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            var _files = new System.IO.DirectoryInfo(Options.Folder)
+                             .GetFiles("*.pdf", Options.Subfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+                             .ToList();
 
+            if (Options.ExcludeFileNames != null)
+                Options.ExcludeFileNames.ToList().ForEach(f => 
+                {
+                    _files.RemoveAll(z => Path.GetFileName(z.FullName).Equals(f, StringComparison.CurrentCultureIgnoreCase));
+                });
 
+            if (!Options.ExcludePattern.Empty())
+                new System.IO.DirectoryInfo(Options.Folder)
+                             .GetFiles(Options.ExcludePattern, Options.Subfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+                             .ToList().ForEach(f => 
+                             {
 
+                             });
 
+            return _files;
         }
 
         private List<PdfSharp.Pdf.PdfPage> Ranges(SharpDoc doc )

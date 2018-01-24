@@ -19,7 +19,8 @@ namespace PdfSharps.Entities
         #region ^Custom
         public bool Subfolders { get; set; }
         public string OutText { get; set; }
-
+        public string[] ExcludeFileNames { get; set; }
+        public string ExcludePattern { get; set; }
         #endregion
 
         #region ^Methods

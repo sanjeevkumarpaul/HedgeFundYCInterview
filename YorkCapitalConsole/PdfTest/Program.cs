@@ -17,11 +17,12 @@ namespace PdfTest
                                                                                                              Ranges = new List<PdfSharps.Entities.PageRange>
                                                                                                              {
                                                                                                                  new PdfSharps.Entities.PageRange(2,0)
-                                                                                                             }
+                                                                                                             },
+                                                                                                             ExcludeFileNames = new string[] { "BOA_2017_Savings 1099-INT.pdf"}
                                                                                                            }))
             {
 
-                //_sharp.WriteFileNames();
+                _sharp.WriteFileNames();
                 //_sharp.Merge();
                 //_sharp.RemovePages();
                 
