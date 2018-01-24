@@ -92,8 +92,7 @@ namespace Wrappers
 
             return lines;
         }
-
-
+        
         public static void WriteRecords(string[] records, string filePath)
         {
             using (StreamWriter writer = File.CreateText(filePath))
@@ -102,6 +101,15 @@ namespace Wrappers
                 {
                     writer.WriteLine(record);
                 }
+            }
+        }
+
+        public static void Create(string filepath, string text)
+        {
+            using (var file = File.CreateText( filepath ))
+            {
+                file.WriteLine(text);
+                file.Close();
             }
         }
 
@@ -125,8 +133,7 @@ namespace Wrappers
                 }
             }
         }
-
-
+        
         public static void Delete(string filePath)
         {
             try

@@ -33,11 +33,11 @@
     <Reference Include="BitMiracle.LibTiff.NET, Version=2.3.642.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BitMiracle.LibTiff.NET.2.3.642.0\lib\net20\BitMiracle.LibTiff.NET.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.dll</HintPath>
+    <Reference Include="PdfSharp, Version=1.50.4740.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.4740-beta5\lib\net20\PdfSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp.Charting, Version=1.32.3057.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp.1.32.3057.0\lib\net20\PdfSharp.Charting.dll</HintPath>
+    <Reference Include="PdfSharp.Charting, Version=1.50.4740.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.4740-beta5\lib\net20\PdfSharp.Charting.dll</HintPath>
     </Reference>
     <Reference Include="PDFSharp.Extensions, Version=0.1.2.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFSharp.Extensions.0.1.2.2\lib\net40\PDFSharp.Extensions.dll</HintPath>
@@ -59,9 +59,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Enhancers\Wrappers.csproj">
+      <Project>{31ca682a-a9c6-47bf-a9cf-bed5d6296888}</Project>
+      <Name>Wrappers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Extensions\Extensions.csproj">
       <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
       <Name>Extensions</Name>

@@ -150,55 +150,7 @@ Just Practice.
             }
         }
 
-        public static void MergePdfViaPDFSharp(string folderPath)
-        {
-            using (SharpDoc outPdf = new SharpDoc())
-            {
-                foreach (FileInfo file in new System.IO.DirectoryInfo(folderPath).GetFiles("*.pdf"))
-                {
-                    using (SharpDoc one = SharpReader.Open(file.FullName , PdfDocumentOpenMode.Import))
-                    {
-                        CopyPages(one, outPdf);
-                    }
-                }
-
-                outPdf.Save(string.Format("{0}\\Merged_On_{1}.pdf", folderPath, DateTime.Now.ToString("ddddMMMddyyyy_hhmmss")));
-            }
-            
-        }
-
-        private static void CopyPages(SharpDoc from, SharpDoc to)
-        {
-            for (int i = 0; i < from.PageCount; i++)
-            {
-                to.AddPage(from.Pages[i]);
-            }
-        }
-
-
-        public static void RemovePages(string filepath, params PageRange[] pages)
-        {
-            using (SharpDoc one = SharpReader.Open(filepath, PdfDocumentOpenMode.Modify))
-            {
-                List<PdfSharp.Pdf.PdfPage> pagesToRemove = new List<PdfSharp.Pdf.PdfPage>();
-
-                foreach (var range in pages.Where(p => p.Start > 0 ))
-                {
-                    if (range.End > 0)
-                    {
-                        for (int i = range.Start; i <= range.End; i++)
-                        {
-                            pagesToRemove.Add(one.Pages[i - 1]);                            
-                        }
-                    }
-                    else pagesToRemove.Add(one.Pages[range.Start - 1]);
-                }
-
-                pagesToRemove.ForEach(p => { one.Pages.Remove(p); });
-
-                one.Save(filepath);
-            }            
-        }
+        
 
 
         public static void Compress(string filepath)

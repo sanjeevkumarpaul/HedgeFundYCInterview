@@ -23,14 +23,21 @@ namespace PdfSharps.Entities
         #endregion
 
         #region ^Methods
-        internal string OutputFilePath()
+        internal string CalculatedtFilePath(bool isOutputFile = false)
         {
-            if (OutputFile.Empty()) return $@"{Folder}\Output.txt";
+            if (!isOutputFile && File.Empty()) return "";
 
-            var _path = Path.GetDirectoryName(OutputFile); if (_path.Empty()) _path = Folder.TrimEx(@"\");
-            var _file = Path.GetFileName(OutputFile);
+            var _path = Path.GetDirectoryName(isOutputFile ? OutputFile : File ); if (_path.Empty()) _path = Folder.TrimEx(@"\");
+            var _file = Path.GetFileName(isOutputFile ? OutputFile : File);
 
             return $@"{_path}\{_file}";
+        }
+
+        internal string OutputFilePath(bool pdfExtension = true)
+        {
+            if (OutputFile.Empty()) return $@"{Folder}\Output.{ ( pdfExtension ? "pdf" : "txt" ) }";
+
+            return CalculatedtFilePath(true);
         }
 
         /// <summary>
