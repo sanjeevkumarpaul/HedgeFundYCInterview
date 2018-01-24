@@ -111,7 +111,8 @@ namespace PdfSharps
             if (Options.ExcludeFileNames != null)
                 Options.ExcludeFileNames.ToList().ForEach(f => 
                 {
-                    _files.RemoveAll(z => Path.GetFileName(z.FullName).Equals(f, StringComparison.CurrentCultureIgnoreCase));
+                    _files.RemoveAll(z => Path.GetFileName(z.FullName).Equals(f, StringComparison.CurrentCultureIgnoreCase) ||
+                                          z.FullName.Equals(f, StringComparison.CurrentCultureIgnoreCase));
                 });
 
             if (!Options.ExcludePattern.Empty())
@@ -119,7 +120,7 @@ namespace PdfSharps
                              .GetFiles(Options.ExcludePattern, Options.Subfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
                              .ToList().ForEach(f => 
                              {
-
+                                 _files.RemoveAll(z => z.FullName.Equals(f.FullName, StringComparison.CurrentCultureIgnoreCase));
                              });
 
             return _files;
