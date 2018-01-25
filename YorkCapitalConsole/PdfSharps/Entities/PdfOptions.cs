@@ -21,6 +21,7 @@ namespace PdfSharps.Entities
         public string OutText { get; set; }
         public string[] ExcludeFileNames { get; set; }
         public string ExcludePattern { get; set; }
+        public bool CompressToCopy { get; set; }
         #endregion
 
         #region ^Methods

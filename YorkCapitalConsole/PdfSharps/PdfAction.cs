@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Extensions;
 using Wrappers;
+using PdfSharp.Drawing;
+using PdfSharps.SystemIO;
 
 //PDF Sharp Code Base
 //https://www.csharpcodi.com/vs2/4577/NClass/lib/PdfSharp/PdfSharp/PdfSharp.Pdf/PdfPages.cs/
@@ -25,12 +27,13 @@ namespace PdfSharps
         {
             if (options == null) throw new Exception("Options can not be null");
             Options = options;
+            PdfIOs.Options = Options;
         }
 
         public void WriteFileNames()
         {
             StringBuilder _names = new StringBuilder();
-            foreach (var file in Files())
+            foreach (var file in PdfIOs.Files())
             {                
                 _names.Append( Options.OutputText(file.Name));
             }
@@ -39,11 +42,32 @@ namespace PdfSharps
                 WrapIOs.Create(Options.OutputFilePath(false), _names.ToString());            
         }
 
+        public void AddSamplePage()
+        {
+            //Help: http://csharp.net-informations.com/file/txttopdf.htm
+
+            var _path = Options.CalculatedtFilePath();
+
+            using (SharpDoc pdf = SharpReader.Open(_path, PdfSharp.Pdf.IO.PdfDocumentOpenMode.Modify))
+            {
+                var page = pdf.AddPage();
+
+                XGraphics graph = XGraphics.FromPdfPage(page);
+                XFont font = new XFont("Verdana", 20, XFontStyle.Bold);
+                graph.DrawString("-- SAMPLE --", font, XBrushes.Black, new XRect(0, 0, page.Width.Point, page.Height.Point), XStringFormats.TopLeft);
+
+                pdf.Save(_path);
+            }
+        }
+
+        /// <summary>
+        /// Merge all files and produce an output file.
+        /// </summary>
         public void Merge()
         {
             using (SharpDoc outPdf = new SharpDoc())
             {
-                foreach(var file in Files())
+                foreach(var file in PdfIOs.Files())
                 {
                     try
                     {
@@ -55,21 +79,34 @@ namespace PdfSharps
             }
         }
 
+        /// <summary>
+        /// Removes Pages from the only file specially specified.
+        /// </summary>
         public void RemovePages()
         {
             if (Options.File.Empty()) return;
             try
             {
-                var _path = Options.CalculatedtFilePath();
-
-                using (SharpDoc one = SharpReader.Open(_path, PdfSharp.Pdf.IO.PdfDocumentOpenMode.Modify))
-                {
-                    Ranges(one).ForEach(p => { one.Pages.Remove(p); });
-
-                    one.Save(_path);
-                }
+               RemovePages(Options.CalculatedtFilePath());
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Removes ranges from all files selected in a folder or subfolders
+        /// </summary>
+        public void RemovePagesFromSelection(bool singleFileToo = false)
+        {
+            if (singleFileToo) RemovePages();
+
+            foreach (var file in PdfIOs.Files())
+            {
+                try
+                {
+                    RemovePages(file.FullName);
+                }
+                catch { }
+            }
         }
 
         /// <summary>
@@ -77,17 +114,12 @@ namespace PdfSharps
         /// </summary>
         public void DeleteFiles()
         {
-            foreach (var file in Files())
+            foreach (var file in PdfIOs.Files())
             {
                 WrapIOs.Delete(file.FullName);
             }
         }
-
-        public void Compress()
-        {
-            //TODO: PdfSharp is yet to do much with compression.
-        }
-
+        
         public void Dispose()
         {
 
@@ -102,29 +134,17 @@ namespace PdfSharps
             for(int i =0; i< from.PageCount; i++) to.AddPage(from.Pages[i]);            
         }
 
-        private IList<FileInfo> Files()
+        private void RemovePages(string filePath)
         {
-            var _files = new System.IO.DirectoryInfo(Options.Folder)
-                             .GetFiles("*.pdf", Options.Subfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-                             .ToList();
+            using (SharpDoc one = SharpReader.Open(filePath, PdfSharp.Pdf.IO.PdfDocumentOpenMode.Modify))
+            {
+                Ranges(one).ForEach(p => { one.Pages.Remove(p); });
 
-            if (Options.ExcludeFileNames != null)
-                Options.ExcludeFileNames.ToList().ForEach(f => 
-                {
-                    _files.RemoveAll(z => Path.GetFileName(z.FullName).Equals(f, StringComparison.CurrentCultureIgnoreCase) ||
-                                          z.FullName.Equals(f, StringComparison.CurrentCultureIgnoreCase));
-                });
-
-            if (!Options.ExcludePattern.Empty())
-                new System.IO.DirectoryInfo(Options.Folder)
-                             .GetFiles(Options.ExcludePattern, Options.Subfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-                             .ToList().ForEach(f => 
-                             {
-                                 _files.RemoveAll(z => z.FullName.Equals(f.FullName, StringComparison.CurrentCultureIgnoreCase));
-                             });
-
-            return _files;
+                one.Save(filePath);
+            }
         }
+
+       
 
         private List<PdfSharp.Pdf.PdfPage> Ranges(SharpDoc doc )
         {

@@ -33,6 +33,12 @@
     <Reference Include="BitMiracle.LibTiff.NET, Version=2.3.642.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BitMiracle.LibTiff.NET.2.3.642.0\lib\net20\BitMiracle.LibTiff.NET.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.12\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp.xmlworker, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\itextsharp.xmlworker.5.5.12\lib\itextsharp.xmlworker.dll</HintPath>
+    </Reference>
     <Reference Include="PdfSharp, Version=1.50.4740.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFsharp.1.50.4740-beta5\lib\net20\PdfSharp.dll</HintPath>
     </Reference>
@@ -56,7 +62,9 @@
     <Compile Include="Entities\PageRange.cs" />
     <Compile Include="Entities\PdfOptions.cs" />
     <Compile Include="PdfAction.cs" />
+    <Compile Include="PdfActions_iTextSharp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SystemIO\PdfIOs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

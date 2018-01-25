@@ -148,5 +148,11 @@ namespace Wrappers
 
         }
 
+        public static void Rename(string oldfile, string newfile)
+        {
+            try { File.Delete(newfile); } catch { }
+            try { File.Move(oldfile, newfile); } catch { }
+        }
+
     }
 }
