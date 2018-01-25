@@ -16,7 +16,7 @@ namespace PdfTest
                                                                                                              File = "TaxReturns_2007.pdf",
                                                                                                              Ranges = new List<PdfSharps.Entities.PageRange>
                                                                                                              {
-                                                                                                                 new PdfSharps.Entities.PageRange(3,0)
+                                                                                                                 new PdfSharps.Entities.PageRange(2,0)
                                                                                                              },
                                                                                                              ExcludeFileNames = new string[] { "BOA_2017_Savings 1099-INTt.pdf"},
                                                                                                              ExcludePattern = "w2*.*",
@@ -32,7 +32,7 @@ namespace PdfTest
                 //_sharp.AddSamplePage();
                 //_sharp.CompressSelection();
                 //_sharp.Compress();
-                _sharp.Divide();
+                //_sharp.DivideSelection();
 
             }
             Console.ReadLine();
