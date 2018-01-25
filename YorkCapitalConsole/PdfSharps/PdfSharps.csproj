@@ -63,6 +63,7 @@
     <Compile Include="Entities\PdfOptions.cs" />
     <Compile Include="PdfAction.cs" />
     <Compile Include="PdfActions_iTextSharp.cs" />
+    <Compile Include="PdfWebActions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemIO\PdfIOs.cs" />
   </ItemGroup>

@@ -39,15 +39,19 @@ namespace PdfSharps
             }
         }
 
+        public void ConvertFromHtml()
+        {
+            //TODO: may be will be shifting to web section within pdfUtility
+        }
     }
 
     partial class PdfAction
     {
         public void CompressFile(string filepath)
         {
-            var _path = $@"{Path.GetDirectoryName(filepath)}/{Path.GetFileNameWithoutExtension(filepath)}_Compressed.pdf";
+            var _path = PdfIOs.AppendToFileName(filepath, postfix:"_Compressed"); 
 
-            using (iTextSharp.text.Document doc = new iTextSharp.text.Document()) // PageSize.A4, 50, 50, 25, 25))
+            using (iTextSharp.text.Document doc = new iTextSharp.text.Document()) 
             {
                 using (iTextSharp.text.pdf.PdfReader reader = new iTextSharp.text.pdf.PdfReader(filepath))
                 {                    
