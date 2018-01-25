@@ -1,0 +1,167 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using WPFIrregularShape.Dependencies;
+using System.Windows;
+using System.Windows.Input;
+
+namespace WPFIrregularShape
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class EllipseWindow : Window
+    {
+        public EllipseWindow()
+        {
+            InitializeComponent();
+
+            // Insert code required on object creation below this point 
+            CommandBinding cb = new CommandBinding();
+            cb.Command = UICommandBase.CloseCmd;
+            cb.Executed += new ExecutedRoutedEventHandler(CloseCmdExecuted);
+            cb.CanExecute += new CanExecuteRoutedEventHandler(CloseCmdCanExecute);
+
+            CommandBinding minb = new CommandBinding();
+            minb.Command = UICommandBase.MinimizeCmd;
+            minb.Executed += new ExecutedRoutedEventHandler(MinimizeCmdExecuted);
+            minb.CanExecute += new CanExecuteRoutedEventHandler(MinimizeCmdCanExecute);
+
+            CommandBinding maxb = new CommandBinding();
+            maxb.Command = UICommandBase.MaximizeCmd;
+            maxb.Executed += new ExecutedRoutedEventHandler(MaximizeCmdExecuted);
+            maxb.CanExecute += new CanExecuteRoutedEventHandler(MaximizeCmdCanExecute);
+
+            CommandBinding restoreb = new CommandBinding();
+            restoreb.Command = UICommandBase.RestoreCmd;
+            restoreb.Executed += new ExecutedRoutedEventHandler(RestoreCmdExecuted);
+            restoreb.CanExecute += new CanExecuteRoutedEventHandler(RestoreCmdCanExecute);
+
+            //Will execute the command object added to form the command object set 
+            this.CommandBindings.Add(cb);
+            this.CommandBindings.Add(minb);
+            this.CommandBindings.Add(maxb);
+            this.CommandBindings.Add(restoreb);
+
+            this.mnuInvokeClose.Command = UICommandBase.CloseCmd;
+            this.mnuInvokeClose.CommandTarget = btnInvokeClose;
+            this.btnInvokeClose.Command = UICommandBase.CloseCmd;
+
+            this.mnuInvokeMaximize.Command = UICommandBase.MaximizeCmd;
+            this.mnuInvokeMaximize.CommandTarget = btnInvokeMaximize;
+            this.btnInvokeMaximize.Command = UICommandBase.MaximizeCmd;
+
+            this.mnuInvokeMinimize.Command = UICommandBase.MinimizeCmd;
+            this.mnuInvokeMinimize.CommandTarget = btnInvokeMinimize;
+            this.btnInvokeMinimize.Command = UICommandBase.MinimizeCmd;
+
+            this.mnuInvokeRestore.Command = UICommandBase.RestoreCmd;
+            this.mnuInvokeRestore.CommandTarget = btnInvokeRestore;
+            this.btnInvokeRestore.Command = UICommandBase.RestoreCmd;
+
+        }
+
+        /// <summary> 
+        /// Close window behavior 
+        /// </summary> 
+        private void CloseCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        /// <summary> 
+        /// CanExecuteRoutedEventHandler for the custom CloseCmd command 
+        /// </summary> 
+        private void CloseCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        /// <summary> 
+        /// Minimize window behavior 
+        /// </summary> 
+        private void MinimizeCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        /// <summary> 
+        /// CanExecuteRoutedEventHandler for the custom MinimizeCmd command 
+        /// </summary> 
+        private void MinimizeCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        /// <summary> 
+        /// Maximize window behavior 
+        /// </summary> 
+        private void MaximizeCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+
+            // If canExcute could be used,then menu item and button which used by Maximize should switch 
+            bool canExecute = AvalonCommandsHelper.CanExecuteCommandSource(btnInvokeRestore);
+            if (canExecute == true)
+            {
+                this.btnInvokeRestore.Visibility = Visibility.Visible;
+                this.btnInvokeMaximize.Visibility = Visibility.Hidden;
+                this.mnuInvokeMaximize.IsEnabled = false;
+                this.mnuInvokeRestore.IsEnabled = true;
+            }
+            this.WindowState = WindowState.Maximized;
+        }
+
+        /// <summary> 
+        /// CanExecuteRoutedEventHandler for the custom MaximizeCmd command 
+        /// </summary> 
+        private void MaximizeCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        /// <summary> 
+        /// Restore window behavior 
+        /// </summary> 
+        private void RestoreCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+
+            // If canExcute could be used,then menu item and button which used by Restore should switch 
+            bool canExecute = AvalonCommandsHelper.CanExecuteCommandSource(btnInvokeRestore);
+            if (canExecute == true)
+            {
+                this.btnInvokeRestore.Visibility = Visibility.Hidden;
+                this.btnInvokeMaximize.Visibility = Visibility.Visible;
+                this.mnuInvokeMaximize.IsEnabled = true;
+                this.mnuInvokeRestore.IsEnabled = false;
+            }
+            this.WindowState = WindowState.Normal;
+        }
+
+        /// <summary> 
+        /// CanExecuteRoutedEventHandler for the custom RestoreCmd command 
+        /// </summary> 
+        private void RestoreCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        /// <summary> 
+        /// delegate event for Drag shape window 
+        /// </summary> 
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+    }
+}
