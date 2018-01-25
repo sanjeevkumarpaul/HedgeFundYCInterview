@@ -95,7 +95,7 @@ namespace PdfSharps
         /// <summary>
         /// Removes ranges from all files selected in a folder or subfolders
         /// </summary>
-        public void RemovePagesFromSelection(bool singleFileToo = false)
+        public void RemovePagesSelection(bool singleFileToo = false)
         {
             if (singleFileToo) RemovePages();
 
@@ -104,6 +104,31 @@ namespace PdfSharps
                 try
                 {
                     RemovePages(file.FullName);
+                }
+                catch { }
+            }
+        }
+
+        public void Divide()
+        {
+            if ( ( Options.DivisionPageSize <= 0 && !Options.DivisionOnRanges ) || Options.File.Empty()) return;
+
+            try
+            {
+                Divide(Options.CalculatedtFilePath());
+            }
+            catch { }
+        }
+
+        public void DivideSelection(bool singleFileToo = false)
+        {
+            if (singleFileToo) Divide();
+
+            foreach (var file in PdfIOs.Files())
+            {
+                try
+                {
+                    Divide(file.FullName);
                 }
                 catch { }
             }
@@ -143,9 +168,7 @@ namespace PdfSharps
                 one.Save(filePath);
             }
         }
-
-       
-
+        
         private List<PdfSharp.Pdf.PdfPage> Ranges(SharpDoc doc )
         {
             List<PdfSharp.Pdf.PdfPage> pages = new List<PdfSharp.Pdf.PdfPage>();
@@ -160,6 +183,51 @@ namespace PdfSharps
             }
 
             return pages;
+        }
+
+        private void Divide(string filePath)
+        {
+            using (SharpDoc pdf = SharpReader.Open(filePath, PdfSharp.Pdf.IO.PdfDocumentOpenMode.Import))
+            {
+                if (Options.DivisionOnRanges)
+                {
+                    var _range = Ranges(pdf);
+                    var _pages = pdf.Pages;
+                    _pages.Cast<PdfSharp.Pdf.PdfPage>().ToList().ForEach(p => { if ( !_range.Any(r => r == p) ) pdf.Pages.Remove(p); });                
+                }
+
+                Divide(filePath, pdf.Pages);
+            }
+        }
+
+        private void Divide(string filePath, PdfSharp.Pdf.PdfPages pages)
+        {
+            var _pCount = pages.Count;
+            var _pageSize = Options.DivisionPageSize;
+            if (Options.DivisionOnRanges && Options.DivisionPageSize <= 0) _pageSize = _pCount;
+            if (_pCount < _pageSize) return;
+
+            Int32 index = 1;
+            Int32 pageNo = 0;
+            bool pageExists = true;
+            do
+            {
+                using (SharpDoc outPdf = new SharpDoc())
+                {
+                    for (var iPage = 1; iPage <= _pageSize; iPage++)
+                    {
+                        if (pageNo > (_pCount - 1)) { pageExists = false; break; }
+                        outPdf.Pages.Add(pages[pageNo++]);
+                    }
+
+                    if (outPdf.Pages.Count > 0)
+                    {
+                        var _path = PdfIOs.AppendToFileName(filePath, postfix: $"_{index++}");
+                        outPdf.Save(_path);
+                    }
+                }
+
+            } while (pageExists);
         }
     }
 }

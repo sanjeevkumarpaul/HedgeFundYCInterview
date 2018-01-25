@@ -13,24 +13,26 @@ namespace PdfTest
             using (PdfSharps.PdfAction _sharp = new PdfSharps.PdfAction(new PdfSharps.Entities.PdfOptions {  Folder = @"C:\Users\Sanje\Downloads\tax",
                                                                                                              OutText = "Have a break #name#.",
                                                                                                              Subfolders =true,
-                                                                                                             File = "BOA_2017_Savings 1099-INTTEST.pdf",
+                                                                                                             File = "TaxReturns_2007.pdf",
                                                                                                              Ranges = new List<PdfSharps.Entities.PageRange>
                                                                                                              {
                                                                                                                  new PdfSharps.Entities.PageRange(3,0)
                                                                                                              },
                                                                                                              ExcludeFileNames = new string[] { "BOA_2017_Savings 1099-INTt.pdf"},
                                                                                                              ExcludePattern = "w2*.*",
-                                                                                                             //CompressToCopy = true
+                                                                                                             //CompressToCopy = true,
+                                                                                                             DivisionPageSize = 0,
+                                                                                                             DivisionOnRanges = true
                                                                                                            }))
             {
-
                 //_sharp.WriteFileNames();
                 //_sharp.Merge();
                 //_sharp.RemovePages();
-                //_sharp.RemovePagesFromSelection();
+                //_sharp.RemovePagesSelection();
                 //_sharp.AddSamplePage();
                 //_sharp.CompressSelection();
                 //_sharp.Compress();
+                _sharp.Divide();
 
             }
             Console.ReadLine();

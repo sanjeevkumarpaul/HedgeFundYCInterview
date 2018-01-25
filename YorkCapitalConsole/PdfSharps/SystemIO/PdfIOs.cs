@@ -37,5 +37,10 @@ namespace PdfSharps.SystemIO
             return _files;
         }
 
+        internal static string AppendToFileName(string filepath, string prefix = "", string postfix = "")
+        {
+            return $@"{Path.GetDirectoryName(filepath)}\{prefix}{Path.GetFileNameWithoutExtension(filepath)}{postfix}{Path.GetExtension(filepath)}";
+        }
+
     }
 }

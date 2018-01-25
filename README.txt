@@ -30,12 +30,6 @@ Just Practice.
             //Response.Cache.SetCacheability(HttpCacheability.NoCache);
             //Response.Write(pdfDoc);
             //Response.End();
-        }
-		      
-
-        public static void Compress(string filepath)
-        {
-            
-        }
+        }		    
     }    
    
