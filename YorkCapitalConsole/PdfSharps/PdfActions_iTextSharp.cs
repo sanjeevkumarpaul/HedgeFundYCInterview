@@ -37,12 +37,7 @@ namespace PdfSharps
                 }
                 catch { }
             }
-        }
-
-        public void ConvertFromHtml()
-        {
-            //TODO: may be will be shifting to web section within pdfUtility
-        }
+        }        
     }
 
     partial class PdfAction

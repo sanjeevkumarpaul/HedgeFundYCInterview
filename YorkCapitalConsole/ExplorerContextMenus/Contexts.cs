@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Extensions;
+using Wrappers;
 
 namespace ExplorerContextMenus
 {
@@ -41,40 +42,44 @@ namespace ExplorerContextMenus
         /// </summary>
         private void CreateForFiles()
         {
-            if (Options.FileContextMenu)
-            {
-                using (RegistryKey _key = Registry.ClassesRoot.OpenSubKey(ContextConstants.FILE_CONTEXT_MENU_REGISTRY, true))
-                {
-                    CreateSubRegistry(_key);
-                    _key.Close();
-                }
-            }
+            if (Options.FileContextMenu)  CreateKey();            
         }
 
         private void CreateForFolders()
         {
-            if (Options.FolderContextMenu)
-            {
-                using (RegistryKey _key = Registry.ClassesRoot.OpenSubKey(ContextConstants.FOLDER_CONTEXT_MENU_REGISTRY, true))
-                {
-                    CreateSubRegistry(_key);
-                    _key.Close();
-                }
-            }
+            if (Options.FolderContextMenu) CreateKey(true);           
         }
 
         private void RemoveForFiles()
         {
-           using (RegistryKey _key = Registry.ClassesRoot.OpenSubKey(ContextConstants.FILE_CONTEXT_MENU_REGISTRY + "\\", true))
-           {
-                    _key.DeleteSubKey(Options.Description);
-                    _key.Close();           
-           }
+            RemoveKey();
         }
 
         private void RemoveForFolders()
         {
-            using (RegistryKey _key = Registry.ClassesRoot.OpenSubKey(ContextConstants.FOLDER_CONTEXT_MENU_REGISTRY, true))
+            RemoveKey(true);
+        }
+
+        /// <summary>
+        /// Creates root Key for File Level
+        /// </summary>
+        /// <param name="isFolder"></param>
+        private void CreateKey(bool isFolder = false)
+        {
+            using (RegistryKey _key = Registry.ClassesRoot.OpenSubKey(isFolder ? ContextConstants.FOLDER_CONTEXT_MENU_REGISTRY : ContextConstants.FILE_CONTEXT_MENU_REGISTRY, true))
+            {
+                CreateSubRegistry(_key);
+                _key.Close();
+            }
+        }
+
+        /// <summary>
+        /// Creates root key for Folder Level
+        /// </summary>
+        /// <param name="isFolder"></param>
+        private void RemoveKey(bool isFolder = false)
+        {
+            using (RegistryKey _key = Registry.ClassesRoot.OpenSubKey( (isFolder ? ContextConstants.FOLDER_CONTEXT_MENU_REGISTRY : ContextConstants.FILE_CONTEXT_MENU_REGISTRY  ) + "\\", true))
             {
                 _key.DeleteSubKey(Options.Description);
                 _key.Close();
@@ -87,6 +92,8 @@ namespace ExplorerContextMenus
         /// <param name="rootRegisteryKey"></param>
         private void CreateSubRegistry(RegistryKey rootRegisteryKey)
         {
+            if (!WrapIOs.Exists(Options.ApplicationPath)) return;
+
             using (RegistryKey newkey = rootRegisteryKey.CreateSubKey(Options.Description))
             {
                 using (RegistryKey subNewkey = newkey.CreateSubKey(ContextConstants.COMMAND_REGISTRY))
@@ -97,9 +104,5 @@ namespace ExplorerContextMenus
                 newkey.Close();
             }
         }
-
-        
-       
-
     }
 }

@@ -25,6 +25,10 @@ namespace Wrappers
 
     public static partial class WrapIOs
     {
+        public static bool Exists(string filepath)
+        {
+            return File.Exists(filepath) || Directory.Exists(filepath);
+        }
 
         public static string AbsolutePath(string relativepath)
         {
