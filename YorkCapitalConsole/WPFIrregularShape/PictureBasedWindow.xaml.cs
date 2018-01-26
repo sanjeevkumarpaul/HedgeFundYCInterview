@@ -1,29 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WPFIrregularShape.Dependencies;
-using System.Windows;
-using System.Windows.Input;
 
 namespace WPFIrregularShape
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for PictureBasedWindow.xaml
     /// </summary>
-    public partial class EllipseWindow : Window
+    /// <summary> 
+    /// Interaction logic for PictureBasedWindow.xaml 
+    /// </summary> 
+    public partial class PictureBasedWindow : Window
     {
-        public EllipseWindow()
+        public PictureBasedWindow()
         {
             InitializeComponent();
 
@@ -69,7 +58,6 @@ namespace WPFIrregularShape
             this.mnuInvokeRestore.Command = UICommandBase.RestoreCmd;
             this.mnuInvokeRestore.CommandTarget = btnInvokeRestore;
             this.btnInvokeRestore.Command = UICommandBase.RestoreCmd;
-
         }
 
         /// <summary> 
@@ -105,11 +93,18 @@ namespace WPFIrregularShape
         }
 
         /// <summary> 
+        /// CanExecuteRoutedEventHandler for the custom MaximizeCmd command 
+        /// </summary> 
+        private void MaximizeCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        /// <summary> 
         /// Maximize window behavior 
         /// </summary> 
         private void MaximizeCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-
             // If canExcute could be used,then menu item and button which used by Maximize should switch 
             bool canExecute = AvalonCommandsHelper.CanExecuteCommandSource(btnInvokeRestore);
             if (canExecute == true)
@@ -123,9 +118,9 @@ namespace WPFIrregularShape
         }
 
         /// <summary> 
-        /// CanExecuteRoutedEventHandler for the custom MaximizeCmd command 
+        /// CanExecuteRoutedEventHandler for the custom RestoreCmd command 
         /// </summary> 
-        private void MaximizeCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void RestoreCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
@@ -135,6 +130,7 @@ namespace WPFIrregularShape
         /// </summary> 
         private void RestoreCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
+
             // If canExcute could be used,then menu item and button which used by Restore should switch 
             bool canExecute = AvalonCommandsHelper.CanExecuteCommandSource(btnInvokeRestore);
             if (canExecute == true)
@@ -145,14 +141,7 @@ namespace WPFIrregularShape
                 this.mnuInvokeRestore.IsEnabled = false;
             }
             this.WindowState = WindowState.Normal;
-        }
 
-        /// <summary> 
-        /// CanExecuteRoutedEventHandler for the custom RestoreCmd command 
-        /// </summary> 
-        private void RestoreCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
         }
 
         /// <summary> 
