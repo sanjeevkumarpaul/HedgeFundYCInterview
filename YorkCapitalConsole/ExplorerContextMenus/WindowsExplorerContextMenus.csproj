@@ -7,8 +7,8 @@
     <ProjectGuid>{1EDB132C-4C15-4D74-89DB-111481C5A160}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExplorerContextMenus</RootNamespace>
-    <AssemblyName>ExplorerContextMenus</AssemblyName>
+    <RootNamespace>WindowsExplorerContextMenus</RootNamespace>
+    <AssemblyName>WindowsExplorerContextMenus</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

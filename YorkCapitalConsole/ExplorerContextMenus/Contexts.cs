@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Extensions;
 using Wrappers;
 
-namespace ExplorerContextMenus
+namespace WindowsExplorerContextMenus
 {
     public class Contexts
     {

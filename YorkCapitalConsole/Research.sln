@@ -52,7 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows Desktop Tecnology",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registry", "Registry", "{88DBD061-F43D-4EF6-B39F-C629E2E9CC9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplorerContextMenus", "ExplorerContextMenus\ExplorerContextMenus.csproj", "{1EDB132C-4C15-4D74-89DB-111481C5A160}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsExplorerContextMenus", "ExplorerContextMenus\WindowsExplorerContextMenus.csproj", "{1EDB132C-4C15-4D74-89DB-111481C5A160}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFIrregularShape", "WPFIrregularShape\WPFIrregularShape.csproj", "{973E1D9E-D77F-4E29-AD3B-76ABD0369974}"
 EndProject
