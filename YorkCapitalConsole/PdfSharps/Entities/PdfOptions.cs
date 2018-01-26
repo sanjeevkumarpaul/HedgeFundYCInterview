@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Extensions;
 using System.IO;
 
-namespace PdfSharps.Entities
+namespace PdfUtility.Entities
 {
     public class PdfOptions
     {

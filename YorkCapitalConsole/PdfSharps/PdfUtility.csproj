@@ -7,8 +7,8 @@
     <ProjectGuid>{EDA30A46-D08F-4226-B082-2EA4E2FA1499}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PdfSharps</RootNamespace>
-    <AssemblyName>PdfSharps</AssemblyName>
+    <RootNamespace>PdfUtility</RootNamespace>
+    <AssemblyName>PdfUtility</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

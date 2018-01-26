@@ -53,9 +53,9 @@
       <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
       <Name>Extensions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PdfSharps\PdfSharps.csproj">
+    <ProjectReference Include="..\PdfSharps\PdfUtility.csproj">
       <Project>{eda30a46-d08f-4226-b082-2ea4e2fa1499}</Project>
-      <Name>PdfSharps</Name>
+      <Name>PdfUtility</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

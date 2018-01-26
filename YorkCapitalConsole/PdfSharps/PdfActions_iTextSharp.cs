@@ -9,9 +9,9 @@ using Wrappers;
 using iTextSharp.text;
 using System.IO;
 using iTextSharp.text.pdf;
-using PdfSharps.SystemIO;
+using PdfUtility.SystemIO;
 
-namespace PdfSharps
+namespace PdfUtility
 {
     partial class PdfAction
     {

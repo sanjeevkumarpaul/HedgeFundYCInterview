@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PdfSharps.Entities
+namespace PdfUtility.Entities
 {
     public class PageRange
     {

@@ -10,13 +10,13 @@ namespace PdfTest
     {
         static void Main(string[] args)
         {
-            using (PdfSharps.PdfAction _sharp = new PdfSharps.PdfAction(new PdfSharps.Entities.PdfOptions {  Folder = @"C:\Users\Sanje\Downloads\tax",
+            using (PdfUtility.PdfAction _sharp = new PdfUtility.PdfAction(new PdfUtility.Entities.PdfOptions {  Folder = @"C:\Users\Sanje\Downloads\tax",
                                                                                                              OutText = "Have a break #name#.",
                                                                                                              Subfolders =true,
                                                                                                              File = "TaxReturns_2007.pdf",
-                                                                                                             Ranges = new List<PdfSharps.Entities.PageRange>
+                                                                                                             Ranges = new List<PdfUtility.Entities.PageRange>
                                                                                                              {
-                                                                                                                 new PdfSharps.Entities.PageRange(2,0)
+                                                                                                                 new PdfUtility.Entities.PageRange(2,0)
                                                                                                              },
                                                                                                              ExcludeFileNames = new string[] { "BOA_2017_Savings 1099-INTt.pdf"},
                                                                                                              ExcludePattern = "w2*.*",

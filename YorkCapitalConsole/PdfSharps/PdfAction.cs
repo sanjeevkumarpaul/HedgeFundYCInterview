@@ -1,4 +1,4 @@
-﻿using PdfSharps.Entities;
+﻿using PdfUtility.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Extensions;
 using Wrappers;
 using PdfSharp.Drawing;
-using PdfSharps.SystemIO;
+using PdfUtility.SystemIO;
 
 //PDF Sharp Code Base
 //https://www.csharpcodi.com/vs2/4577/NClass/lib/PdfSharp/PdfSharp/PdfSharp.Pdf/PdfPages.cs/
 
-namespace PdfSharps
+namespace PdfUtility
 {
 
     using SharpDoc = PdfSharp.Pdf.PdfDocument;

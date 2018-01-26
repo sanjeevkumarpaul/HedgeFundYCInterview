@@ -7,30 +7,33 @@ using System.Threading.Tasks;
 using System.Web.UI;
 
 using Downloads.Dependency;
+using PdfUtility;
 
 namespace Downloads
 {
     public sealed class AspDownload : WebContext
     {
-        public static void ControlContent()
+        public AspDownload(Downloads.Entities.DownloadOptions options) : base(options) { } //Default copy constructor
+
+        public void ControlContent(Control uiControl)
         {
             using (StringWriter sw = new StringWriter())
             {
                 using (HtmlTextWriter hw = new HtmlTextWriter(sw))
                 {
-                    //GridView1.RenderControl(hw);
-                    StringReader sr = new StringReader(sw.ToString());
+                    uiControl.RenderControl(hw);
 
-                    //Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                    switch (Options.FileType)
+                    {
+                        case Entities.FileTypes.PDF: Download(new PdfWebActions().CreateStreamResponse(hw, Response.OutputStream)); break;
+                        case Entities.FileTypes.EXCEL:
+                        case Entities.FileTypes.CSV: Download(sw.ToString()); break;
 
-                    //PdfWriter writer = PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
-                    //pdfDoc.Open();
-                    //XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
-                    //pdfDoc.Close();                    
-                }
+
+                        default: break;
+                    }
+                }                
             }
         }
     }
-
-
 }
