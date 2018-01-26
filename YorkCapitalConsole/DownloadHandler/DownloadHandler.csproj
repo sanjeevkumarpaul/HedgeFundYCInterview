@@ -63,12 +63,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dependency\FileTypeHelper.cs" />
     <Compile Include="ImageResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Downloads\Downloads.csproj">
+      <Project>{eadfad2e-f6df-473c-8f4f-233391b11599}</Project>
+      <Name>Downloads</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

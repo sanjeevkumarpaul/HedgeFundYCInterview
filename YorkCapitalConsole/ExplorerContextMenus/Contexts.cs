@@ -1,5 +1,4 @@
-﻿using ExplorerContextMenus.Entities;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 
 using Extensions;
 using Wrappers;
+using WindowsExplorerContextMenus.Entities;
 
 namespace WindowsExplorerContextMenus
 {

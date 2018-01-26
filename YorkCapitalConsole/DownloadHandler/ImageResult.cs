@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-using DownloadHandler.Dependency;
+using Downloads.Dependency;
 
 namespace DownloadHandler
 {

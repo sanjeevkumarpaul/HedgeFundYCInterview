@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DownloadHandler.Dependency
+namespace Downloads.Dependency
 {
-    internal static class FileTypeHelper
+    public static class FileTypeHelper
     {
-        internal static string GetContentType(string SourceFileName)
+        public static string GetContentType(string SourceFileName)
         {
             var extension = Path.GetExtension(SourceFileName).ToLower();
             switch (extension)
