@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2008
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YorkCapitalConsole", "YorkCapitalConsole\YorkCapitalConsole.csproj", "{13DB5E77-752B-49AD-8581-E473726791F1}"
 EndProject
@@ -33,6 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImpWebApiDelegatingHandler"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AB541859-7918-4CF1-8988-5CB73813A13E}"
 	ProjectSection(SolutionItems) = preProject
+		ImportantUrls.txt = ImportantUrls.txt
 		..\README.txt = ..\README.txt
 	EndProjectSection
 EndProject

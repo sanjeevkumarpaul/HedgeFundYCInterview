@@ -37,6 +37,7 @@ namespace Downloads.Dependency
                 case ".dcr": return "application/x-director";
                 case ".dir": return "application/x-director";
                 case ".dms": return "application/octet-stream";
+                case ".docx":
                 case ".doc": return "application/msword";
                 case ".drw": return "application/drafting";
                 case ".dvi": return "application/x-dvi";
@@ -165,7 +166,8 @@ namespace Downloads.Dependency
                 case ".xlc": return "application/vnd.ms-excel";
                 case ".xll": return "application/vnd.ms-excel";
                 case ".xlm": return "application/vnd.ms-excel";
-                case ".xls": return "application/vnd.ms-excel";
+                case ".xlsx":
+                case ".xls": return "application/vnd.ms-excel";                
                 case ".xlw": return "application/vnd.ms-excel";
                 case ".xml": return "text/xml";
                 case ".xpm": return "image/x-xpixmap";
