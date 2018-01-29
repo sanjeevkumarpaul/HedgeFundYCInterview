@@ -15,6 +15,19 @@ namespace Downloads
     {
         public AspDownload(Downloads.Entities.DownloadOptions options) : base(options) { } //Default copy constructor
 
+        /// <summary>
+        /// Renders any control 
+        /// If you get an error like wise - 
+        /// Server Error in 'ASP.Net' Application.
+        ///     RegisterForEventValidation can only be called during Render();
+        ///     Description: An unhandled exception occurred during the execution of the current web request.Please review the stack trace for more information about the error and where it originated in the code. 
+        ///     Exception Details: System.InvalidOperationException: RegisterForEventValidation can only be called during Render();
+        ///Use
+        ///   <pages enableEventValidation ="false"></pages> -- In web.config
+        ///   OR
+        ///   <%@ Page Language="C#" AutoEventWireup="true" EnableEventValidation = "false" -- Inside each page.
+        /// </summary>
+        /// <param name="uiControl"></param>
         public void ControlContent(Control uiControl)
         {
             using (StringWriter sw = new StringWriter())
@@ -34,6 +47,6 @@ namespace Downloads
                     }
                 }                
             }
-        }
+        }        
     }
 }
