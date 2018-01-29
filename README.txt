@@ -94,3 +94,169 @@ public override void VerifyRenderingInServerForm(Control control)
         }		    
     }    
    
+   
+   Bread Crumb
+   =============================================================================================
+   using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BreadCrumbs
+{
+    public class BreadCrumbItem
+    {
+        /// <summary>
+        /// URL of the Item
+        /// </summary>
+        public string Url { get; set; }
+        /// <summary>
+        /// Index number of the item clicked by user.
+        /// </summary>
+        public int Index { get; set; }
+        /// <summary>
+        /// Description to be displayed on top
+        /// </summary>
+        public string Crumb { get; set; }
+        /// <summary>
+        /// to be set true or false as per user action.
+        /// </summary>
+        public bool Disabled { get; set; }
+    }
+    
+    
+    public class BreadCrumbList
+    {
+        public const string Session = "_Breadcrumb_";
+        public static BreadCrumbList Get(string name, string currentUrl)
+        {
+            if (SessionManager.Get<BreadCrumbList>(BreadCrumbList.Session) == null) SessionManager.Set<BreadCrumbList>(BreadCrumbList.Session, new BreadCrumbList { Name = name });
+            var bread = SessionManager.Get<BreadCrumbList>(BreadCrumbList.Session); //should not be null at all.
+
+            //return if same url is called via @Html.RenderAction() or @Html.Action().
+            //We need to perform this before .Reset().
+            if (bread.Count > 0 && bread.Items[bread.Count - 1].Url.Equals(currentUrl, StringComparison.CurrentCultureIgnoreCase)) return null;
+
+            return bread;
+        }
+        
+        public static string GetHtml()
+        {
+            var breads = SessionManager.Get<BreadCrumbList>(BreadCrumbList.Session);
+            string breadCrumb = "";
+
+            if (breads != null && breads.Items.Count > 0)
+            {
+                foreach (var bread in breads.Items.Take(breads.Items.Count - 1)) { breadCrumb += string.Format("<a href='{0}'>{1}</a> >> ", bread.Url, bread.Crumb); };
+              
+                breadCrumb += string.Format("<strong>{0}</strong>", breads.Items.LastOrDefault().Crumb);
+            }
+
+            return breadCrumb;
+        }
+
+
+        public BreadCrumbList() { Reset(); }
+        
+        /// <summary>
+        /// Any given name - (Commonly we can use GUID for the same)
+        /// </summary>
+        public string Name { get; set; } //any random name for a start.
+        /// <summary>
+        /// Each click of user, when browser moves pagse, for every page a single item will be created.
+        /// </summary>
+        public IList<BreadCrumbItem> Items { get; set; }
+
+        internal int Count { get { return Items.Count;  }}
+
+        public void Reset()
+        {
+            Items = new List<BreadCrumbItem>();           
+        }
+        
+        public void Add(string url, string Description)
+        {
+            var foundBread = Items.FirstOrDefault(i => i.Url.Equals(url, StringComparison.CurrentCultureIgnoreCase));
+            if (foundBread != null) //If found to be there, remove all other beyound that.            
+                Items = Items.TakeWhile(i => i.Index <= foundBread.Index).ToList(); 
+            else
+                Items.Add(new BreadCrumbItem { Url = url, Index = Count + 1, Crumb = SeparateWords(Description) });
+
+            SessionManager.Set<BreadCrumbList>(BreadCrumbList.Session, this);
+        }
+
+
+        /// <summary>
+        /// Private method to format description.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private string SeparateWords(string str)
+        {
+            var final = "";
+            bool firstCharacterCheckIsDone = false;
+            foreach (char c in str)
+            {
+                if (char.IsUpper(c))
+                {
+                    if (str.IndexOf(c) == 0 && !firstCharacterCheckIsDone)
+                    {
+                        final += " " + c.ToString();
+                        firstCharacterCheckIsDone = true;
+                    }
+                    else
+                        final += " " + c.ToString().ToUpper();
+                }
+                else
+                {
+                    if (str.IndexOf(c) == 0 && !firstCharacterCheckIsDone)
+                        final += c.ToString().ToUpper();
+                    else
+                        final += c.ToString();
+                }
+            }
+            return final;
+        }
+    }
+    
+    ///IMPLEMETATION
+    public override IController CreateController(RequestContext requestContext, string controllerName)
+        {
+            CaptureBreadCrumbs(requestContext);
+
+            return base.CreateController(requestContext, controllerName);
+        }
+
+        private void CaptureBreadCrumbs(RequestContext context)
+        {
+            string breadName = "Dashboard";
+            string vasRedirectionPage = "EEORedirect.aspx";
+            var req = HttpContext.Current.Request;
+            var url = req.Url.OriginalString;
+            var refUrl = req.UrlReferrer != null ? req.UrlReferrer.OriginalString : "";
+
+            var action = context.RouteData.Values["action"].ToString();
+            var controller = context.RouteData.Values["controller"].ToString();
+
+            if ( ( req.HttpMethod != "GET" && !refUrl.Contains(vasRedirectionPage) ) || new System.Web.HttpRequestWrapper(req).IsAjaxRequest() ) return;
+
+            if (action.Equals("index", StringComparison.CurrentCultureIgnoreCase)) action = controller;
+            var id = context.RouteData.Values.ContainsKey("id") ? context.RouteData.Values["id"].ToString() : "0";
+            try { if (Convert.ToInt32(id) < 0) action = id; } catch { action = id.Replace("_", " "); };
+
+            BreadCrumbList bread = null;
+            if ((bread = BreadCrumbList.Get(breadName, url)) != null)
+            {
+                if (refUrl == "" || refUrl.Contains(vasRedirectionPage) ) bread.Reset();
+
+                bread.Add(url, action);
+            }            
+        }   
+        
+        
+        IN LAYOUT VIEW 
+         <span>@Html.Raw( BreadCrumbList.GetHtml() )</span>
+    
+}
+
