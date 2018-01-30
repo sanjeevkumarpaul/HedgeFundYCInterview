@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFIrregularShape", "WPFIrr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Downloads", "Downloads\Downloads.csproj", "{EADFAD2E-F6DF-473C-8F4F-233391B11599}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostsharpAspect", "Postsharp\PostsharpAspect.csproj", "{5AC76549-59EC-461C-A831-C157B5A9F358}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{EADFAD2E-F6DF-473C-8F4F-233391B11599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EADFAD2E-F6DF-473C-8F4F-233391B11599}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EADFAD2E-F6DF-473C-8F4F-233391B11599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AC76549-59EC-461C-A831-C157B5A9F358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AC76549-59EC-461C-A831-C157B5A9F358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AC76549-59EC-461C-A831-C157B5A9F358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AC76549-59EC-461C-A831-C157B5A9F358}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -149,6 +155,7 @@ Global
 		{1EDB132C-4C15-4D74-89DB-111481C5A160} = {88DBD061-F43D-4EF6-B39F-C629E2E9CC9D}
 		{973E1D9E-D77F-4E29-AD3B-76ABD0369974} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 		{EADFAD2E-F6DF-473C-8F4F-233391B11599} = {7318CD6C-BEAB-44C1-A1F6-1C5C0C25BFFA}
+		{5AC76549-59EC-461C-A831-C157B5A9F358} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D36F9F5-1A1A-42EF-914A-F4F59C268046}

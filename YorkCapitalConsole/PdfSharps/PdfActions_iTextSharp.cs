@@ -42,7 +42,7 @@ namespace PdfUtility
 
     partial class PdfAction
     {
-        public void CompressFile(string filepath)
+        private void CompressFile(string filepath)
         {
             var _path = PdfIOs.AppendToFileName(filepath, postfix:"_Compressed"); 
 
