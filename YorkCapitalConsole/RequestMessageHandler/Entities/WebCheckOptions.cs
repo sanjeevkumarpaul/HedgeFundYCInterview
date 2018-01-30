@@ -19,6 +19,8 @@ namespace RequestMessageHandler.Entities
         public string TokenExactValue { internal get; set; }
         
         public List<CustomHeaderOptions> CustomHeaders { internal get; set; }        
+
+        public BreadCrumbOptions BreadCrumbOption { internal get; set; }
     }
 
     public class CustomHeaderOptions

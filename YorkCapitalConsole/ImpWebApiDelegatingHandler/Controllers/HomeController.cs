@@ -12,8 +12,9 @@ namespace ImpWebApiDelegatingHandler.Controllers
         public ActionResult Index()
         {
             var identity = (ApiKeyInterceptor)User.Identity;
+            var breadcrumb = ((RequestMessageHandler.Entities.Principal)User).BreadCrumb;
 
-            ViewBag.Title = "Home Page And " + identity.Host;
+            ViewBag.Title = "Home Page And " + identity.Host + " BREAD CRUMB: " + breadcrumb;
 
             return View();
         }

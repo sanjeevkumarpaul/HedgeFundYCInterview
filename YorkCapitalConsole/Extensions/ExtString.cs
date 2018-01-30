@@ -295,9 +295,12 @@ namespace Extensions
             else return "";
         }
 
-        public static string RemoveSpecialCharacters(this string str)
+        public static string RemoveSpecialCharacters(this string str, char replaceableChar = ' ')
         {
-            return str;
+            string _final = "";
+            foreach(char c in str)
+                _final +=  (char.IsLetterOrDigit(c) ? c : replaceableChar).ToString().Trim();
+            return _final;
         }
     }
 }

@@ -33,9 +33,8 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -73,10 +72,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\WebCustomHeaderKey.cs" />
+    <Compile Include="Entities\BreadCrumbItem.cs" />
+    <Compile Include="Entities\BreadCrumbList.cs" />
+    <Compile Include="Entities\BreadCrumbOptions.cs" />
     <Compile Include="Entities\WebCheckOptions.cs" />
     <Compile Include="Entities\WebIdentity.cs" />
     <Compile Include="Entities\Principal.cs" />
     <Compile Include="Exceptions\WebRequestInterceptorException.cs" />
+    <Compile Include="Process\WebProcessBreadCrumb.cs" />
     <Compile Include="WebApiDelegateHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\WebIdentityExpando.cs" />
@@ -94,8 +97,13 @@
       <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
       <Name>Extensions</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebSessions\WebSessions.csproj">
+      <Project>{4afaf0a2-5dce-4984-93b4-6e27a3f7de6d}</Project>
+      <Name>WebSessions</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

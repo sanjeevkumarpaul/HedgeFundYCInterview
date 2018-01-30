@@ -33,8 +33,9 @@ namespace RequestMessageHandler
                 throw new ArgumentNullException("controllerName");
 
             WebProcessHeader.BindHeadersToPrincipal<Identity>(Options);
+            new WebProcessBreadCrumb(Options.BreadCrumbOption).Process(requestContext);
                         
-            return Create(requestContext, controllerName);
+            return base.CreateController(requestContext, controllerName);
         }
 
         internal IController Create(RequestContext requestContext, string controllerName)

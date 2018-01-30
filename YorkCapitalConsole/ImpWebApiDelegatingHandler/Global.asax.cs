@@ -22,7 +22,9 @@ namespace ImpWebApiDelegatingHandler
             BundleConfig.RegisterBundles(BundleTable.Bundles);                  
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            ControllerBuilder.Current.SetControllerFactory(new WebMvcDefaultControllerFactory<MessageInterceptors.ApiKeyInterceptor>());
+            var options = new WebCheckOptions { BreadCrumbOption = new BreadCrumbOptions { CreateBreadCrumbs = true  } };
+
+            ControllerBuilder.Current.SetControllerFactory(new WebMvcDefaultControllerFactory<MessageInterceptors.ApiKeyInterceptor>(options));
             //OR//
             //ControllerBuilder.Current.SetControllerFactory(new WebMvcIControllerFactory<MessageInterceptors.ApiKeyInterceptor>());
         }
