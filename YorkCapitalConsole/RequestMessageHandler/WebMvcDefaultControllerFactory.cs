@@ -35,7 +35,7 @@ namespace RequestMessageHandler
             var controller = base.CreateController(requestContext, controllerName);
 
             WebProcessHeader.BindHeadersToPrincipal<Identity>(Options);
-            new WebProcessBreadCrumb(Options.BreadCrumbOption).Process(requestContext, GetControllerType(requestContext, controllerName));
+            new WebProcessBreadCrumb(Options.BreadCrumbOption).Process(requestContext, ControllerType(requestContext, controllerName));
 
             return controller;
         }
@@ -46,6 +46,11 @@ namespace RequestMessageHandler
             IController controller = GetControllerInstance(requestContext, type);
 
             return controller;
+        }
+
+        internal Type ControllerType(RequestContext requestContext, string controllerName)
+        {
+            return GetControllerType(requestContext, controllerName);
         }
     }
 }

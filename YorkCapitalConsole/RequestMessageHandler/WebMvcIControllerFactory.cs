@@ -33,6 +33,7 @@ namespace RequestMessageHandler
                 throw new ArgumentNullException("controllerName");
 
            WebProcessHeader.BindHeadersToPrincipal<Identity>(Options);
+           new WebProcessBreadCrumb(Options.BreadCrumbOption).Process(requestContext, ControllerType(requestContext, controllerName));
 
             return Create(requestContext, controllerName);
         }
@@ -55,6 +56,13 @@ namespace RequestMessageHandler
 
             return factory.Create(context, controllerName);
         } 
+
+        private Type ControllerType(RequestContext context, string controllerName)
+        {
+            var factory = new WebMvcDefaultControllerFactory<Identity>();
+
+            return factory.ControllerType(context, controllerName);
+        }
 
     }
 }
