@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\WebCustomHeaderKey.cs" />
+    <Compile Include="Entities\BreadCrumbs\BreadCrumbAttribute.cs" />
     <Compile Include="Entities\BreadCrumbs\BreadCrumbItem.cs" />
     <Compile Include="Entities\BreadCrumbs\BreadCrumbList.cs" />
     <Compile Include="Entities\BreadCrumbs\BreadCrumbOptions.cs" />
@@ -96,6 +97,10 @@
     <ProjectReference Include="..\Extensions\Extensions.csproj">
       <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
       <Name>Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reflections\Reflections.csproj">
+      <Project>{94446f19-7c94-4fc8-9e63-837903ffb251}</Project>
+      <Name>Reflections</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebSessions\WebSessions.csproj">
       <Project>{4afaf0a2-5dce-4984-93b4-6e27a3f7de6d}</Project>

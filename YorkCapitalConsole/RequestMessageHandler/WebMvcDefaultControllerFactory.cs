@@ -32,10 +32,12 @@ namespace RequestMessageHandler
             if (string.IsNullOrEmpty(controllerName))
                 throw new ArgumentNullException("controllerName");
 
+            var controller = base.CreateController(requestContext, controllerName);
+
             WebProcessHeader.BindHeadersToPrincipal<Identity>(Options);
-            new WebProcessBreadCrumb(Options.BreadCrumbOption).Process(requestContext);
-                        
-            return base.CreateController(requestContext, controllerName);
+            new WebProcessBreadCrumb(Options.BreadCrumbOption).Process(requestContext, GetControllerType(requestContext, controllerName));
+
+            return controller;
         }
 
         internal IController Create(RequestContext requestContext, string controllerName)

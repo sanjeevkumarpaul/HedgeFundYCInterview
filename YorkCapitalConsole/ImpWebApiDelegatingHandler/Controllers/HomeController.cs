@@ -1,4 +1,5 @@
 ﻿using ImpWebApiDelegatingHandler.MessageInterceptors;
+using RequestMessageHandler.Entities.BreadCrumbs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace ImpWebApiDelegatingHandler.Controllers
 {
     public class HomeController : Controller
     {
+        [BreadCrumb(Crumb ="First Delegate")]
         public ActionResult Index()
         {
             var identity = (ApiKeyInterceptor)User.Identity;

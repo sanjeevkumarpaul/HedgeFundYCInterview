@@ -9,6 +9,7 @@ using System.Web.Routing;
 using System.Web.Mvc;
 
 using Extensions;
+using Reflections;
 using RequestMessageHandler.Entities.BreadCrumbs;
 
 namespace RequestMessageHandler.Process
@@ -41,33 +42,38 @@ namespace RequestMessageHandler.Process
         /// This is for MVC
         /// </summary>
         /// <param name="requestContext"></param>
-        internal void Process(RequestContext requestContext)
+        internal void Process(RequestContext requestContext, Type controllerType = null)
         {
             if (!Options.CreateBreadCrumbs) return;
-            GetContents(requestContext);
+            GetContents(requestContext, controllerType);
             Assign(Create());            
         }
 
-        private void GetContents(RequestContext context)
+        private void GetContents(RequestContext context, Type controllerType = null)
         {
             var action = context.RouteData.GetRequiredString("action");
             var controller = context.RouteData.GetRequiredString("controller");
 
-            if (action.EqualsIgnoreCase("index")) action = controller;
-            if (!Options.MVCCrumbKey.Empty()) 
+            var attr = CustomAttributes.FindMethodFirst<BreadCrumbAttribute>(controllerType, action);
+            if (attr != null)
+                action = attr.Crumb;
+            else
             {
-                var value = (context.RouteData.Values.Keys.Contains(Options.MVCCrumbKey) ?
-                                context.RouteData.Values[Options.MVCCrumbKey].ToString() : "").RemoveSpecialCharacters();
-                try
+                if (action.EqualsIgnoreCase("index")) action = controller;
+                if (!Options.MVCCrumbKey.Empty())
                 {
-                    if (Convert.ToInt32(value) < 0) action = value;
-                }
-                catch
-                {
-                    action = value;
+                    var value = (context.RouteData.Values.Keys.Contains(Options.MVCCrumbKey) ?
+                                    context.RouteData.Values[Options.MVCCrumbKey].ToString() : "").RemoveSpecialCharacters();
+                    try
+                    {
+                        if (Convert.ToInt32(value) < 0) action = value;
+                    }
+                    catch
+                    {
+                        action = value;
+                    }
                 }
             }
-
             var req = System.Web.HttpContext.Current.Request;
             content = new Contents
             {
