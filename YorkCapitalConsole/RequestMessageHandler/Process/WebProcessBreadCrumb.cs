@@ -54,9 +54,9 @@ namespace RequestMessageHandler.Process
             var action = context.RouteData.GetRequiredString("action");
             var controller = context.RouteData.GetRequiredString("controller");
 
-            var attr = CustomAttributes.FindMethodFirst<BreadCrumbAttribute>(controllerType, action);
-            if (attr != null)
-                action = attr.Crumb;
+            var desc = CustomAttributes.FindMethodFirst<BreadCrumbAttribute>(controllerType, action)?.Crumb;
+            if (!desc.Empty())
+                action = desc;
             else
             {
                 if (action.EqualsIgnoreCase("index")) action = controller;
