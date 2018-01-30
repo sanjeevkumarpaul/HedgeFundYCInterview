@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebSessions;
 
-namespace RequestMessageHandler.Entities
+namespace RequestMessageHandler.Entities.BreadCrumbs
 {
     internal class BreadCrumbList
     {

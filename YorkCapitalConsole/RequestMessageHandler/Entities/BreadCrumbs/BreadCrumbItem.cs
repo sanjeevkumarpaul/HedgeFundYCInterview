@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RequestMessageHandler.Entities
+namespace RequestMessageHandler.Entities.BreadCrumbs
 {
     internal class BreadCrumbItem
     {

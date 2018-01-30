@@ -20,7 +20,7 @@ namespace RequestMessageHandler.Entities
         
         public List<CustomHeaderOptions> CustomHeaders { internal get; set; }        
 
-        public BreadCrumbOptions BreadCrumbOption { internal get; set; }
+        public BreadCrumbs.BreadCrumbOptions BreadCrumbOption { internal get; set; }
     }
 
     public class CustomHeaderOptions

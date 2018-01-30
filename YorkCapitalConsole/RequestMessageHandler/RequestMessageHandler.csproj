@@ -72,9 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\WebCustomHeaderKey.cs" />
-    <Compile Include="Entities\BreadCrumbItem.cs" />
-    <Compile Include="Entities\BreadCrumbList.cs" />
-    <Compile Include="Entities\BreadCrumbOptions.cs" />
+    <Compile Include="Entities\BreadCrumbs\BreadCrumbItem.cs" />
+    <Compile Include="Entities\BreadCrumbs\BreadCrumbList.cs" />
+    <Compile Include="Entities\BreadCrumbs\BreadCrumbOptions.cs" />
     <Compile Include="Entities\WebCheckOptions.cs" />
     <Compile Include="Entities\WebIdentity.cs" />
     <Compile Include="Entities\Principal.cs" />

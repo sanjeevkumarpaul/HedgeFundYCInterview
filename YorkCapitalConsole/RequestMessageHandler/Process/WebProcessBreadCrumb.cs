@@ -9,6 +9,7 @@ using System.Web.Routing;
 using System.Web.Mvc;
 
 using Extensions;
+using RequestMessageHandler.Entities.BreadCrumbs;
 
 namespace RequestMessageHandler.Process
 {
@@ -57,7 +58,6 @@ namespace RequestMessageHandler.Process
             {
                 var value = (context.RouteData.Values.Keys.Contains(Options.MVCCrumbKey) ?
                                 context.RouteData.Values[Options.MVCCrumbKey].ToString() : "").RemoveSpecialCharacters();
-
                 try
                 {
                     if (Convert.ToInt32(value) < 0) action = value;

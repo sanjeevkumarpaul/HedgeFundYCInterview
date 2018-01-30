@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Extensions;
 
-namespace RequestMessageHandler.Entities
+namespace RequestMessageHandler.Entities.BreadCrumbs
 {
     public class BreadCrumbOptions
     {
