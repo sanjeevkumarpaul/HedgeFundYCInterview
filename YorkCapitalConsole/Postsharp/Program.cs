@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NugetPackageLibrary;
 using Postsharp.AspectEntities;
 
 namespace PostsharpAspect
@@ -22,7 +23,7 @@ namespace PostsharpAspect
         {
             Console.WriteLine("From AspectIT Method.");
 
-            return "Have Fun!";
+            return new SomeExperimentNuget().HaveIt();
         }
     }
 }
