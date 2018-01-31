@@ -7,9 +7,27 @@ using WebSessions;
 
 namespace RequestMessageHandler.Entities.BreadCrumbs
 {
-    internal class BreadCrumbList
+    internal partial class BreadCrumbList
     {
-        public const string Session = "IIS_$application$_Breadcrumb_";
+        internal BreadCrumbList() { Reset(); }
+
+        /// <summary>
+        /// Any given name - (Commonly we can use GUID for the same)
+        /// </summary>
+        internal string Name { get; set; } //any random name for a start.
+        /// <summary>
+        /// Each click of user, when browser moves pagse, for every page a single item will be created.
+        /// </summary>
+        internal IList<BreadCrumbItem> Items { get; set; }
+
+        internal int Count { get { return Items.Count; } }        
+    }
+
+    /// <summary>
+    /// Static Methods.
+    /// </summary>
+    partial class BreadCrumbList
+    {
         public static BreadCrumbList Get(string currentUrl)
         {
             if (SessionManager.Get<BreadCrumbList>(Session) == null) SessionManager.Set<BreadCrumbList>(Session, new BreadCrumbList { Name = Session });
@@ -22,20 +40,13 @@ namespace RequestMessageHandler.Entities.BreadCrumbs
             return bread;
         }
 
-        
-        public BreadCrumbList() { Reset(); }
+    }
 
-        /// <summary>
-        /// Any given name - (Commonly we can use GUID for the same)
-        /// </summary>
-        public string Name { get; set; } //any random name for a start.
-        /// <summary>
-        /// Each click of user, when browser moves pagse, for every page a single item will be created.
-        /// </summary>
-        internal IList<BreadCrumbItem> Items { get; set; }
-
-        internal int Count { get { return Items.Count; } }
-
+    /// <summary>
+    /// Public Methods
+    /// </summary>
+    partial class BreadCrumbList
+    {
         public void Reset()
         {
             Items = new List<BreadCrumbItem>();
@@ -51,13 +62,15 @@ namespace RequestMessageHandler.Entities.BreadCrumbs
 
             SessionManager.Set<BreadCrumbList>(Session, this);
         }
+    }
 
+    /// <summary>
+    /// Private method to format description.
+    /// </summary>
+    partial class BreadCrumbList
+    {
+        private const string Session = "IIS_$application$_Breadcrumb_";
 
-        /// <summary>
-        /// Private method to format description.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
         private string SeparateWords(string str)
         {
             var final = "";

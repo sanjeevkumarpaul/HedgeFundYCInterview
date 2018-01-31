@@ -7,7 +7,7 @@ using Extensions;
 
 namespace RequestMessageHandler.Entities.BreadCrumbs
 {
-    public class BreadCrumbOptions
+    public partial class BreadCrumbOptions
     {
         /// <summary>
         /// User specifies if Breadcrumbs are to be stored as a part of Controller Factory.
@@ -46,21 +46,34 @@ namespace RequestMessageHandler.Entities.BreadCrumbs
         /// Default is " >> "
         /// </summary>
         public string Separator { get; set; }
+        
+    }
 
-
+    /// <summary>
+    /// Internal methods 
+    /// </summary>
+    partial class BreadCrumbOptions
+    {
         internal string GetHtml(BreadCrumbList breads)
         {
-            string breadCrumb = "";          
+            string breadCrumb = "";
             if (breads != null && breads.Items.Count > 0)
             {
                 foreach (var bread in breads.Items.Take(breads.Items.Count - 1)) { breadCrumb += FormatTemplate(bread); };
-                               
+
                 breadCrumb += FormatTemplate(breads.Items.Last(), true, false);
             }
 
             return breadCrumb;
         }
 
+    }
+
+    /// <summary>
+    /// Private Methods
+    /// </summary>
+    partial class BreadCrumbOptions
+    {
         private string FormatTemplate(BreadCrumbItem item, bool isLastBread = false, bool separatorToBePlaced = true)
         {
             string template = "";
@@ -69,8 +82,8 @@ namespace RequestMessageHandler.Entities.BreadCrumbs
             else
                 template = LastTemplate.Empty() ? "<strong>{Description}</strong>" : LastTemplate;
 
-            return ( template.Replace("{Url}", item.Url)
-                             .Replace("{Description}", item.Crumb) ) + ( separatorToBePlaced ? " " + ( Separator ?? " >> " ) + " " : "" ) ;
+            return (template.Replace("{Url}", item.Url)
+                             .Replace("{Description}", item.Crumb)) + (separatorToBePlaced ? " " + (Separator ?? " >> ") + " " : "");
         }
     }
 }
