@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YorkCapitalConsole", "YorkCapitalConsole\YorkCapitalConsole.csproj", "{13DB5E77-752B-49AD-8581-E473726791F1}"
 EndProject
@@ -62,6 +62,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostsharpAspect", "Postsharp\PostsharpAspect.csproj", "{5AC76549-59EC-461C-A831-C157B5A9F358}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NugetPackageLibrary", "NugetPackageLibrary\NugetPackageLibrary.csproj", "{99F42773-4600-4EBE-92A4-9DFDB85335EC}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "FirstNodeJs", "NodeJS\FirstNodeJs.njsproj", "{8347595C-F0D3-406F-8E71-FA64626097B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +139,10 @@ Global
 		{99F42773-4600-4EBE-92A4-9DFDB85335EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99F42773-4600-4EBE-92A4-9DFDB85335EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99F42773-4600-4EBE-92A4-9DFDB85335EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8347595C-F0D3-406F-8E71-FA64626097B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8347595C-F0D3-406F-8E71-FA64626097B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8347595C-F0D3-406F-8E71-FA64626097B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8347595C-F0D3-406F-8E71-FA64626097B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -163,6 +169,7 @@ Global
 		{EADFAD2E-F6DF-473C-8F4F-233391B11599} = {7318CD6C-BEAB-44C1-A1F6-1C5C0C25BFFA}
 		{5AC76549-59EC-461C-A831-C157B5A9F358} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 		{99F42773-4600-4EBE-92A4-9DFDB85335EC} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
+		{8347595C-F0D3-406F-8E71-FA64626097B2} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D36F9F5-1A1A-42EF-914A-F4F59C268046}
