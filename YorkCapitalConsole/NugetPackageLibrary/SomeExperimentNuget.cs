@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NugetPackageLibrary
+﻿namespace NugetPackageLibrary
 {
     // https://blogs.msdn.microsoft.com/mvpawardprogram/2016/06/28/creating-nuget-packages/
     //Steps
@@ -16,7 +10,10 @@ namespace NugetPackageLibrary
     {
         public string HaveIt()
         {
-            return "HaveIt";
+            return "HaveIt directly from NUGET.";
         }
     }
+
+    //success : Install-Package Sanj_SomeExperimentNuget -Version 3.0.0 
+    //Todo create a package for my extensions.
 }

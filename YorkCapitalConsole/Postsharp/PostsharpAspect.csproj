@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NugetPackageLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sanj_SomeExperimentNuget.2.0.0\lib\NugetPackageLibrary.dll</HintPath>
+      <HintPath>..\packages\Sanj_SomeExperimentNuget.3.0.0\lib\NugetPackageLibrary.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp, Version=5.1.3.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <HintPath>..\packages\PostSharp.Redist.5.1.3-alpha\lib\net45\PostSharp.dll</HintPath>
