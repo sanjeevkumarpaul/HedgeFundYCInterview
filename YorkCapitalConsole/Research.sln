@@ -65,6 +65,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NugetPackageLibrary", "Nuge
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "FirstNodeJs", "NodeJS\FirstNodeJs.njsproj", "{8347595C-F0D3-406F-8E71-FA64626097B2}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "AzureNodejs", "NodeJS\AzureNodejs\AzureNodejs.njsproj", "{AA5A3079-41CA-4D86-A39C-B4485018C2B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,10 @@ Global
 		{8347595C-F0D3-406F-8E71-FA64626097B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8347595C-F0D3-406F-8E71-FA64626097B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8347595C-F0D3-406F-8E71-FA64626097B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA5A3079-41CA-4D86-A39C-B4485018C2B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA5A3079-41CA-4D86-A39C-B4485018C2B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA5A3079-41CA-4D86-A39C-B4485018C2B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA5A3079-41CA-4D86-A39C-B4485018C2B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +176,7 @@ Global
 		{5AC76549-59EC-461C-A831-C157B5A9F358} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 		{99F42773-4600-4EBE-92A4-9DFDB85335EC} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 		{8347595C-F0D3-406F-8E71-FA64626097B2} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
+		{AA5A3079-41CA-4D86-A39C-B4485018C2B2} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D36F9F5-1A1A-42EF-914A-F4F59C268046}
