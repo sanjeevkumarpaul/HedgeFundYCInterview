@@ -17,5 +17,51 @@
   </metadata>
   <files>
     <file src="bin\debug\NugetPackageLibrary.dll" target="lib\NugetPackageLibrary.dll" />
+    <![CDATA[
+    
+    wild cards
+    <file src="lib\**" target="lib/{framework name}[{version}]" />
+    
+    
+       Framework Specific ...
+    
+       \lib
+    \net46
+        \MyAssembly.dll
+    \net461
+        \MyAssembly.dll
+    \uap
+        \MyAssembly.dll
+    \netcore
+        \MyAssembly.dll
+    
+    
+    For architecture specific.
+    \runtimes
+    \win10-arm
+        \native
+        \lib\uap10.0
+    \win10-x86
+        \native
+        \lib\uap10.0
+    \win10-x64
+        \native
+        \lib\uap10.0
+    
+    ]]>
   </files>
+
+  <!-- A readme.txt to display when the package is installed 
+  <files>
+    <file src="readme.txt" target="" />
+  </files>
+  -->
+  
+  <!--
+   
+  <dependencies>
+    <dependency id="Newtonsoft.Json" version="9.0" />
+  </dependencies>
+  </metadata>
+  -->
 </package>

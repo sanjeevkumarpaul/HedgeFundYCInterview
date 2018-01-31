@@ -1,6 +1,7 @@
 ﻿namespace NugetPackageLibrary
 {
     // https://blogs.msdn.microsoft.com/mvpawardprogram/2016/06/28/creating-nuget-packages/
+    //https://docs.microsoft.com/en-us/nuget/create-packages/creating-a-package
     //Steps
     //0. Open Command Promt, down the Nuget.exe from the above link and perform below actions.
     //1. nuget spec   - This will create a file with FolderName -
