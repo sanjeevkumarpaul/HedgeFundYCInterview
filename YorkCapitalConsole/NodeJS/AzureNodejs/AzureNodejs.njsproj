@@ -47,9 +47,13 @@
     <Folder Include="views\layouts\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="views\error.pug" />
     <Content Include="views\home.handlebars" />
+    <Content Include="views\index.pug" />
+    <Content Include="views\layout.pug" />
     <Content Include="views\layouts\main.handlebars" />
     <Content Include="views\Usersview.handlebars" />
+    <Content Include="views\Users_Index.pug" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config" />
   </ItemGroup>
