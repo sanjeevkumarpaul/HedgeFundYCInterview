@@ -30,6 +30,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="database\Sql.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="routes\home.js" />
     <Compile Include="routes\users.js" />
     <Content Include="package.json" />
@@ -38,6 +41,7 @@
     <Content Include="index.pug" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="database\" />
     <Folder Include="public\" />
     <Folder Include="public\images\" />
     <Folder Include="public\javascripts\" />
@@ -47,6 +51,7 @@
     <Folder Include="views\layouts\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="views\error.handlebars" />
     <Content Include="views\error.pug" />
     <Content Include="views\home.handlebars" />
     <Content Include="views\index.pug" />
