@@ -24,7 +24,7 @@
 
     this.config = {
         user: 'nodejs',
-        password: 'Deepak2!',
+        password: 'nodejs123',
         server: 'localhost',
         database: 'Home'
     }
