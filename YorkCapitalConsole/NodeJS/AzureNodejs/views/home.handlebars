@@ -1,3 +1,10 @@
+<!-- Inline Partial content template, can be placed anywhere within the page. -->
+<!-- Remember Parial names are very much case sensitive -->
+<!-- Please check at > myPartial -->
+{{#*inline "myPartial"}}
+<span style="color:blue; font-family:Broadway; font-size:9px">(Copy Right)</span>
+{{/inline}}
+<!-- End of inline partial content tempalte. -->
 
 <h1>{{title}}</h1>
 
@@ -13,7 +20,7 @@
     <tr>
         {{#each data}}
         <td>{{@index}}</td>
-        <td>{{this.Number}}</td>
+        <td>{{this.Number}} {{> myPartial}}</td> <!-- Inline Partial Content-->
         <td>{{this.Street}}</td>
         <td>{{this.City}}</td>
         <td>{{this.State}}</td>
