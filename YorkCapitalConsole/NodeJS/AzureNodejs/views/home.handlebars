@@ -3,8 +3,20 @@
 
 <p>Below are all the addresses From SQL Server</p>
 
-<div class="people_list">
-    {{#each data}}
-    <span style="display:block;">{{@index}}. {{this.Number}}</span>
-    {{/each}}
-</div>
+<table border="1">
+    <tr>
+        <th>Sl.No.</th>
+        {{#each data.columns}}
+        <th>{{this.name}}</th>
+        {{/each}}
+    </tr>
+    <tr>
+        {{#each data}}
+        <td>{{@index}}</td>
+        <td>{{this.Number}}</td>
+        <td>{{this.Street}}</td>
+        <td>{{this.City}}</td>
+        <td>{{this.State}}</td>
+        {{/each}}
+    </tr>
+</table>

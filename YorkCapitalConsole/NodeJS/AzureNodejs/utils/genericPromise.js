@@ -51,21 +51,40 @@
 
                     var request = new sql.Request();
 
-                    request.query(query, function (err, recordsets) {
+                    request.query(query, function (err, results) {
 
                         if (err) {
                             reject(err);
                         }
                         else {
-                            resolve(recordsets);
+                            resolve(results);
                         }
                     });
                 }
             });
         });
-
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~ Another ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    this.getSQLDatabaseDataMssqlPromise = function (query) {
+
+        require('../database/Sql.js')();
+
+        return new Promise(function (resolve, reject) {
+
+            sql.connect(config)
+                .then(pool => {
+
+                    return pool.request().query(query);
+                })
+                .then(result => {
+                    resolve(result);
+                });
+
+            sql.on('error', err => { reject(err); });
+        });        
+    }
 
     /////////// END - GET DATA FROM SQL //////////////////////
     //////////////////////////////////////////////////////////

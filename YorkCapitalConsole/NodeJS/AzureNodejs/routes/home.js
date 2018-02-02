@@ -5,18 +5,18 @@ var router = express.Router();
 require('../utils/genericPromise.js')();
 
 function main() {
-    var query = 'SELECT Number, street, city, State FROM [Address]';
+    var query = 'SELECT Number, Street, City, State FROM [Address]';
 
-    var dataPromise = getSQLDatabaseData(query);
+    var dataPromise = getSQLDatabaseDataMssqlPromise(query); //getSQLDatabaseData(query);
 
     dataPromise
-        .then(function (recordsets) {
+        .then(function (results) {
 
-            console.log(recordsets);
+            console.log(results.recordset.columns);
 
             /* GET home page. */
             router.get('/', function (req, res) {
-                res.render('home', { title: 'First Azure Compatible - Node JS/Retrive Data from SQL Server', "data": recordsets.recordset });
+                res.render('home', { title: 'First Azure Compatible - Node JS/Retrive Data from SQL Server', "data": results.recordset });
             });
 
         }, errHandler);        
