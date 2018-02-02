@@ -35,6 +35,9 @@
     </Compile>
     <Compile Include="routes\home.js" />
     <Compile Include="routes\users.js" />
+    <Compile Include="utils\genericPromise.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Content Include="package.json" />
     <Content Include="public\stylesheets\main.css" />
     <Content Include="README.md" />
@@ -42,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="database\" />
+    <Folder Include="utils\" />
     <Folder Include="public\" />
     <Folder Include="public\images\" />
     <Folder Include="public\javascripts\" />
@@ -52,13 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="views\error.handlebars" />
-    <Content Include="views\error.pug" />
     <Content Include="views\home.handlebars" />
-    <Content Include="views\index.pug" />
-    <Content Include="views\layout.pug" />
     <Content Include="views\layouts\main.handlebars" />
     <Content Include="views\Usersview.handlebars" />
-    <Content Include="views\Users_Index.pug" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config" />
   </ItemGroup>

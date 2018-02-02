@@ -2,32 +2,26 @@
 var express = require('express');
 var router = express.Router();
 
-require('../database/Sql.js')();
+require('../utils/genericPromise.js')();
 
-/* GET home page. */
-router.get('/', function (req, res) {
-    res.render('home', { title: 'First Azure Compatible - Node JS', "data": Read() });
-});
+function main() {
+    var query = 'SELECT Number, street, city, State FROM [Address]';
 
-function Read() {
+    var dataPromise = getSQLDatabaseData(query);
 
-    var data = null;
+    dataPromise
+        .then(function (recordsets) {
 
-    var connection = sql.connect(config, function (err) {
+            console.log(recordsets);
 
-        if (err) return;
+            /* GET home page. */
+            router.get('/', function (req, res) {
+                res.render('home', { title: 'First Azure Compatible - Node JS/Retrive Data from SQL Server', "data": recordsets.recordset });
+            });
 
-        var request = new sql.Request();
-
-        request.query('SELECT Number, street, city, State FROM [Address]', function (err, recordset) {
-
-            if (err) return;
-
-            data = recordset;
-        });
-    });    
-
-    return data;
+        }, errHandler);        
 }
+
+main();
 
 module.exports = router;
