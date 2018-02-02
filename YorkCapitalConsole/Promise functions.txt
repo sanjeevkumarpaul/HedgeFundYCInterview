@@ -1,0 +1,50 @@
+
+Any time you are inside of a promise callback, you can use throw. However, if you're in any other asynchronous callback, you must use reject.
+
+For example,
+
+new Promise(function() {
+  setTimeout(function() {
+    throw 'or nah';
+    // return Promise.reject('or nah'); also won't work
+  }, 1000);
+}).catch(function(e) {
+  console.log(e); // doesn't happen
+});
+
+won't trigger the catch, instead you're left with an unresolved promise and an uncaught exception. That is a case where you would want to instead use reject. 
+However, you could fix this by promisifying the timeout:
+
+function timeout(duration) {
+  return new Promise(function(resolve) {
+    setTimeout(resolve, duration);
+  });
+}
+
+timeout(1000).then(function() {
+  throw 'worky!';
+  // return Promise.reject('worky'); also works
+}).catch(function(e) {
+  console.log(e); // 'worky!'
+});
+
+
+Another important fact is that reject() DOES NOT terminate control flow like a return statement does. In contrast throw does terminate control flow.
+
+Example:
+
+new Promise((resolve, reject) => {
+  throw "err";
+  console.log("NEVER REACHED");
+})
+.then(() => console.log("RESOLVED"))
+.catch(() => console.log("REJECTED"));
+ Run code snippetExpand snippet
+vs
+
+new Promise((resolve, reject) => {
+  reject(); // resolve() behaves similarly
+  console.log("ALWAYS REACHED"); // "REJECTED" will print AFTER this
+})
+.then(() => console.log("RESOLVED"))
+.catch(() => console.log("REJECTED"));

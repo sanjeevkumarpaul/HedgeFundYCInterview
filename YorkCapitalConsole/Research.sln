@@ -34,6 +34,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AB541859-7918-4CF1-8988-5CB73813A13E}"
 	ProjectSection(SolutionItems) = preProject
 		ImportantUrls.txt = ImportantUrls.txt
+		Promise functions.txt = Promise functions.txt
 		..\README.txt = ..\README.txt
 	EndProjectSection
 EndProject

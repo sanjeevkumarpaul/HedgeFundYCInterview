@@ -28,7 +28,6 @@
         server: 'localhost',
         database: 'Home'
     }
-
     
 }
 
