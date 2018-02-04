@@ -1,0 +1,9 @@
+-- partial views --
+http://blog.teamtreehouse.com/handlebars-js-part-2-partials-and-helpers
+
+-- partial views related to nodejs --
+https://www.npmjs.com/package/hbs
+
+-- for new handlebars utility --
+npm install hbs-utils 
+

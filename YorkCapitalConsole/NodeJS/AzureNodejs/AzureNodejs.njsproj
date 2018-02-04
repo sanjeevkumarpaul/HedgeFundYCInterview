@@ -38,6 +38,7 @@
     <Compile Include="utils\genericPromise.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="utils\hbsHelpers.js" />
     <Compile Include="utils\promiseCatches.js">
       <SubType>Code</SubType>
     </Compile>
@@ -56,11 +57,14 @@
     <Folder Include="routes\" />
     <Folder Include="views\" />
     <Folder Include="views\layouts\" />
+    <Folder Include="views\partials\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="views\error.handlebars" />
     <Content Include="views\home.handlebars" />
     <Content Include="views\layouts\main.handlebars" />
+    <Content Include="views\partials\footer.handlebars" />
+    <Content Include="views\partials\header.handlebars" />
     <Content Include="views\Usersview.handlebars" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config" />

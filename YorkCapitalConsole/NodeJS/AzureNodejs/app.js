@@ -8,6 +8,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 //Handlebars View Engine
 var exphbs = require('express-handlebars');
+var handlebars = require('handlebars');
+//var engines = require('engines');
 
 var routes = require('./routes/home');
 var users = require('./routes/users');
@@ -23,6 +25,26 @@ app.set('views', path.join(__dirname, 'views'));
 //http://handlebarsjs.com/builtin_helpers.html
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
+
+//hbs helpers
+//var helpers = require('./utils/helpers')
+//require('./utils/hbsHelpers.js')(handlebars);
+//INLINE Helper is good now. boldit is called without any prefix notion at view ( {{boldit 'any text'}} )
+handlebars.registerHelper('boldit', function (text) {
+    return new handlebars.SafeString("<strong>" + text + "</strong>");
+})
+
+//install hbs - extenstion to handlebars view engine for partials.
+var hbs = require('hbs');
+hbs.registerPartials(__dirname + '/views/partials'); //it means all files within the folder /views/partials will be treated as partials.
+
+
+
+
+//defining global variables 
+hbs.localsAsTemplateData(app);
+app.locals.application = "NodeJS via Handlebars";
+
 //-End for handlebars View engine --
 
 // uncomment after placing your favicon in /public

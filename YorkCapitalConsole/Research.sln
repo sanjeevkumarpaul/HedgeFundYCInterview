@@ -33,6 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImpWebApiDelegatingHandler"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AB541859-7918-4CF1-8988-5CB73813A13E}"
 	ProjectSection(SolutionItems) = preProject
+		HandleBars_ViewEngine.txt = HandleBars_ViewEngine.txt
 		ImportantUrls.txt = ImportantUrls.txt
 		Promise functions.txt = Promise functions.txt
 		..\README.txt = ..\README.txt

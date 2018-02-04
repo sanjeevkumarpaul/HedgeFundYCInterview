@@ -8,7 +8,7 @@
 
 <h1>{{title}}</h1>
 
-<p>Below are all the addresses From SQL Server</p>
+<p>Below are all the addresses From SQL Server / {{application}}</p>    <!-- {{application}} is from app.js, local variable defined through hbs-->
 
 <table border="1">
     <tr>
@@ -28,4 +28,5 @@
     </tr>
 </table>
 
-Goto Users : <a href="/users">Click me.</a>
+Goto Users : <a href="/users"> {{boldit 'Click me.'}}</a>
+<!--Goto Users : <a href="/users"> Click me.</a>-->
