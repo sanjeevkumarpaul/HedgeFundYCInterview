@@ -1,17 +1,12 @@
-﻿'use strict';
-var debug = require('debug');
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+﻿import debug = require('debug');
+import express = require('express');
+import path = require('path');
 //Handlebars View Engine
-var exphbs = require('express-handlebars');
-var handlebars = require('handlebars');
+import exphbs = require('express-handlebars');
+import handlebars = require('handlebars');
 
-var routes = require('./routes/home');
-var users = require('./routes/users');
+import routes from './routes/index';
+import users from './routes/user';
 
 var app = express();
 
@@ -34,25 +29,14 @@ handlebars.registerHelper('boldit', function (text) {
 })
 
 //install hbs - extenstion to handlebars view engine for partials.
-var hbs = require('hbs');
+import hbs = require('hbs');
 hbs.registerPartials(__dirname + '/views/partials'); //it means all files within the folder /views/partials will be treated as partials.
-
-
 
 
 //defining global variables 
 hbs.localsAsTemplateData(app);
-app.locals.application = "NodeJS via Handlebars";
+app.locals.application = "Typescript NodeJS via Handlebars";
 
-//-End for handlebars View engine --
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
@@ -61,7 +45,7 @@ app.use('/users', users);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
-    err.status = 404;
+    err['status'] = 404;
     next(err);
 });
 
@@ -70,19 +54,18 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function (err, req, res, next) {
-        res.status(err.status || 500);
+    app.use((err: any, req, res, next) => {
+        res.status(err['status'] || 500);
         res.render('error', {
             message: err.message,
-            error: err,
-            code: err.code
+            error: err
         });
     });
 }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
+app.use((err: any, req, res, next) => {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,

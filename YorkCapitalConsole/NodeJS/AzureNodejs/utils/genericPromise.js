@@ -44,7 +44,7 @@
     ////////////////////////////////////////////////////
     /////////// GET DATA FROM SQL //////////////////////
 
-    this.getSQLDatabaseData = function (query, route) {
+    this.getSQLDatabaseData = function (query, router) {
 
         require('../database/Sql.js')();
         
