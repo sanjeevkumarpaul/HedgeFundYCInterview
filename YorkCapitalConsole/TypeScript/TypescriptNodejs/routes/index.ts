@@ -14,4 +14,4 @@ router.get('/', (req: express.Request, res: express.Response) => {
     res.render('index', { title: 'Express' });
 });
 
-export default router;
+export default router; 
