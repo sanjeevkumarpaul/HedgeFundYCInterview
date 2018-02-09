@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "mssql": "github:typed-contrib/node-mssql"
+  }
+}

@@ -1,17 +1,24 @@
-﻿/*
- * GET home page.
- */
-
+﻿
 import express = require('express');
 const router = express.Router();
 
-import Promise from "ts-promise";
+import { AppPromises } from '../utils/genericPromise';
 
-const promise = new Promise((resolve, reject) => { resolve(1); });
+const _query: string = "SELECT Number, Street, City, State FROM [Address]";
+
+new AppPromises().getDataViaMssqlPromise(router, _query)
+    .then((resultset) => {
+
+        /*
+         * GET home page.
+       */
+        console.log("Results fetched to the page.");
+
+        router.get('/', (req: express.Request, res: express.Response) => {
+            res.render('home', { title: 'Express', 'data': resultset });
+        });
+    });
 
 
-router.get('/', (req: express.Request, res: express.Response) => {
-    res.render('index', { title: 'Express' });
-});
 
 export default router; 

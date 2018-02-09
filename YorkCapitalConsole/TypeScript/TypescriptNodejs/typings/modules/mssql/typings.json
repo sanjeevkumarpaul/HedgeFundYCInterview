@@ -1,0 +1,10 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/typed-contrib/node-mssql/master/typings.json",
+    "raw": "github:typed-contrib/node-mssql",
+    "main": "index.d.ts",
+    "version": "3.3.0",
+    "name": "mssql"
+  }
+}
