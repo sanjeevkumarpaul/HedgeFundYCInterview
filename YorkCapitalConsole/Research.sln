@@ -73,6 +73,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworks", "EntityF
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "TypescriptNodejs", "TypeScript\TypescriptNodejs\TypescriptNodejs.njsproj", "{975BD253-65F0-44A5-90AD-43BEB2002B99}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reactive Programing", "Reactive Programing", "{2EFB00FB-3D62-4D6B-B144-2CE4AACBD898}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveLesson", "ReactiveLesson\ReactiveLesson.csproj", "{76AD33CB-F768-491A-A987-7D51E60FA6B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +167,10 @@ Global
 		{975BD253-65F0-44A5-90AD-43BEB2002B99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{975BD253-65F0-44A5-90AD-43BEB2002B99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{975BD253-65F0-44A5-90AD-43BEB2002B99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76AD33CB-F768-491A-A987-7D51E60FA6B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76AD33CB-F768-491A-A987-7D51E60FA6B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76AD33CB-F768-491A-A987-7D51E60FA6B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76AD33CB-F768-491A-A987-7D51E60FA6B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,6 +201,7 @@ Global
 		{AA5A3079-41CA-4D86-A39C-B4485018C2B2} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 		{7234083B-7893-4FBA-BFEE-A59771DAB1AC} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
 		{975BD253-65F0-44A5-90AD-43BEB2002B99} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
+		{76AD33CB-F768-491A-A987-7D51E60FA6B7} = {2EFB00FB-3D62-4D6B-B144-2CE4AACBD898}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D36F9F5-1A1A-42EF-914A-F4F59C268046}
