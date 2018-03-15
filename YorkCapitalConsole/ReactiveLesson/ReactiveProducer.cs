@@ -20,7 +20,7 @@ namespace ReactiveLesson
         }
 
         //Copy Constructor.
-        public ReactiveProducer(T consumer) : this(new List<T>() { consumer }) { }
+        public ReactiveProducer(T consumer) : this(new List<T>() { consumer }) { } 
               
 
         private void StartObserving(List<T> consumers)
