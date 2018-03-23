@@ -9,6 +9,9 @@ namespace ReactiveLesson
 {
     public interface ICustomePropertyChangedNotification : INotifyPropertyChanged
     {
+        string ChangedPropertyName { get; set; } 
+        dynamic ChangedPropertyValue { get; set; }
+        dynamic ChangedPropertyValueOld { get; set; }
         void Print();
     }
 }
