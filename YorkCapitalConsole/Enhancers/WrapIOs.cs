@@ -117,15 +117,49 @@ namespace Wrappers
             }
         }
 
-        public static string[] FindFiles(string path, bool includeSubfolders = false)
+        public static string[] FindFiles(string path, bool includeSubfolders = false, string pattern="*.*")
         {
             if (System.IO.Directory.Exists(path))
-                return System.IO.Directory.GetFiles(path, "*.*", includeSubfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                return System.IO.Directory.GetFiles(path, pattern, includeSubfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
             if (System.IO.File.Exists(path))
                 return new string[] { path };
 
             return null;
+        }
+
+        public static void UnZip(string path, string unzipPath =  "", bool deleteAfterExtraction = false)
+        {
+            try
+            {
+                if (unzipPath.Empty()) unzipPath = $@"{System.IO.Path.GetDirectoryName(path)}\{System.IO.Path.GetFileNameWithoutExtension(path)}";
+
+                //bool networkPath = unzipPath.StartsWith(@"\\");
+
+                //var _dirs = unzipPath.SplitEx("\\", true);
+                //if (!System.IO.Directory.Exists(unzipPath))
+                //{
+                //    var _path = $@"{(networkPath? "\\\\" : "")}";
+                //    bool _start = true;
+                //    _dirs.ToList().ForEach(p =>
+                //    {
+                //        var _folder = $"{_path}{(!_start ? "\\" : "")}{p}";
+                //        if (!System.IO.Directory.Exists(_folder))
+                //        {
+                //            if (_start) throw new Exception("Root not avilable");
+
+                //            System.IO.Directory.CreateDirectory(_folder);
+                //        }
+                //        _path = _folder;
+                //        _start = false;
+                //    });
+                //}
+
+                System.IO.Compression.ZipFile.ExtractToDirectory(path, unzipPath);
+                if (deleteAfterExtraction) Delete(path);
+            }
+            catch { }
+
         }
 
         public static void CreateIfNotexists(string filePath, string header)

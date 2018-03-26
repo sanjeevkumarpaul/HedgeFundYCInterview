@@ -11,6 +11,8 @@ namespace MP3Utility.Entities
         public string Folder { get; set; }
         public string File { get; set; }
         public bool IncludeSubfolders { get; set; }
+        public bool ExtractZip { get; set; }
+        public bool DeleteAfterExtraction { get; set; }
 
         public string RemovePhraseFromName { get; set; } 
         public string ReplacePhaseOnRemove { get; set; }

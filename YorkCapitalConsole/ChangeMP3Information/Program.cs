@@ -14,11 +14,14 @@ namespace ChangeMP3Information
 
             new Mp3Headers(  new MP3Utility.Entities.Mp3Options
                              {
-                                 Folder = @"C:\Users\Sanje\Downloads\Movies\Songs\2018\Albumbs\Movies",
+                                 Folder = @"C:\Users\Sanje\Downloads\Movies\Songs",
                                  IncludeSubfolders = true,
                                  RemovePhraseFromName = " - Songs.pk - 320Kbps",
                                  ReplacePhaseOnRemove = "",
+                                 ExtractZip = true,
+                                 DeleteAfterExtraction = true
                              })
+                .UnZip()
                 .ReplacePhraseOnName()
                 .DisplayHeaders();
 

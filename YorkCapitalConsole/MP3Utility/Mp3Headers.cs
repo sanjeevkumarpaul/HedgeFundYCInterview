@@ -51,6 +51,22 @@ namespace MP3Utility
             return this;
         }
 
+        public Mp3Headers UnZip()
+        {
+            if (Options.ExtractZip)
+            {
+                WrapIOs.FindFiles(Options.Folder ?? Options.File, Options.IncludeSubfolders, "*.zip")
+                       .ToList()
+                        .ForEach(p =>
+                        {
+                            Console.WriteLine($"Unziping the file : [ {p} ]");
+                            WrapIOs.UnZip(p, deleteAfterExtraction:Options.DeleteAfterExtraction);
+                            Console.WriteLine("Done.!"); Console.WriteLine();
+                        });
+            }
+
+            return this;
+        }
         
         public Mp3Headers ReplacePhraseOnName()
         {
