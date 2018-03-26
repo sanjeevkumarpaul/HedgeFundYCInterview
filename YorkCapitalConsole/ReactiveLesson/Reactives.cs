@@ -178,8 +178,12 @@ namespace ReactiveLesson
                                  (e) => { Console.WriteLine($"{e.Message} on {Thread.CurrentThread.ManagedThreadId}"); }, 
                                  () => { Console.WriteLine($"Completed  on {Thread.CurrentThread.ManagedThreadId}"); });
         }
+        
+    }
+}
 
-        /// <summary>
+/*
+ * /// <summary>
         /// Observabble with parallel Task library hand in hand
         /// Explanation:
         /// If you use TASK, it has always to return a single value that is Task<IList<Row>> and if you are reading database
@@ -212,9 +216,7 @@ namespace ReactiveLesson
 
             return finalTask.Task;
         }
-    }
-}
-
+*/
 
 /*
  * 

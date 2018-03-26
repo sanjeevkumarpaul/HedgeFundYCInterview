@@ -117,6 +117,14 @@ namespace Wrappers
             }
         }
 
+        public static string[] FindFiles(string path)
+        {
+            if (System.IO.Directory.Exists(path))
+                return System.IO.Directory.GetFiles(path);
+
+            return null;
+        }
+
         public static void CreateIfNotexists(string filePath, string header)
         {
             if (File.Exists(filePath)) return;
