@@ -117,10 +117,13 @@ namespace Wrappers
             }
         }
 
-        public static string[] FindFiles(string path)
+        public static string[] FindFiles(string path, bool includeSubfolders = false)
         {
             if (System.IO.Directory.Exists(path))
-                return System.IO.Directory.GetFiles(path);
+                return System.IO.Directory.GetFiles(path, "*.*", includeSubfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+
+            if (System.IO.File.Exists(path))
+                return new string[] { path };
 
             return null;
         }
@@ -162,6 +165,8 @@ namespace Wrappers
 
         public static void Rename(string oldfile, string newfile)
         {
+            if (oldfile == newfile) return;
+
             try { File.Delete(newfile); } catch { }
             try { File.Move(oldfile, newfile); } catch { }
         }

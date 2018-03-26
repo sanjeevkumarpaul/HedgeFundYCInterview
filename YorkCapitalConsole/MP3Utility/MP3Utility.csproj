@@ -147,6 +147,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Mp3Options.cs" />
     <Compile Include="Mp3Headers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Taglib\FileAbstraction.cs" />
