@@ -134,27 +134,6 @@ namespace Wrappers
             {
                 if (unzipPath.Empty()) unzipPath = $@"{System.IO.Path.GetDirectoryName(path)}\{System.IO.Path.GetFileNameWithoutExtension(path)}";
 
-                //bool networkPath = unzipPath.StartsWith(@"\\");
-
-                //var _dirs = unzipPath.SplitEx("\\", true);
-                //if (!System.IO.Directory.Exists(unzipPath))
-                //{
-                //    var _path = $@"{(networkPath? "\\\\" : "")}";
-                //    bool _start = true;
-                //    _dirs.ToList().ForEach(p =>
-                //    {
-                //        var _folder = $"{_path}{(!_start ? "\\" : "")}{p}";
-                //        if (!System.IO.Directory.Exists(_folder))
-                //        {
-                //            if (_start) throw new Exception("Root not avilable");
-
-                //            System.IO.Directory.CreateDirectory(_folder);
-                //        }
-                //        _path = _folder;
-                //        _start = false;
-                //    });
-                //}
-
                 System.IO.Compression.ZipFile.ExtractToDirectory(path, unzipPath);
                 if (deleteAfterExtraction) Delete(path);
             }
@@ -197,9 +176,28 @@ namespace Wrappers
 
         }
 
+        public static bool Rename(string path, string searchPhrase, string replacePhrase)
+        {
+            if (!(searchPhrase == replacePhrase || searchPhrase.Empty()))
+            {
+                var _path = System.IO.Path.GetDirectoryName(path);
+                var _file = System.IO.Path.GetFileName(path);
+
+                if (_file.Contains(searchPhrase))
+                {
+                    var _newname = $"{_path}\\{_file.Replace(searchPhrase, replacePhrase.ToEmpty())}";
+
+                    Rename(path, _newname);
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static void Rename(string oldfile, string newfile)
         {
-            if (oldfile == newfile) return;
+            if (oldfile == newfile) return; //Either complete path or just the filename is same.
 
             try { File.Delete(newfile); } catch { }
             try { File.Move(oldfile, newfile); } catch { }

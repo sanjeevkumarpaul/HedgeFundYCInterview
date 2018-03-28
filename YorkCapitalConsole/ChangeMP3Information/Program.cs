@@ -12,12 +12,13 @@ namespace ChangeMP3Information
         static void Main(string[] args)
         {
 
-            new Mp3Headers(  new MP3Utility.Entities.Mp3Options
+            new TagHeaders(  new MP3Utility.Entities.TagOptions
                              {
                                  Folder = @"C:\Users\Sanje\Downloads\Movies\Songs",
                                  IncludeSubfolders = true,
-                                 RemovePhraseFromName = " - Songs.pk - 320Kbps",
-                                 ReplacePhaseOnRemove = "",
+                                 SearchPhraseFromName = new string[] { " - Songs.pk - 320Kbps", " - Songs.pk - 128Kbps" },
+                                 ReplacePhase = "",
+                                 SearchPattern = "*.mp3",
                                  ExtractZip = true,
                                  DeleteAfterExtraction = true
                              })

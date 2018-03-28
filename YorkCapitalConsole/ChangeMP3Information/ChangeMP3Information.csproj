@@ -49,9 +49,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MP3Utility\MP3Utility.csproj">
+    <ProjectReference Include="..\MP3Utility\TagUtility.csproj">
       <Project>{6cacd281-36d8-4df8-b49b-9f36c3cb2abb}</Project>
-      <Name>MP3Utility</Name>
+      <Name>TagUtility</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

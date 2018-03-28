@@ -77,9 +77,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reactive Programing", "Reac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveLesson", "ReactiveLesson\ReactiveLesson.csproj", "{76AD33CB-F768-491A-A987-7D51E60FA6B7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MP3s", "MP3s", "{BC8A6EFA-D95B-46B6-A58A-EA7FA9861709}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TagLibrary", "TagLibrary", "{BC8A6EFA-D95B-46B6-A58A-EA7FA9861709}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MP3Utility", "MP3Utility\MP3Utility.csproj", "{6CACD281-36D8-4DF8-B49B-9F36C3CB2ABB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagUtility", "MP3Utility\TagUtility.csproj", "{6CACD281-36D8-4DF8-B49B-9F36C3CB2ABB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeMP3Information", "ChangeMP3Information\ChangeMP3Information.csproj", "{9B3E793D-E71A-4E5C-93C6-777FB048888A}"
 EndProject
