@@ -47,6 +47,13 @@ namespace MP3Utility
 
                         });
                     }
+                    Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}Other Information-{Environment.NewLine}{ (".".Repeat(30)) }");
+                    Console.WriteLine($"Beats Per Minute: {_file.Tag.BeatsPerMinute}");
+                    Console.WriteLine($"Albumb          : {_file.Tag.Album}");
+                    Console.WriteLine($"Year            : {_file.Tag.Year}");
+                    Console.WriteLine($"Track Count     : {_file.Tag.TrackCount}");
+
+
                     Console.WriteLine($"{Environment.NewLine}{ ("=".Repeat(100)) }{Environment.NewLine}");
                 }            
             }
