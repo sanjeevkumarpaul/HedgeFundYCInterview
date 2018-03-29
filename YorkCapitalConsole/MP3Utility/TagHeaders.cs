@@ -7,11 +7,12 @@ using Wrappers;
 using Extensions;
 
 using TagLib;
-using MP3Utility.Taglib;
-using MP3Utility.Entities;
-using MP3Utility.Utility;
+using TagUtility.Entities;
+using TagUtility.Utility;
+using TagUtility.Taglib;
 
-namespace MP3Utility
+
+namespace TagUtility
 {
     public class TagHeaders
     {
@@ -43,7 +44,7 @@ namespace MP3Utility
                     {
                         arts.SplitEx(',').Select(a => a.Trim()).ToList().ForEach(a =>
                         {
-                            Console.Write($"[{a}]");
+                            Console.Write($"[{a}]  ");
 
                         });
                     }
@@ -51,9 +52,9 @@ namespace MP3Utility
                     Console.WriteLine($"Beats Per Minute: {_file.Tag.BeatsPerMinute}");
                     Console.WriteLine($"Albumb          : {_file.Tag.Album}");
                     Console.WriteLine($"Year            : {_file.Tag.Year}");
-                    Console.WriteLine($"Track Count     : {_file.Tag.TrackCount}");
-
-
+                    Console.WriteLine($"Track Number    : {_file.Tag.Track}");
+                    Console.WriteLine($"Title           : {_file.Tag.Title}");
+                    
                     Console.WriteLine($"{Environment.NewLine}{ ("=".Repeat(100)) }{Environment.NewLine}");
                 }            
             }
@@ -95,6 +96,14 @@ namespace MP3Utility
                 }
             }
             return this;
+        }
+
+
+        ///PRIVATE///
+        
+        private void Subscription(ITagResult result)
+        {
+            result.Display(Options);
         }
     }
 }

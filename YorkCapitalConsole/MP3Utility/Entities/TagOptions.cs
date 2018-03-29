@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MP3Utility.Entities
+namespace TagUtility.Entities
 {
     public class TagOptions
     {

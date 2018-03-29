@@ -1,4 +1,4 @@
-﻿using MP3Utility;
+﻿using TagUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace ChangeMP3Information
         static void Main(string[] args)
         {
 
-            new TagHeaders(  new MP3Utility.Entities.TagOptions
+            new TagHeaders(  new TagUtility.Entities.TagOptions
                              {
                                  Folder = @"C:\Users\Sanje\Downloads\Movies\Songs",
                                  IncludeSubfolders = true,

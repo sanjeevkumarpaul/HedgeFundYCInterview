@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MP3Utility.Taglib
+namespace TagUtility.Taglib
 {
     public class FileAbstraction : TagLib.File.IFileAbstraction
     {
