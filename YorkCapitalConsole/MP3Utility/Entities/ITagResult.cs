@@ -9,6 +9,8 @@ namespace TagUtility.Entities
 {
     public interface ITagResult
     {
-        void Display(TagOptions options);
+        string FilePath { get; set; }
+
+        void Action(TagOptions options);
     }
 }

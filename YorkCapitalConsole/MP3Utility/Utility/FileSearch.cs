@@ -8,6 +8,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 using Wrappers;
+using TagUtility.Entities;
 
 namespace TagUtility.Utility
 {
@@ -48,9 +49,12 @@ namespace TagUtility.Utility
             Observe(options, subscriber);
         }
 
-        public static void Renamer(TagUtility.Entities.TagOptions options, Action<Entities.ITagResult> subscriber)
+        public static void Informer<T>(TagUtility.Entities.TagOptions options, Action<T> subscriber) where T : ITagResult, new()
         {
-
+            FindAll(options)
+                .Select(f => new T { FilePath = f })
+                .ToObservable<T>(NewThreadScheduler.Default)
+                .Subscribe<T>(subscriber);
         }
     }
 }

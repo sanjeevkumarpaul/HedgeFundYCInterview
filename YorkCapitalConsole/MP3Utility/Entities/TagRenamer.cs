@@ -8,9 +8,9 @@ namespace TagUtility.Entities
 {
     public class TagRenamer : ITagResult
     {
-        public string filePath { get; set; }
+        public string FilePath { get; set; }
 
-        public void Display(TagOptions options)
+        public void Action(TagOptions options)
         {
 
         }

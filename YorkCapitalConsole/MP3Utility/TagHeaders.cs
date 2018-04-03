@@ -29,35 +29,7 @@ namespace TagUtility
 
         public TagHeaders DisplayHeaders()
         {
-            FileSearch.All(Options, Display); //Observable Sequence
-
-            //C# 7.0 Local function.
-            void Display(string path)
-            {
-                var _file = TagLib.File.Create(new FileAbstraction(path));
-
-                if (_file.Tag.Performers != null)
-                {
-                    Console.WriteLine($"Performers for the song: {System.IO.Path.GetFileName(_file.Name)}, are ...");
-                    Console.WriteLine($"{ (".".Repeat(75)) }{Environment.NewLine}");                    
-                    foreach (var arts in _file.Tag.Performers)
-                    {
-                        arts.SplitEx(',').Select(a => a.Trim()).ToList().ForEach(a =>
-                        {
-                            Console.Write($"[{a}]  ");
-
-                        });
-                    }
-                    Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}Other Information-{Environment.NewLine}{ (".".Repeat(30)) }");
-                    Console.WriteLine($"Beats Per Minute: {_file.Tag.BeatsPerMinute}");
-                    Console.WriteLine($"Albumb          : {_file.Tag.Album}");
-                    Console.WriteLine($"Year            : {_file.Tag.Year}");
-                    Console.WriteLine($"Track Number    : {_file.Tag.Track}");
-                    Console.WriteLine($"Title           : {_file.Tag.Title}");
-                    
-                    Console.WriteLine($"{Environment.NewLine}{ ("=".Repeat(100)) }{Environment.NewLine}");
-                }            
-            }
+            FileSearch.Informer<TagDisplayer>(Options, (T) => { T.Action(Options); }); //This is done via Reactive Way and Observation Pattern 
 
             return this;
         }
@@ -103,7 +75,7 @@ namespace TagUtility
         
         private void Subscription(ITagResult result)
         {
-            result.Display(Options);
+            result.Action(Options);
         }
     }
 }

@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\ITagResult.cs" />
+    <Compile Include="Entities\TagDisplayer.cs" />
     <Compile Include="Entities\TagOptions.cs" />
     <Compile Include="Entities\TagRenamer.cs" />
     <Compile Include="TagHeaders.cs" />
