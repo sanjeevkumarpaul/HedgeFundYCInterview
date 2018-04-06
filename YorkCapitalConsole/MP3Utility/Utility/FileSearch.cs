@@ -25,11 +25,26 @@ namespace TagUtility.Utility
         {
             if (where == null) where = ((f) => { return true; });
 
+            
+                FindAll(options, pattern)
+                       .Where(where)
+                       .Cast<T>()
+                       .ToObservable<T>(NewThreadScheduler.Default)
+                       .Subscribe<T>(subscriber);
+            
+        }
+
+        private static void Observe<T>(TagUtility.Entities.TagOptions options, string pattern = null, Func<string, bool> where = null) where T: ITagResult, new()
+        {
+            if (where == null) where = ((f) => { return true; });
+
             FindAll(options, pattern)
                    .Where(where)
-                   .Cast<T>()
-                   .ToObservable<T>( NewThreadScheduler.Default )                  
-                   .Subscribe<T>(subscriber);
+                   .Select(f => new T { FilePath = f })
+                   .ToObservable<T>(NewThreadScheduler.Default)
+                   .Do<T>((tag) => { Console.WriteLine($"Proessing - { System.IO.Path.GetFileName(((ITagResult)tag).FilePath) }"); })
+                   .Subscribe((tag) => { ((ITagResult)tag).Action(options); });
+            
         }
         
         public static void Zips(TagUtility.Entities.TagOptions options, Action<string> subscriber)
@@ -49,12 +64,19 @@ namespace TagUtility.Utility
             Observe(options, subscriber);
         }
 
-        public static void Informer<T>(TagUtility.Entities.TagOptions options, Action<T> subscriber) where T : ITagResult, new()
+        public static void Informer<T>(TagUtility.Entities.TagOptions options) where T : ITagResult, new()
         {
-            FindAll(options)
-                .Select(f => new T { FilePath = f })
-                .ToObservable<T>(NewThreadScheduler.Default)
-                .Subscribe<T>(subscriber);
+            Observe<T>(options);
+        }
+
+        public static void Zipper<T>(TagUtility.Entities.TagOptions options) where T : ITagResult, new()
+        {
+            Observe<T>(options, "*.zip");
+        }
+
+        public static void Search<T>(TagUtility.Entities.TagOptions options) where T : ITagResult, new()
+        {
+            Observe<T>(options, where: (f) => { return options.SearchPhraseFromName.Any(s => f.Contains(s)); });
         }
     }
 }

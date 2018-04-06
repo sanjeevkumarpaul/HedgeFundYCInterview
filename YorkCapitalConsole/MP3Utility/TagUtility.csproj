@@ -166,10 +166,12 @@
     <Compile Include="Entities\TagDisplayer.cs" />
     <Compile Include="Entities\TagOptions.cs" />
     <Compile Include="Entities\TagRenamer.cs" />
+    <Compile Include="Entities\TagUnZipper.cs" />
     <Compile Include="TagHeaders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Taglib\FileAbstraction.cs" />
     <Compile Include="Utility\FileSearch.cs" />
+    <Compile Include="Utility\MessageListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

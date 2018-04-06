@@ -29,7 +29,7 @@ namespace TagUtility
 
         public TagHeaders DisplayHeaders()
         {
-            FileSearch.Informer<TagDisplayer>(Options, (T) => { T.Action(Options); }); //This is done via Reactive Way and Observation Pattern 
+            FileSearch.Informer<TagDisplayer>(Options); //This is done via Reactive Way and Observation Pattern 
 
             return this;
         }
@@ -37,16 +37,8 @@ namespace TagUtility
         public TagHeaders UnZip()
         {
             if (Options.ExtractZip)
-            {
-                FileSearch.Zips(Options, UnZipSubscriber);  //Observable Sequence
-
-                //C# 7.0 Local function.
-                void UnZipSubscriber(string zipPath)
-                {
-                    Console.WriteLine($"Unziping the file : [ {zipPath} ]");
-                    WrapIOs.UnZip(zipPath, deleteAfterExtraction: Options.DeleteAfterExtraction);
-                    Console.WriteLine("Done.!"); Console.WriteLine();
-                }
+            {                
+                FileSearch.Zipper<TagUnZipper>(Options);
             }
 
             return this;
