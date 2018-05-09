@@ -83,6 +83,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagUtility", "MP3Utility\Ta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeMP3Information", "ChangeMP3Information\ChangeMP3Information.csproj", "{9B3E793D-E71A-4E5C-93C6-777FB048888A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BotBuilder", "BotBuilder", "{A4C940FC-0D3D-436A-B381-EBD1F9361D89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotTalks", "BotTalks\BotTalks.csproj", "{5FB508B2-05F6-42E3-8CAF-5BA1E5ED1C13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -185,6 +189,10 @@ Global
 		{9B3E793D-E71A-4E5C-93C6-777FB048888A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B3E793D-E71A-4E5C-93C6-777FB048888A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B3E793D-E71A-4E5C-93C6-777FB048888A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FB508B2-05F6-42E3-8CAF-5BA1E5ED1C13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB508B2-05F6-42E3-8CAF-5BA1E5ED1C13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB508B2-05F6-42E3-8CAF-5BA1E5ED1C13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB508B2-05F6-42E3-8CAF-5BA1E5ED1C13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -219,6 +227,7 @@ Global
 		{BC8A6EFA-D95B-46B6-A58A-EA7FA9861709} = {6B7BEC95-8E7F-419B-BD2E-186391C1657C}
 		{6CACD281-36D8-4DF8-B49B-9F36C3CB2ABB} = {BC8A6EFA-D95B-46B6-A58A-EA7FA9861709}
 		{9B3E793D-E71A-4E5C-93C6-777FB048888A} = {A61023CD-45E8-4269-A3BB-D6ABD3B849CA}
+		{5FB508B2-05F6-42E3-8CAF-5BA1E5ED1C13} = {A4C940FC-0D3D-436A-B381-EBD1F9361D89}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D36F9F5-1A1A-42EF-914A-F4F59C268046}
