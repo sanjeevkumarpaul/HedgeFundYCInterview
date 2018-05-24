@@ -50,7 +50,7 @@
   <ItemGroup>
     <Compile Include="Entities\APIAuthenticationType.cs" />
     <Compile Include="Entities\APIAuthorization.cs" />
-    <Compile Include="Entities\APIContentType.cs" />
+    <Compile Include="Entities\APIRequestHeaders.cs" />
     <Compile Include="Entities\APIProspect.cs" />
     <Compile Include="Entities\IAPIProspect.cs" />
     <Compile Include="APIUtil.cs" />
@@ -59,6 +59,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Extensions\Extensions.csproj">
+      <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
