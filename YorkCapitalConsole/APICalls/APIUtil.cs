@@ -91,7 +91,7 @@ namespace APICalls
                 else
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(prospect.Authorization.Type.ToString(), prospect.Authorization.Token);
             }
-            else (prospect.Authorization?.Username != null && prospect.Authorization?.Password != null)
+            else if (prospect.Authorization?.Username != null && prospect.Authorization?.Password != null)
             {
                 var bytearray = Encoding.ASCII.GetBytes($"{prospect.Authorization.Username}:{prospect.Authorization.Password}");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(prospect.Authorization.Type.ToString(), Convert.ToBase64String(bytearray));
