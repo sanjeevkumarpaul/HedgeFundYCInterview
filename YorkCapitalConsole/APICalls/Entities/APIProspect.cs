@@ -10,7 +10,7 @@ namespace APICalls.Entities
     public class APIProspect<T> : IAPIProspect where T: new()
     {
         public string BaseUrl { get; set; }
-        public string APIUril { get; set; }
+        public string APIUri { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public bool ParametersIsQueryString { get; set; }
         public APIAuthorization Authorization { get; set; }
@@ -21,12 +21,23 @@ namespace APICalls.Entities
         {
             get
             {
-                string _url = $"{BaseUrl}{ (APIUril.Empty()? "" : "/") }{APIUril}".Trim();
+                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + (ParametersIsQueryString ? QueryString : "");
 
-                if (ParametersIsQueryString && Parameters != null)
-                    Parameters.Keys.All(k => (_url += $"{k}={Parameters[k]}&") != null );
+                return _url;
 
-                return _url.TrimEx("&");
+            }
+        }
+
+        public string QueryString
+        {
+            get
+            {
+                string _url = "";
+
+                if (Parameters != null)
+                  Parameters.Keys.All(k => (_url += $"{k}={Parameters[k]}&") != null);
+
+                return  (!_url.Empty()? "?" : "") + _url.TrimEx("&");
             }
         }
     }

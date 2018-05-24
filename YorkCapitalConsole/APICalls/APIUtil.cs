@@ -44,6 +44,15 @@ namespace APICalls
             }
         }
 
+        private HttpRequestMessage CreateRequest(HttpMethod method )
+        {
+            AddContentTypes();
+            HttpRequestMessage request = AddParameters(new HttpRequestMessage(method, prospect.Url));
+            AddAuthorization(request);
+
+            return request;
+        }
+
         private void AddContentTypes()
         {
             var contents = prospect.RequestHeaders?.AcceptContentTypes ?? null;
@@ -57,7 +66,7 @@ namespace APICalls
         }
 
         private W AddParameters<W>(W request)
-        {
+        {            
             if (request is HttpRequestMessage && !prospect.ParametersIsQueryString && prospect.Parameters != null)
                 (request as HttpRequestMessage).Content = new StringContent(JsonConvert.SerializeObject(prospect.Parameters), Encoding.UTF8, prospect.RequestHeaders?.ParameterContentType ?? "application/json");
 
@@ -102,11 +111,8 @@ namespace APICalls
         {
             try
             {
-                AddContentTypes();                
-                HttpRequestMessage request = AddParameters( new HttpRequestMessage(HttpMethod.Get, prospect.Url) );
-                AddAuthorization(request);
-
-                HttpResponseMessage response = await client.GetAsync(prospect.Url);
+                var request = CreateRequest(HttpMethod.Get);
+                HttpResponseMessage response = await client.GetAsync(prospect.Url + ( !prospect.ParametersIsQueryString ? prospect.ParametersIsQueryString : "" ));
                 if (response.IsSuccessStatusCode)
                 {
                     var data = await response.Content.ReadAsStringAsync();
@@ -117,6 +123,69 @@ namespace APICalls
             {
 
             }
+            return string.Empty;
+        }
+
+        private async Task<string> PostItAsync()
+        {
+            try
+            {
+                var request = CreateRequest(HttpMethod.Post);
+
+                var response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    return responseString;
+                }
+            }
+            catch
+            {
+
+            }
+
+            return string.Empty;
+        }
+
+        private string GetIt()
+        {
+            try
+            {
+                var request = CreateRequest(HttpMethod.Get);
+
+                HttpResponseMessage response = client.GetAsync(prospect.Url + (!prospect.ParametersIsQueryString ? prospect.ParametersIsQueryString : "")).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = response.Content.ReadAsStringAsync().Result;
+                    return data;
+                }
+            }
+            catch
+            {
+
+            }
+
+            return string.Empty;
+        }
+
+        private string PostIt()
+        {
+            try
+            {
+                var request = CreateRequest(HttpMethod.Post);
+
+                var response = client.SendAsync(request).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = response.Content.ReadAsStringAsync().Result;
+                    return responseString;
+                }
+            }
+            catch
+            {
+
+            }
+
             return string.Empty;
         }
 
