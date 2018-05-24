@@ -4,16 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using xs = System.IO.Compression.ZipFile;
-
-namespace BotTalks
+namespace JobComponent
 {
     class Program
     {
         static void Main(string[] args)
         {
-            
-
         }
     }
 }
