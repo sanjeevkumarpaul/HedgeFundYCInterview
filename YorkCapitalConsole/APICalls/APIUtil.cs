@@ -44,7 +44,7 @@ namespace APICalls
             }
         }
 
-        private HttpRequestMessage CreateRequest(HttpMethod method )
+        private HttpRequestMessage CreateRequest(HttpMethod method)
         {
             AddContentTypes();
             HttpRequestMessage request = AddParameters(new HttpRequestMessage(method, prospect.Url));
@@ -59,14 +59,14 @@ namespace APICalls
             client.DefaultRequestHeaders.Accept.Clear();
 
             if (contents != null)
-            {                
+            {
                 foreach (var content in contents) client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(content));
             }
             else client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         private W AddParameters<W>(W request)
-        {            
+        {
             if (request is HttpRequestMessage && !prospect.ParametersIsQueryString && prospect.Parameters != null)
                 (request as HttpRequestMessage).Content = new StringContent(JsonConvert.SerializeObject(prospect.Parameters), Encoding.UTF8, prospect.RequestHeaders?.ParameterContentType ?? "application/json");
 
@@ -77,17 +77,28 @@ namespace APICalls
 
         private void AddHeaders(HttpRequestMessage request, string token = null)
         {
+            var headers = prospect.RequestHeaders?.Headers ?? null;
+            
             if (token == null)
             {
-                var headers = prospect.RequestHeaders?.Headers ?? null;
-
                 if (headers != null)
-                    foreach (var header in headers)                    
-                        request.Headers.Add(header.Key, header.Value);                    
+                    foreach (var header in headers)
+                            request.Headers.Add(header.Key, header.Value);                
             }
             else
-                request.Headers.Add("Authorization", token);
+            {
+                if (request.Method != HttpMethod.Get)
+                {
+                    request.Headers.Add("Authorization", token);
+                }
+                else
+                {
+                    if (client.DefaultRequestHeaders.Contains("Authorization")) client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"{prospect.Authorization.Token}");
+                }
+            }                        
         }
+           
 
         private void AddAuthorization(HttpRequestMessage request)
         {
@@ -112,7 +123,7 @@ namespace APICalls
             try
             {
                 var request = CreateRequest(HttpMethod.Get);
-                HttpResponseMessage response = await client.GetAsync(prospect.Url + ( !prospect.ParametersIsQueryString ? prospect.ParametersIsQueryString : "" ));
+                HttpResponseMessage response = await client.GetAsync(prospect.Url + ( !prospect.ParametersIsQueryString ? prospect.QueryString : "" ));
                 if (response.IsSuccessStatusCode)
                 {
                     var data = await response.Content.ReadAsStringAsync();
@@ -153,7 +164,7 @@ namespace APICalls
             {
                 var request = CreateRequest(HttpMethod.Get);
 
-                HttpResponseMessage response = client.GetAsync(prospect.Url + (!prospect.ParametersIsQueryString ? prospect.ParametersIsQueryString : "")).Result;
+                HttpResponseMessage response = client.GetAsync(prospect.Url + (!prospect.ParametersIsQueryString ? prospect.QueryString : "")).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     var data = response.Content.ReadAsStringAsync().Result;
