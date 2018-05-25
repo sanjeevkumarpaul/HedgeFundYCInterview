@@ -77,26 +77,21 @@ namespace APICalls
 
         private void AddHeaders(HttpRequestMessage request, string token = null)
         {
-            var headers = prospect.RequestHeaders?.Headers ?? null;
-            
-            if (token == null)
+            var headers = ( token != null ) ? new APINamePareMedia[] { new APINamePareMedia { Key = "Authorization", Value = token  } }  : prospect.RequestHeaders?.Headers ?? null;
+
+            if (headers != null)
             {
-                if (headers != null)
-                    foreach (var header in headers)
-                            request.Headers.Add(header.Key, header.Value);                
+                foreach (var header in headers)
+                {
+                    if (request.Method != HttpMethod.Get)
+                        request.Headers.Add(header.Key, header.Value);
+                    else
+                    {
+                        if (client.DefaultRequestHeaders.Contains(header.Key)) client.DefaultRequestHeaders.Remove(header.Key);
+                        client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
+                    }
+                }
             }
-            else
-            {
-                if (request.Method != HttpMethod.Get)
-                {
-                    request.Headers.Add("Authorization", token);
-                }
-                else
-                {
-                    if (client.DefaultRequestHeaders.Contains("Authorization")) client.DefaultRequestHeaders.Remove("Authorization");
-                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"{prospect.Authorization.Token}");
-                }
-            }                        
         }
            
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Extensions;
@@ -11,24 +12,25 @@ namespace APICalls.Entities
     {
         public string BaseUrl { get; set; }
         public string APIUri { get; set; }
+        public HttpMethod Method { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public bool ParametersIsQueryString { get; set; }
         public APIAuthorization Authorization { get; set; }
         public APIRequestHeaders RequestHeaders {get; set;}
         public T Result { get; set; }
 
-        public string Url
+        internal string Url
         {
             get
             {
-                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + (ParametersIsQueryString ? QueryString : "");
+                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + ( (ParametersIsQueryString || Method == HttpMethod.Get) ? QueryString : "");
 
                 return _url;
 
             }
         }
 
-        public string QueryString
+        internal string QueryString
         {
             get
             {
