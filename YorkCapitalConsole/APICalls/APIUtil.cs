@@ -118,7 +118,7 @@ namespace APICalls
             try
             {
                 var request = CreateRequest(HttpMethod.Get);
-                HttpResponseMessage response = await client.GetAsync(prospect.Url + ( !prospect.ParametersIsQueryString ? prospect.QueryString : "" ));
+                HttpResponseMessage response = await client.GetAsync(prospect.Url);
                 if (response.IsSuccessStatusCode)
                 {
                     var data = await response.Content.ReadAsStringAsync();
@@ -159,7 +159,7 @@ namespace APICalls
             {
                 var request = CreateRequest(HttpMethod.Get);
 
-                HttpResponseMessage response = client.GetAsync(prospect.Url + (!prospect.ParametersIsQueryString ? prospect.QueryString : "")).Result;
+                HttpResponseMessage response = client.GetAsync(prospect.Url).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     var data = response.Content.ReadAsStringAsync().Result;
