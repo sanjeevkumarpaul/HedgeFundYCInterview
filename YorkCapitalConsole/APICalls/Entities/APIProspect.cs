@@ -12,7 +12,7 @@ namespace APICalls.Entities
     {
         public string BaseUrl { get; set; }
         public string APIUri { get; set; }
-        public HttpMethod Method { get; set; }
+        public HttpMethod Method { get; set; } = HttpMethod.Post;
         public Dictionary<string, string> Parameters { get; set; }
         public bool ParametersIsQueryString { get; set; }
         public APIAuthorization Authorization { get; set; }
