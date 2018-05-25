@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Entities\APIAuthenticationType.cs" />
     <Compile Include="Entities\APIAuthorization.cs" />
+    <Compile Include="Entities\APIMethod.cs" />
     <Compile Include="Entities\APIRequestHeaders.cs" />
     <Compile Include="Entities\APIProspect.cs" />
     <Compile Include="Entities\IAPIProspect.cs" />

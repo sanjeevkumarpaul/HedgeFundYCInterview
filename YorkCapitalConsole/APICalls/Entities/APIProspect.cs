@@ -12,18 +12,25 @@ namespace APICalls.Entities
     {
         public string BaseUrl { get; set; }
         public string APIUri { get; set; }
-        public HttpMethod Method { get; set; } = HttpMethod.Post;
+        public APIMethod Method { get; set; } = APIMethod.POST;
         public Dictionary<string, string> Parameters { get; set; }
         public bool ParametersIsQueryString { get; set; }
         public APIAuthorization Authorization { get; set; }
         public APIRequestHeaders RequestHeaders {get; set;}
         public T Result { get; set; }
 
+        internal HttpMethod HttpMethod
+        {
+            get
+            {
+                return Method.ToString().ToEnum<HttpMethod>();
+            }
+        }
         internal string Url
         {
             get
             {
-                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + ( (ParametersIsQueryString || Method == HttpMethod.Get) ? QueryString : "");
+                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + ( (ParametersIsQueryString || Method == APIMethod.POST) ? QueryString : "");
 
                 return _url;
 

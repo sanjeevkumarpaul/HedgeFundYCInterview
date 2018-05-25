@@ -44,10 +44,10 @@ namespace APICalls
             }
         }
 
-        private HttpRequestMessage CreateRequest(HttpMethod method)
+        private HttpRequestMessage CreateRequest()
         {
             AddContentTypes();
-            HttpRequestMessage request = AddParameters(new HttpRequestMessage(method, prospect.Url));
+            HttpRequestMessage request = AddParameters(new HttpRequestMessage(prospect.Method, prospect.Url));
             AddAuthorization(request);
 
             return request;
@@ -83,7 +83,7 @@ namespace APICalls
             {
                 foreach (var header in headers)
                 {
-                    if (request.Method != HttpMethod.Get)
+                    if (prospect.Method != HttpMethod.Get)
                         request.Headers.Add(header.Key, header.Value);
                     else
                     {
@@ -117,7 +117,7 @@ namespace APICalls
         {
             try
             {
-                var request = CreateRequest(HttpMethod.Get);
+                var request = CreateRequest();
                 HttpResponseMessage response = await client.GetAsync(prospect.Url);
                 if (response.IsSuccessStatusCode)
                 {
@@ -136,7 +136,7 @@ namespace APICalls
         {
             try
             {
-                var request = CreateRequest(HttpMethod.Post);
+                var request = CreateRequest();
 
                 var response = await client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
@@ -157,7 +157,7 @@ namespace APICalls
         {
             try
             {
-                var request = CreateRequest(HttpMethod.Get);
+                var request = CreateRequest();
 
                 HttpResponseMessage response = client.GetAsync(prospect.Url).Result;
                 if (response.IsSuccessStatusCode)
@@ -178,7 +178,7 @@ namespace APICalls
         {
             try
             {
-                var request = CreateRequest(HttpMethod.Post);
+                var request = CreateRequest();
 
                 var response = client.SendAsync(request).Result;
                 if (response.IsSuccessStatusCode)

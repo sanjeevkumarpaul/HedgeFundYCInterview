@@ -29,6 +29,11 @@ namespace Extensions
                 .OfType<TAttribute>()
                 .SingleOrDefault();
         }
+
+        public static T ToEnum<T>(this string str)
+        {
+            return (T)Enum.Parse(typeof(T), str);
+        }
         
     }
 }
