@@ -20,11 +20,30 @@ namespace APICalls
             this.prospect = prospect;
         }
 
-        public async Task<T> GetAsync()
+        public T Call()
         {
-            var data = await GetItAsync();
+            string data = string.Empty;
 
-            return ReturnResult("");
+            switch (prospect.Method)
+            {
+                case APIMethod.GET: data = GetIt(); break;
+                case APIMethod.POST: data = PostIt(); break;
+            }
+           
+            return ReturnResult(data);
+        }
+
+        public async Task<T> CallAsync()
+        {
+            string data = string.Empty;
+
+            switch (prospect.Method)
+            {
+                case APIMethod.GET: data = await GetItAsync(); break;
+                case APIMethod.POST: data = await PostItAsync(); break;                
+            }
+
+            return ReturnResult(data);
         }
 
 
@@ -47,7 +66,7 @@ namespace APICalls
         private HttpRequestMessage CreateRequest()
         {
             AddContentTypes();
-            HttpRequestMessage request = AddParameters(new HttpRequestMessage(prospect.Method, prospect.Url));
+            HttpRequestMessage request = AddParameters(new HttpRequestMessage(prospect.HttpMethod, prospect.Url));
             AddAuthorization(request);
 
             return request;
@@ -83,7 +102,7 @@ namespace APICalls
             {
                 foreach (var header in headers)
                 {
-                    if (prospect.Method != HttpMethod.Get)
+                    if (prospect.HttpMethod != HttpMethod.Get)
                         request.Headers.Add(header.Key, header.Value);
                     else
                     {
@@ -94,7 +113,6 @@ namespace APICalls
             }
         }
            
-
         private void AddAuthorization(HttpRequestMessage request)
         {
             client.DefaultRequestHeaders.Authorization = null;

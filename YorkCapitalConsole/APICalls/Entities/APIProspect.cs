@@ -23,7 +23,17 @@ namespace APICalls.Entities
         {
             get
             {
-                return Method.ToString().ToEnum<HttpMethod>();
+                switch(Method)
+                {
+                    case APIMethod.POST: return HttpMethod.Post;
+                    case APIMethod.GET: return HttpMethod.Get;
+                    case APIMethod.PUT: return HttpMethod.Put;
+                    case APIMethod.DELETE: return HttpMethod.Delete;
+                    case APIMethod.HEAD: return HttpMethod.Head;
+                    case APIMethod.TRACE: return HttpMethod.Trace;
+
+                    default: return HttpMethod.Post;
+                }
             }
         }
         internal string Url
