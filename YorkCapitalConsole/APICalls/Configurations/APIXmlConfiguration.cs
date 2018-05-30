@@ -30,7 +30,71 @@ namespace APICalls.Configurations
                              select elem;
 
         }
+        
+        private APIAuthorization Authorization(ApiXmlNode node)
+        {
+            if (node.Token.Empty()) return null;
 
+            var auth = new APIAuthorization { Mandatory = true, IsTokenAHeader = node.TokenAsHeader, Token = node.Token };
+
+            var match = Regex.Match(node.Token, "[{].*[}]");
+            if (match.Length > 0)
+            {
+                var item = match.Value.TrimEx("{").TrimEx("}").SplitEx('.');
+                var _node = Apis.Where(n => n.Name.Equals(item[0], StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+
+                if (_node != null) //challenge to find out if Result is f type Tokens
+                {
+                    var value = _node.Result.GetVal(item[1]);
+
+                    auth.Token = auth.Token.Replace(match.Value, value);
+                }
+            }
+
+            return auth;
+        }
+        
+        private Type CreateGenericType(string prospectType, Type genericType)
+        {
+            Type customType = Type.GetType(prospectType);                
+            Type constructedType = genericType.MakeGenericType(customType);
+
+            return constructedType;
+        }
+
+        private object CreateInstance(string prospectType, Type genericType, params object[] parameters)
+        {
+            Type constructedType = CreateGenericType(prospectType, genericType);
+            var realtype = Activator.CreateInstance(constructedType, parameters);
+
+            return realtype;
+        }
+        
+        private ApiXmlNode ExecuteApi(string prospectType, ApiXmlNode node)
+        {
+            var prospect = CreateInstance(prospectType, typeof(APIProspect<>));
+
+            using (var prosBase = (APIProspectOptionBase)prospect)
+            {
+                prosBase.BaseUrl = BaseUrl;
+                prosBase.APIUri = node.Uri;
+                prosBase.Method = node.Method;
+                prosBase.Parameters = node.Parameters;
+                prosBase.Authorization = Authorization(node);
+            }
+
+            var constructedType = CreateGenericType(prospectType, typeof(APIClient<>));
+            var apiObject = CreateInstance(prospectType, typeof(APIClient<>), prospect);
+
+            var method = constructedType.GetMethod("Call");
+            var res = method.Invoke(apiObject, null);
+
+            node.Result = (IAPIProspect)res;
+
+            return node;
+        } 
+
+        /*
         private ApiXmlNode CallApi(ApiXmlNode node)
         {
             switch (node.Type)
@@ -59,25 +123,9 @@ namespace APICalls.Configurations
 
             return node;
         }
+        */
 
-        private APIAuthorization Authorization(ApiXmlNode node)
-        {
-            if (node.Token.Empty()) return null;
-
-            var auth = new APIAuthorization { Mandatory = true, IsTokenAHeader = node.TokenAsHeader, Token = node.Token };
-
-            var match = Regex.Match(node.Token, "[{].*[}]");
-            if (match.Length > 0)
-            {
-                var item = match.Value.TrimEx("{").TrimEx("}");
-                var _node = Apis.Where(n => n.Name.Equals(item, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-
-                if (_node != null && _node.Result is Tokens) //challenge to find out if Result is f type Tokens
-                    auth.Token = auth.Token.Replace(match.Value, (_node.Result as Tokens).Token);
-            }
-
-            return auth;
-        }
+        
 
     }
 }
