@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\APIXmlConfiguration.cs" />
+    <Compile Include="Configurations\APIXmlNode.cs" />
     <Compile Include="Entities\APIAuthenticationType.cs" />
     <Compile Include="Entities\APIAuthorization.cs" />
     <Compile Include="Entities\APIMethod.cs" />
@@ -66,6 +68,11 @@
       <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
       <Name>Extensions</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="APIProspectConfiguration.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

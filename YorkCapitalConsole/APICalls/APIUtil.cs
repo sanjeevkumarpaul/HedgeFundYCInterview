@@ -15,11 +15,19 @@ namespace APICalls
         private static readonly HttpClient client = new HttpClient();
         private APIProspect<T> prospect;
 
+        /// <summary>
+        /// Constructor, takes Prospect information to proceed. 
+        /// </summary>
+        /// <param name="prospect"></param>
         public APIUtil(APIProspect<T> prospect)
         {
             this.prospect = prospect;
         }
 
+        /// <summary>
+        /// Synchronouse Call to API
+        /// </summary>
+        /// <returns></returns>
         public T Call()
         {
             string data = string.Empty;
@@ -33,6 +41,10 @@ namespace APICalls
             return ReturnResult(data);
         }
 
+        /// <summary>
+        /// Asynchronous Call to API
+        /// </summary>
+        /// <returns></returns>
         public async Task<T> CallAsync()
         {
             string data = string.Empty;

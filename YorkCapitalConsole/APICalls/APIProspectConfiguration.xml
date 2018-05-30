@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" ?> 
+<APIProspects>
+  <Base Url="http://abc/api/"  />
+
+  <APIProspect Name="Tokenizer" Uri="login" Method="POST">
+
+    <Parameters ContentType="application/json">
+      <Parameter Type="Static" Key="client_name" Value="Ai3mse93404,03480"/>
+      <Parameter Type="Static" Key="client_key"  Value="O937jmd23;9sdj34"/>
+    </Parameters>
+
+    <Headers>
+      <Header Type="Static"  Key="CallerKey"        Value="abcCallerInfo" />
+      <Header Type="Dynamic" Key="CalculatedValue"  Value="" />
+    </Headers>
+  </APIProspect>
+
+  <APIProspect Name="InfoGathering" Uri="Estimates" Method="GET">
+    <Authorization Required ="True" Type="Bearer" Token="Token {Tokenizer}" TokenAsHeader="True" />
+    
+    <Parameters ContentType="application/json">
+      <Parameter Type="Dynamic" Key="Property" Value="0"/>  <!-- Value here is Default -->      
+    </Parameters>
+  
+    <ContentType Values="application/json" />
+  </APIProspect>
+</APIProspects>
