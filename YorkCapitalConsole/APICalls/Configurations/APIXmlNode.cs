@@ -10,17 +10,21 @@ namespace APICalls.Configurations
 {
     internal class APIXmlNode
     {
+        internal string Name { get; set; }
         internal string BaseUrl { get; set; }
         internal string ApiUri { get; set; }
         internal bool RequiredAuthorization { get; set; }
         internal string Token { get; set; }
         internal bool TokenAsHeader { get; set; }
+        internal Dictionary<string, string> Parameters { get; set; }
         /// <summary>
         /// Sepration to be done via semicolon at XML
         /// application/json[;application/jpeg[;...]]
         /// </summary>
         internal string ContentType { get; set; }
         internal APIMethod Method { get; set; }
+
+        internal IAPIProspect Result { get; set; }
 
         internal APIXmlNode(XElement elements)
         {

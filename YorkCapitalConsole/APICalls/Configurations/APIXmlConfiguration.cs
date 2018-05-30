@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using APICalls.Entities;
 using Extensions;
 
 namespace APICalls.Configurations
@@ -31,11 +33,11 @@ namespace APICalls.Configurations
 
         }
         
-        private APIAuthorization Authorization(ApiXmlNode node)
+        private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
 
-            var auth = new APIAuthorization { Mandatory = true, IsTokenAHeader = node.TokenAsHeader, Token = node.Token };
+            var auth = new APIAuthorization { IsTokenAHeader = node.TokenAsHeader, Token = node.Token };
 
             var match = Regex.Match(node.Token, "[{].*[}]");
             if (match.Length > 0)
@@ -70,21 +72,20 @@ namespace APICalls.Configurations
             return realtype;
         }
         
-        private ApiXmlNode ExecuteApi(string prospectType, ApiXmlNode node)
+        private APIXmlNode ExecuteApi(string prospectType, APIXmlNode node)
         {
             var prospect = CreateInstance(prospectType, typeof(APIProspect<>));
 
             using (var prosBase = (APIProspectOptionBase)prospect)
             {
                 prosBase.BaseUrl = BaseUrl;
-                prosBase.APIUri = node.Uri;
-                prosBase.Method = node.Method;
+                prosBase.APIUri = node.ApiUri;
                 prosBase.Parameters = node.Parameters;
                 prosBase.Authorization = Authorization(node);
             }
 
-            var constructedType = CreateGenericType(prospectType, typeof(APIClient<>));
-            var apiObject = CreateInstance(prospectType, typeof(APIClient<>), prospect);
+            var constructedType = CreateGenericType(prospectType, typeof(APIUtil<>));
+            var apiObject = CreateInstance(prospectType, typeof(APIUtil<>), prospect);
 
             var method = constructedType.GetMethod("Call");
             var res = method.Invoke(apiObject, null);

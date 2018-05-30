@@ -8,7 +8,7 @@ using Extensions;
 
 namespace APICalls.Entities
 {
-    public class APIProspect<T> : IAPIProspect where T: new()
+    public abstract class APIProspectOptionBase : IDisposable
     {
         public string BaseUrl { get; set; }
         public string APIUri { get; set; }
@@ -16,7 +16,17 @@ namespace APICalls.Entities
         public Dictionary<string, string> Parameters { get; set; }
         public bool ParametersIsQueryString { get; set; }
         public APIAuthorization Authorization { get; set; }
-        public APIRequestHeaders RequestHeaders {get; set;}
+        public APIRequestHeaders RequestHeaders { get; set; }
+
+        public void Dispose()
+        {
+
+        }
+    }
+
+    public class APIProspect<T> : IAPIProspect where T: new()
+    {
+        
         public T Result { get; set; }
 
         internal HttpMethod HttpMethod
