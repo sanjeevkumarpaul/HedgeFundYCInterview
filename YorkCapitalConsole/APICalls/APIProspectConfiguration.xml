@@ -17,7 +17,7 @@
   </APIProspect>
 
   <APIProspect Name="InfoGathering" BaseUrl="" Uri="Estimates" Method="GET">
-    <Authorization Type="Bearer" Token="Token {Tokenizer}" TokenAsHeader="True" />
+    <Authorization Type="Bearer" Token="Token {Tokenizer.Token}" TokenAsHeader="True" />
     
     <Parameters ContentType="application/json">
       <Parameter Key="Property" Value="{Project.SomeValue}"/>  <!-- Value here is Default -->      
