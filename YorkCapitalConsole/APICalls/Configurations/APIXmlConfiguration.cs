@@ -68,6 +68,47 @@ namespace APICalls.Configurations
             return auth;
         }
         
+         private Dictionary<string, string> InjectObjectParams(APIXmlNode node )
+        {
+            var parameters = node.Parameters;
+
+            if (parameters != null)
+            {
+                Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
+                foreach (var para in parameters)
+                {                   
+                    dictReplacers.Add(para.Key, LocateObjectParamValue(para.Value) );
+                }
+
+                return dictReplacers;
+            }
+            return parameters;
+        }
+
+        private string LocateObjectParamValue(string placeholderStr)
+        {
+            //Find all matches with {...}
+            var matches = Regex.Matches(placeholderStr, "[{].*[}]");
+            if (matches.Count > 0)
+            {
+                //Lets make sure all the matches are taken care of.
+                foreach (var match in matches)
+                {
+                    var item = match.ToString().TrimEx("{").TrimEx("}").SplitEx('.');
+
+                    foreach (var obj in objectParams.ObjectParams)
+                    {
+                        if (obj.GetType().Name.Equals(item[0]))
+                        {
+                            placeholderStr = placeholderStr.Replace(match.ToString(), obj.GetVal(item[1]));
+                        }
+                    }
+                }
+            }
+
+            return placeholderStr;
+        }
+        
         private Type CreateGenericType(string prospectType, Type genericType)
         {
             Type customType = Type.GetType(prospectType);                
@@ -91,8 +132,8 @@ namespace APICalls.Configurations
             using (var prosBase = (APIProspectOptionBase)prospect)
             {
                 prosBase.BaseUrl = BaseUrl;
-                prosBase.APIUri = node.ApiUri;
-                prosBase.Parameters = node.Parameters;
+                prosBase.APIUri = LocateObjectParamValue(node.ApiUri);
+                prosBase.Parameters = InjectObjectParams(node);
                 prosBase.Authorization = Authorization(node);
             }
 
