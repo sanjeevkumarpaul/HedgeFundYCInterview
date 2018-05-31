@@ -13,23 +13,35 @@ namespace APICalls.Configurations
     public class APIXmlConfiguration
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
-        private IEnumerable<XElement> Elements;
+        private IEnumerable<XElement> ApiElements;
         private string BaseUrl;
+        private object[] placeholderElements;
 
         public APIXmlConfiguration(string configurationFilePath)
         {
             XElement xml = XElement.Load(configurationFilePath);
-            Elements = xml.Elements();
+            var all = xml.Elements();
 
-            BaseUrl = Elements.Where(n => n.Name == "Base").First().Attribute("Url").Value;
+            BaseUrl = all.Where(n => n.Name == "Base").First().Attribute("Url").Value;
+
+            ApiElements =  from elem in ApiElements.Where(n => n.Name == "APIProspect")
+                           let order = elem.Attribute("Order").Value.ToInt()
+                           orderby order
+                           select elem;
         }
 
-        public void ExecuteApis()
+        public IEnumerable<IAPIProspect> ExecuteApis(params object[] apiParameterElements)
         {
-            var _prospects = from elem in Elements.Where(n => n.Name == "APIProspect")
-                             let order = elem.Attribute("Order").Value.ToInt()
-                             orderby order
-                             select elem;
+            placeholderElements = apiParameterElements;
+            foreach (var api in ApiElements)
+            {
+                var node = new APIXmlNode(api, BaseUrl);
+
+                var resultNode = ExecuteApi(node.GenericType, node);
+                Apis.Add(resultNode);
+
+                yield return resultNode.Result;
+            }
 
         }
         
@@ -37,7 +49,7 @@ namespace APICalls.Configurations
         {
             if (node.Token.Empty()) return null;
 
-            var auth = new APIAuthorization { IsTokenAHeader = node.TokenAsHeader, Token = node.Token };
+            var auth = new APIAuthorization { IsTokenAHeader = node.TokenAsHeader, Token = "" };
 
             var match = Regex.Match(node.Token, "[{].*[}]");
             if (match.Length > 0)

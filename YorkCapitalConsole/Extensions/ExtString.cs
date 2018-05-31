@@ -211,6 +211,15 @@ namespace Extensions
             return result;
         }
 
+        public static bool ToBool(this string str)
+        {
+            bool result = false;
+
+            if (str.Empty()) { str = str.ToLower(); result = str.Equals("true") || str.Equals("1") || str.Equals("y"); }
+
+            return result;
+        }
+
         public static DateTime ToDateTime(this string str, bool OnlySeconds = false)
         {
             DateTime mDateTime;

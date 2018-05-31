@@ -24,7 +24,7 @@ namespace APICalls.Entities
         }
     }
 
-    public class APIProspect<T> : IAPIProspect where T: new()
+    public class APIProspect<T> : APIProspectOptionBase where T: IAPIProspect, new()
     {
         
         public T Result { get; set; }
