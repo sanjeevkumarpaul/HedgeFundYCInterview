@@ -95,10 +95,8 @@ namespace APICalls.Configurations
 
             if (locateFromObjectParams)
             {
-                foreach (var o in objectParams.ObjectParams)
-                {
-                    if (o.GetType().Name.Equals(typeName)) { obj = o; break; }                   
-                } 
+                foreach (var o in objectParams.ObjectParams)                
+                    if (o.GetType().Name.Equals(typeName)) { obj = o; break; }                                   
             }
             else
             {
@@ -108,7 +106,8 @@ namespace APICalls.Configurations
                     obj = _node.Result;                                    
             }
 
-            placeholderStr = placeholderStr.Replace(pattern, obj.GetVal(propertyName));
+            if (obj != null)
+                placeholderStr = placeholderStr.Replace(pattern, obj.GetVal(propertyName));
             
             return placeholderStr;
         }
