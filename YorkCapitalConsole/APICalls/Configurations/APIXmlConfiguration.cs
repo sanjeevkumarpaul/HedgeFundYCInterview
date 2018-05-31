@@ -45,30 +45,16 @@ namespace APICalls.Configurations
 
         }
         
-        private APIAuthorization Authorization(APIXmlNode node)
+        private APIAuthorization Authorization(ApiXmlNode node)
         {
             if (node.Token.Empty()) return null;
 
-            var auth = new APIAuthorization { IsTokenAHeader = node.TokenAsHeader, Token = "" };
-
-            var match = Regex.Match(node.Token, "[{].*[}]");
-            if (match.Length > 0)
-            {
-                var item = match.Value.TrimEx("{").TrimEx("}").SplitEx('.');
-                var _node = Apis.Where(n => n.Name.Equals(item[0], StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-
-                if (_node != null) //challenge to find out if Result is f type Tokens
-                {
-                    var value = _node.Result.GetVal(item[1]);
-
-                    auth.Token = auth.Token.Replace(match.Value, value);
-                }
-            }
-
+            var auth = new APIAuthorization { Mandatory = true, IsTokenAHeader = node.TokenAsHeader, Token = LocateDynamicParamValue(node.Token, false) };
+            
             return auth;
         }
-        
-         private Dictionary<string, string> InjectObjectParams(APIXmlNode node )
+
+        private Dictionary<string, string> InjectObjectParams(ApiXmlNode node )
         {
             var parameters = node.Parameters;
 
@@ -77,7 +63,7 @@ namespace APICalls.Configurations
                 Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
                 foreach (var para in parameters)
                 {                   
-                    dictReplacers.Add(para.Key, LocateObjectParamValue(para.Value) );
+                    dictReplacers.Add(para.Key, LocateDynamicParamValue(para.Value) );
                 }
 
                 return dictReplacers;
@@ -85,7 +71,7 @@ namespace APICalls.Configurations
             return parameters;
         }
 
-        private string LocateObjectParamValue(string placeholderStr)
+        private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true)
         {
             //Find all matches with {...}
             var matches = Regex.Matches(placeholderStr, "[{].*[}]");
@@ -96,16 +82,36 @@ namespace APICalls.Configurations
                 {
                     var item = match.ToString().TrimEx("{").TrimEx("}").SplitEx('.');
 
-                    foreach (var obj in objectParams.ObjectParams)
-                    {
-                        if (obj.GetType().Name.Equals(item[0]))
-                        {
-                            placeholderStr = placeholderStr.Replace(match.ToString(), obj.GetVal(item[1]));
-                        }
-                    }
+                    placeholderStr = GetDynamicParamObjectValue(item[0], placeholderStr, match.ToString(), item[1], locateFromObjectParams);                    
                 }
             }
 
+            return placeholderStr;
+        }
+
+        private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true)
+        {
+            object obj = null;
+
+            if (locateFromObjectParams)
+            {
+                foreach (var o in objectParams.ObjectParams)
+                {
+                    if (o.GetType().Name.Equals(typeName)) { obj = o; break; }                   
+                }
+            }
+            else
+            {
+                var _node = Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+
+                if (_node != null) //challenge to find out if Result is f type Tokens
+                {
+                    obj = _node.Result;                    
+                }
+            }
+
+            placeholderStr = placeholderStr.Replace(pattern, obj.GetVal(propertyName));
+            
             return placeholderStr;
         }
         
