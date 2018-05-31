@@ -45,11 +45,11 @@ namespace APICalls.Configurations
 
         }
         
-        private APIAuthorization Authorization(ApiXmlNode node)
+        private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
 
-            var auth = new APIAuthorization { Mandatory = true, IsTokenAHeader = node.TokenAsHeader, Token = LocateDynamicParamValue(node.Token, false) };
+            var auth = new APIAuthorization {  IsTokenAHeader = node.TokenAsHeader, Token = LocateDynamicParamValue(node.Token, false) };
             
             return auth;
         }
@@ -98,16 +98,14 @@ namespace APICalls.Configurations
                 foreach (var o in objectParams.ObjectParams)
                 {
                     if (o.GetType().Name.Equals(typeName)) { obj = o; break; }                   
-                }
+                } 
             }
             else
             {
                 var _node = Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-
-                if (_node != null) //challenge to find out if Result is f type Tokens
-                {
-                    obj = _node.Result;                    
-                }
+                 
+                if (_node != null) //challenge to find out if Result is f type Tokens                
+                    obj = _node.Result;                                    
             }
 
             placeholderStr = placeholderStr.Replace(pattern, obj.GetVal(propertyName));
@@ -138,7 +136,7 @@ namespace APICalls.Configurations
             using (var prosBase = (APIProspectOptionBase)prospect)
             {
                 prosBase.BaseUrl = BaseUrl;
-                prosBase.APIUri = LocateObjectParamValue(node.ApiUri);
+                prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
                 prosBase.Parameters = InjectObjectParams(node);
                 prosBase.Authorization = Authorization(node);
             }
