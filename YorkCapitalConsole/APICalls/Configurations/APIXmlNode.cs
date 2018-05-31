@@ -83,14 +83,5 @@ namespace APICalls.Configurations
             if (baseUrl.Empty()) BaseUrl = baseUrl;
             if (!Token.Empty()) RequiredAuthorization = true;
         }
-    }
-    
-    public class APIObjectParameter
-    {
-        private List<object> _params = null;
-
-        public List<object> ObjectParams { get { return _params; } }
-
-        public APIObjectParameter() { _params = new List<object>(); }
-    }
+    }   
 }

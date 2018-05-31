@@ -15,7 +15,7 @@ namespace APICalls.Configurations
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
         private IEnumerable<XElement> ApiElements;
         private string BaseUrl;
-        private object[] placeholderElements;
+        private APIObjectParameter objectParams;
 
         public APIXmlConfiguration(string configurationFilePath)
         {
@@ -30,9 +30,9 @@ namespace APICalls.Configurations
                            select elem;
         }
 
-        public IEnumerable<IAPIProspect> ExecuteApis(params object[] apiParameterElements)
+        public IEnumerable<IAPIProspect> ExecuteApis(APIObjectParameter apiParameters)
         {
-            placeholderElements = apiParameterElements;
+            objectParams = apiParameters;
             foreach (var api in ApiElements)
             {
                 var node = new APIXmlNode(api, BaseUrl);
@@ -68,7 +68,7 @@ namespace APICalls.Configurations
             return auth;
         }
         
-         private Dictionary<string, string> InjectObjectParams(APIXmlNode node )
+        private Dictionary<string, string> InjectObjectParams(APIXmlNode node )
         {
             var parameters = node.Parameters;
 
