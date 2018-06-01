@@ -19,4 +19,13 @@ namespace APICalls.Configurations
     {
         void Reponses(IAPIProspect resultProspect, ApiXmlConfiguration config);        
     }
+    
+    //Usage
+    private class APIProspectResults : IAPIResult
+    {
+        public void Reponses(IAPIProspect resultProspect, ApiXmlConfiguration config)
+        {
+            Console.WriteLine("Type : " + resultProspect.GetType().Name);                    
+        }
+    }
 }
