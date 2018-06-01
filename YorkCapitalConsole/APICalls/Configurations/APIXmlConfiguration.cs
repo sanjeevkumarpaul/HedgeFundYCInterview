@@ -58,7 +58,7 @@ namespace APICalls.Configurations
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)
                 .Finally(() => { Dispose();  apiResults.Post( ProspectResults ); })
-                .Subscribe( (result) => { apiResults.Reponses(result, this); });            
+                .Subscribe( (result) => apiResults.Reponses(result, this) );            
         }
         #endregion ~API Calling Sequences
             
@@ -68,9 +68,9 @@ namespace APICalls.Configurations
         /// When more than one API is called, one of the object within the result of first API call, might be used in second API call. this is where it is handy.
         /// </summary>
         /// <param name="obj">Any Object</param>
-        public void InsertObjectParam(object obj)
+        public void InsertObjectParam(params object[] obj)
         {
-            objectParams.ObjectParams.Add(obj);
+            objectParams.ObjectParams.AddRange(obj);
         }
 
         public void Dispose()

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace APICalls.Configurations
 {
-    public class APIObjectParameter
+    internal class APIObjectParameter
     {
         internal List<object> ObjectParams { get; } = null;
 
-        public APIObjectParameter() { ObjectParams = new List<object>(); }
+        internal APIObjectParameter() { ObjectParams = new List<object>(); }
     }    
 }
