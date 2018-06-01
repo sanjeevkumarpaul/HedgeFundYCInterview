@@ -45,7 +45,7 @@ namespace APICalls.Configurations
         public IEnumerable<IAPIProspect> ExecuteApis()
         {            
             foreach (var api in ApiElements)            
-                yield return CallForResult(api);          
+                yield return ExecuteApi(api);          
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace APICalls.Configurations
         public void ExecuteApisObservable(IAPIResult apiResults)
         {
             ApiElements
-                .Select(api => CallForResult(api))
+                .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)
                 .Finally(() => { Dispose();  apiResults.Post( ProspectResults ); })
                 .Subscribe( (result) => { apiResults.Reponses(result, this); });            
@@ -80,16 +80,6 @@ namespace APICalls.Configurations
         #endregion ~Extra Functional methods for Usage intermediatery
 
         #region ^Private methods
-        private IAPIProspect CallForResult(XElement api)
-        {
-            var node = new APIXmlNode(api, BaseUrl);
-
-            var resultNode = ExecuteApi(node.GenericType, node);
-            Apis.Add(resultNode);
-
-            return resultNode.Result;
-        }
-            
         private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
@@ -156,27 +146,32 @@ namespace APICalls.Configurations
             return realtype;
         }
         
-        private APIXmlNode ExecuteApi(string prospectType, APIXmlNode node)
+        private IAPIProspect ExecuteApi( XElement api)
         {
-            var prospect = CreateInstance(prospectType, typeof(APIProspect<>));
+            var node = new ApiXmlNode(api, BaseUrl);
+            
+            var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
 
             using (var prosBase = (APIProspectOptionBase)prospect)
             {
                 prosBase.BaseUrl = BaseUrl;
                 prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
+                prosBase.Method = node.Method;
                 prosBase.Parameters = InjectObjectParams(node);
                 prosBase.Authorization = Authorization(node);
             }
 
-            var constructedType = CreateGenericType(prospectType, typeof(APIUtil<>));
-            var apiObject = CreateInstance(prospectType, typeof(APIUtil<>), prospect);
+            var constructedType = CreateGenericType(node.GenericType, typeof(APIClient<>));
+            var apiObject = CreateInstance(node.GenericType, typeof(APIClient<>), prospect);
 
             var method = constructedType.GetMethod("Call");
             var res = method.Invoke(apiObject, null);
 
             node.Result = (IAPIProspect)res;
+            Apis.Add(node);
 
-            return node;
+
+            return node.Result;
         }
 
         #endregion ~Private methods       
