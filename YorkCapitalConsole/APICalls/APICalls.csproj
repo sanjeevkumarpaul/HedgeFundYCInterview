@@ -71,6 +71,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="APIProspectConfiguration.json">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="APIProspectConfiguration.xml">
       <SubType>Designer</SubType>
     </Content>

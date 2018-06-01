@@ -1,0 +1,48 @@
+﻿{
+  "APIProspects" :[
+                      { "Base"        : { "Url" : "http://abc/api/" } },
+                      
+                      { "APIProspect" : {
+                                          "Name"    : "Tokenizer",
+                                          "BaseUrl" : "",
+                                          "Uri"     : "login",
+                                          "Method"  : "POST",
+                                        
+                                          "Headers" : 
+                                          [
+                                            { "Header"  :  { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } },
+                                            { "Header"  :  { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } }
+                                          ],
+                                          
+                                          "Parameters" : 
+                                          [
+                                            {"Parameter"   : { "Key" : "client_name", "Value" : "Ai3mse93404,03480" } },
+                                            {"Parameter"   : { "Key" : "client_key",  "Value" : "O937jmd23;9sdj34"  } }
+                                          ]
+                                        }
+                      },
+                      
+                      { "APIProspect" : {
+                                          "Name"    : "InfoGathering",
+                                          "BaseUrl" : "",
+                                          "Uri"     : "Estimates",
+                                          "Method"  : "GET",
+                                          
+                                          "Authorization" : { "Type" : "Bearer", "Token" : "Token {Tokenizer.Token}" , "TokenAsHeader" : "True" }
+                                        
+                                          "Headers" : 
+                                          [
+                                            { "Header"  :  { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } },
+                                            { "Header"  :  { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } }
+                                          ],
+                                          
+                                          "Parameters" : 
+                                          [
+                                            { "Parameter"   : { "Key" : "Property", "Value" : "{Project.SomeValue}" } }
+                                          ],
+                                          
+                                          "ContentType" : "application/json"
+                                        }
+                      },
+                  ]
+}
