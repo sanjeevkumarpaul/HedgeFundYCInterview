@@ -14,4 +14,9 @@ namespace APICalls.Configurations
 
         public APIObjectParameter() { _params = new List<object>(); }
     }
+    
+    public interface IAPIResult
+    {
+        void Reponses(IAPIProspect resultProspect, ApiXmlConfiguration config);        
+    }
 }
