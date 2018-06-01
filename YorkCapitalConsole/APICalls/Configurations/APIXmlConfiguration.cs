@@ -148,7 +148,7 @@ namespace APICalls.Configurations
         
         private IAPIProspect ExecuteApi( XElement api)
         {
-            var node = new ApiXmlNode(api, BaseUrl);
+            var node = new APIXmlNode(api, BaseUrl);
             
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
 
@@ -161,8 +161,8 @@ namespace APICalls.Configurations
                 prosBase.Authorization = Authorization(node);
             }
 
-            var constructedType = CreateGenericType(node.GenericType, typeof(APIClient<>));
-            var apiObject = CreateInstance(node.GenericType, typeof(APIClient<>), prospect);
+            var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
+            var apiObject = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
 
             var method = constructedType.GetMethod("Call");
             var res = method.Invoke(apiObject, null);
