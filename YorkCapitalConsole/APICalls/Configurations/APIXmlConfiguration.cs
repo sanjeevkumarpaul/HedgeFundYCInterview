@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -10,11 +12,6 @@ using Extensions;
 
 namespace APICalls.Configurations
 {
-    public interface IAPIResult
-    {
-        void Reponses(IAPIProspect resultProspect, ApiXmlConfiguration config);        
-    }
-    
     public class APIXmlConfiguration
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
@@ -25,7 +22,7 @@ namespace APICalls.Configurations
         public APIXmlConfiguration(string configurationFilePath, APIObjectParameter parameters = null)
         {
             objectParams = parameters;
-            XElement xml = XElement.Load(filename);
+            XElement xml = XElement.Load(configurationFilePath);
             var all = xml.Elements();
 
             BaseUrl = all.Where(n => n.Name == "Base").First().Attribute("Url").Value;
@@ -71,10 +68,11 @@ namespace APICalls.Configurations
             objectParams.ObjectParams.Add(obj);
         }
         #endregion ~Extra Functional methods for Usage intermediatery
-        
+
+        #region ^Private methods
         private IAPIProspect CallForResult(XElement api)
         {
-            var node = new ApiXmlNode(api, BaseUrl);
+            var node = new APIXmlNode(api, BaseUrl);
 
             var resultNode = ExecuteApi(node.GenericType, node);
             Apis.Add(resultNode);
@@ -169,40 +167,8 @@ namespace APICalls.Configurations
             node.Result = (IAPIProspect)res;
 
             return node;
-        } 
-
-        /*
-        private ApiXmlNode CallApi(ApiXmlNode node)
-        {
-            switch (node.Type)
-            {
-                case "Tokens":
-                    return ExecuteApi<Tokens>(node);
-                case "ProestEstimate":
-                    return ExecuteApi<ProestEstimate>(node);
-                default: break;
-            }
-
-            return null;
         }
-        private ApiXmlNode ExecuteApi<T>(ApiXmlNode node) where T : IAPIProspect, new()
-        {
-            var pros1 = new APIProspect<T>()
-            {
-                BaseUrl = BaseUrl,
-                APIUri = node.Uri,
-                Method = node.Method,
-                Parameters = node.parameters,
-                Authorization = Authorization(node)
-            };
 
-            node.Result = (new APIClient<T>(pros1)).CallAsync().Result;
-
-            return node;
-        }
-        */
-
-        
-
+        #endregion ~Private methods       
     }
 }

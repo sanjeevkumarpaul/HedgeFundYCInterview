@@ -13,19 +13,5 @@ namespace APICalls.Configurations
         internal List<object> ObjectParams { get { return _params; } }
 
         public APIObjectParameter() { _params = new List<object>(); }
-    }
-    
-    public interface IAPIResult
-    {
-        void Reponses(IAPIProspect resultProspect, ApiXmlConfiguration config);        
-    }
-    
-    //Usage
-    private class APIProspectResults : IAPIResult
-    {
-        public void Reponses(IAPIProspect resultProspect, ApiXmlConfiguration config)
-        {
-            Console.WriteLine("Type : " + resultProspect.GetType().Name);                    
-        }
-    }
+    }    
 }
