@@ -19,6 +19,8 @@ namespace APICalls.Configurations
         private string BaseUrl;
         private APIObjectParameter objectParams;
 
+        public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
+
         public APIXmlConfiguration(string configurationFilePath, params object[] objectParameters)
         {
             //Keeping track.
@@ -27,7 +29,7 @@ namespace APICalls.Configurations
             XElement xml = XElement.Load(configurationFilePath);
             var all = xml.Elements();
 
-            BaseUrl = all.Where(n => n.Name == "Base").First().Attribute("Url").Value;
+            BaseUrl = all.Where(n => n.Name == "Base" && n.Attribute("Url") != null).First()?.Attribute("Url").Value;
 
             ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
                           let order = elem.Attribute("Order").Value.ToInt()
@@ -55,7 +57,7 @@ namespace APICalls.Configurations
             ApiElements
                 .Select(api => CallForResult(api))
                 .ToObservable(NewThreadScheduler.Default)
-                .Finally(() => Dispose())
+                .Finally(() => { Dispose();  apiResults.Post( ProspectResults ); })
                 .Subscribe( (result) => { apiResults.Reponses(result, this); });            
         }
         #endregion ~API Calling Sequences

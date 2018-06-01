@@ -21,5 +21,6 @@ private class APIProspectResults : IAPIResult
     public interface IAPIResult
     {
         void Reponses(IAPIProspect resultProspect, APIXmlConfiguration config);
+        void Post(IEnumerable<IAPIProspect> results);
     }
 }
