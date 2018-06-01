@@ -56,19 +56,17 @@ namespace APICalls.Configurations
         
         private Dictionary<string, string> InjectObjectParams(APIXmlNode node )
         {
-            var parameters = node.Parameters;
+            var parameters = node.Parameters?.Keys.ToList();
 
-            if (parameters != null)
-            {
-                Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
-                foreach (var para in parameters)
-                {                   
-                    dictReplacers.Add(para.Key, LocateDynamicParamValue(para.Value) );
-                }
+            return parameters == null ?
+                        node.Parameters :
+                        ( ( Func<Dictionary<string, string>>)( () =>
+                        {
+                              Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
+                              parameters.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(node.Parameters[k])));
 
-                return dictReplacers;
-            }
-            return parameters;
+                              return dictReplacers;
+                        }))();
         }
 
         private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true)
