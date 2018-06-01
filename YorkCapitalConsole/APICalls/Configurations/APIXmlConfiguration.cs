@@ -83,7 +83,7 @@ namespace APICalls.Configurations
         private void PostEvents(IAPIResult apiResults)
         {
             Task.Factory.StartNew(() => Dispose())
-                        .ContinueWith(antecendent => apiResults.Post(this.PropspectResults))
+                        .ContinueWith(antecendent => apiResults.Post(this.ProspectResults))
                         .ContinueWith(antecendent => apiResults.Final(Apis.Last().Result))
                         .Wait();
         }
