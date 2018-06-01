@@ -57,7 +57,7 @@ namespace APICalls.Configurations
             ApiElements
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)
-                .Finally(() => { Dispose();  apiResults.Post( ProspectResults ); })
+                .Finally(() => PostEvents(apiResults ) )
                 .Subscribe( (result) => apiResults.Reponses(result, this) );            
         }
         #endregion ~API Calling Sequences
@@ -80,6 +80,14 @@ namespace APICalls.Configurations
         #endregion ~Extra Functional methods for Usage intermediatery
 
         #region ^Private methods
+        private void PostEvents(IAPIResult apiResults)
+        {
+            Task.Factory.StartNew(() => Dispose())
+                        .ContinueWith(antecendent => apiResults.Post(this.PropspectResults))
+                        .ContinueWith(antecendent => apiResults.Final(Apis.Last().Result))
+                        .Wait();
+        }
+        
         private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
