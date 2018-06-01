@@ -10,6 +10,11 @@ using Extensions;
 
 namespace APICalls.Configurations
 {
+    public interface IAPIResult
+    {
+        void Reponses(IAPIProspect resultProspect, ApiXmlConfiguration config);        
+    }
+    
     public class APIXmlConfiguration
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
@@ -17,33 +22,55 @@ namespace APICalls.Configurations
         private string BaseUrl;
         private APIObjectParameter objectParams;
 
-        public APIXmlConfiguration(string configurationFilePath)
+        public APIXmlConfiguration(string configurationFilePath, APIObjectParameter parameters = null)
         {
-            XElement xml = XElement.Load(configurationFilePath);
+            objectParams = parameters;
+            XElement xml = XElement.Load(filename);
             var all = xml.Elements();
 
             BaseUrl = all.Where(n => n.Name == "Base").First().Attribute("Url").Value;
 
-            ApiElements =  from elem in ApiElements.Where(n => n.Name == "APIProspect")
-                           let order = elem.Attribute("Order").Value.ToInt()
-                           orderby order
-                           select elem;
+            ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
+                          let order = elem.Attribute("Order").Value.ToInt()
+                          orderby order
+                          select elem;
         }
 
-        public IEnumerable<IAPIProspect> ExecuteApis(APIObjectParameter apiParameters)
+        #region ^API Calling Sequences
+        /// <summary>
+        /// Sequencial call to all API in a Enumerable.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IAPIProspect> ExecuteApis()
+        {            
+            foreach (var api in ApiElements)            
+                yield return CallForResult(api);          
+        }
+
+        /// <summary>
+        /// Reactive Observable way. Subscription to be precisely done via IAPIResult as responses will be thrown to Its method "Responses"
+        /// </summary>
+        /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
+        public void ExecuteApisObservable(IAPIResult apiResults)
         {
-            objectParams = apiParameters;
-            foreach (var api in ApiElements)
-            {
-                var node = new APIXmlNode(api, BaseUrl);
-
-                var resultNode = ExecuteApi(node.GenericType, node);
-                Apis.Add(resultNode);
-
-                yield return resultNode.Result;
-            }
-
+            ApiElements
+                .Select(api => CallForResult(api))
+                .ToObservable(NewThreadScheduler.Default)
+                .Subscribe( (result) => { apiResults.Reponses(result, this); });            
         }
+        #endregion ~API Calling Sequences
+            
+        #region ^Extra Functional methods for Usage intermediatery
+        /// <summary>
+        /// Push intermediatry objects to that sequence of API calls can use it for Parameter references.
+        /// When more than one API is called, one of the object within the result of first API call, might be used in second API call. this is where it is handy.
+        /// </summary>
+        /// <param name="obj">Any Object</param>
+        public void InsertObjectParam(object obj)
+        {
+            objectParams.ObjectParams.Add(obj);
+        }
+        #endregion ~Extra Functional methods for Usage intermediatery
         
         private APIAuthorization Authorization(APIXmlNode node)
         {
