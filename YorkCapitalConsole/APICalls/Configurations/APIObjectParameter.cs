@@ -10,7 +10,7 @@ namespace APICalls.Configurations
     {
         private List<object> _params = null;
 
-        public List<object> ObjectParams { get { return _params; } }
+        internal List<object> ObjectParams { get { return _params; } }
 
         public APIObjectParameter() { _params = new List<object>(); }
     }
