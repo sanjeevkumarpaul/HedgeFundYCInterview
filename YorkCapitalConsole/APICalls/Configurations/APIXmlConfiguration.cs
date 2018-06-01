@@ -72,13 +72,15 @@ namespace APICalls.Configurations
         private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true)
         {
             //Find all matches with {...}
-            foreach (var match in Regex.Matches(placeholderStr, "[{].*[}]"))
+            Regex.Matches(placeholderStr, "{(.*)}").Cast<Match>().All(m =>
             {
-                var item = match.ToString().TrimEx("{").TrimEx("}").SplitEx('.');
+                var item = m.Groups[1].Value.SplitEx('.'); //Groups[1] stores the group value like (.*). If there are more, more groups are created.
 
                 if (item.Length > 1)
-                    placeholderStr = GetDynamicParamObjectValue(item[0], placeholderStr, match.ToString(), item[1], locateFromObjectParams);                    
-            }
+                    placeholderStr = GetDynamicParamObjectValue(item[0], placeholderStr, m.ToString(), item[1], locateFromObjectParams);
+
+                return true;
+            });
             
             return placeholderStr;            
         }
