@@ -87,12 +87,12 @@ namespace APICalls.Configurations
 
         private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true)
         {
-            var obj = (locateFromObjectParams ?
+            var val = (locateFromObjectParams ?
                         objectParams.ObjectParams.Find(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
                         Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result)
                       ?.GetVal(propertyName);
             
-            return placeholderStr.Replace(pattern, obj);
+            return placeholderStr.Replace(pattern, val);
         }
         
         private Type CreateGenericType(string prospectType, Type genericType)
