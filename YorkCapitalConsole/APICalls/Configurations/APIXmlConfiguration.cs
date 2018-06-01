@@ -12,16 +12,18 @@ using Extensions;
 
 namespace APICalls.Configurations
 {
-    public class APIXmlConfiguration
+    public class APIXmlConfiguration : IDisposable
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
         private IEnumerable<XElement> ApiElements;
         private string BaseUrl;
         private APIObjectParameter objectParams;
 
-        public APIXmlConfiguration(string configurationFilePath, APIObjectParameter parameters = null)
+        public APIXmlConfiguration(string configurationFilePath, params object[] objectParameters)
         {
-            objectParams = parameters;
+            //Keeping track.
+            (objectParams = new APIObjectParameter()).ObjectParams.AddRange(objectParameters);
+
             XElement xml = XElement.Load(configurationFilePath);
             var all = xml.Elements();
 
@@ -53,6 +55,7 @@ namespace APICalls.Configurations
             ApiElements
                 .Select(api => CallForResult(api))
                 .ToObservable(NewThreadScheduler.Default)
+                .Finally(() => Dispose())
                 .Subscribe( (result) => { apiResults.Reponses(result, this); });            
         }
         #endregion ~API Calling Sequences
@@ -66,6 +69,11 @@ namespace APICalls.Configurations
         public void InsertObjectParam(object obj)
         {
             objectParams.ObjectParams.Add(obj);
+        }
+
+        public void Dispose()
+        {
+            objectParams = null;
         }
         #endregion ~Extra Functional methods for Usage intermediatery
 
