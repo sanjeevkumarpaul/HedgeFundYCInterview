@@ -95,17 +95,9 @@ namespace APICalls.Configurations
                     if (o.GetType().Name.Equals(typeName)) { obj = o; break; }                                   
             }
             else
-            {
-                var _node = Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-                 
-                if (_node != null) //challenge to find out if Result is f type Tokens                
-                    obj = _node.Result;                                    
-            }
-
-            if (obj != null)
-                placeholderStr = placeholderStr.Replace(pattern, obj.GetVal(propertyName));
-            
-            return placeholderStr;
+                obj = Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result;
+                
+            return (obj != null) ? placeholderStr.Replace(pattern, obj.GetVal(propertyName)) : placeholderStr;
         }
         
         private Type CreateGenericType(string prospectType, Type genericType)
