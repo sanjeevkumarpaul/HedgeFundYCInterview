@@ -93,6 +93,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobComponent", "JobComponen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICalls", "APICalls\APICalls.csproj", "{BACD1E5F-4CB0-4BBA-B193-1AEE69B7C41F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonSerializers", "JsonSerializers\JsonSerializers.csproj", "{207F29FF-9AFB-4DC6-B40C-5DB51BED5051}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -207,6 +209,10 @@ Global
 		{BACD1E5F-4CB0-4BBA-B193-1AEE69B7C41F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BACD1E5F-4CB0-4BBA-B193-1AEE69B7C41F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BACD1E5F-4CB0-4BBA-B193-1AEE69B7C41F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{207F29FF-9AFB-4DC6-B40C-5DB51BED5051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{207F29FF-9AFB-4DC6-B40C-5DB51BED5051}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{207F29FF-9AFB-4DC6-B40C-5DB51BED5051}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{207F29FF-9AFB-4DC6-B40C-5DB51BED5051}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -244,6 +250,7 @@ Global
 		{5FB508B2-05F6-42E3-8CAF-5BA1E5ED1C13} = {A4C940FC-0D3D-436A-B381-EBD1F9361D89}
 		{A3D61007-95F0-4A47-B7B1-7A1CC12E5E59} = {91102C6C-C17B-4D17-9235-BB058C8FF3A6}
 		{BACD1E5F-4CB0-4BBA-B193-1AEE69B7C41F} = {7318CD6C-BEAB-44C1-A1F6-1C5C0C25BFFA}
+		{207F29FF-9AFB-4DC6-B40C-5DB51BED5051} = {7318CD6C-BEAB-44C1-A1F6-1C5C0C25BFFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D36F9F5-1A1A-42EF-914A-F4F59C268046}
