@@ -72,6 +72,16 @@ namespace APICalls.Configurations
         }
         #endregion ~Extra Functional methods for Usage intermediatery
         
+        private IAPIProspect CallForResult(XElement api)
+        {
+            var node = new ApiXmlNode(api, BaseUrl);
+
+            var resultNode = ExecuteApi(node.GenericType, node);
+            Apis.Add(resultNode);
+
+            return resultNode.Result;
+        }
+            
         private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
