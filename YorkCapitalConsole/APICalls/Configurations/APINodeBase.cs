@@ -1,10 +1,11 @@
-﻿using System;
+﻿using APICalls.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APICalls.Entities
+namespace APICalls.Configurations
 {
     public class APINodeBase
     {
@@ -12,6 +13,7 @@ namespace APICalls.Entities
         public string GenericType { get; set; }
         public string BaseUrl { get; set; }
         public string ApiUri { get; set; }
+        public string ApiKey { get; set; }
         public bool RequiredAuthorization { get; set; }
         public APIAuthenticationType AuthenticationType { get; set; }
         public string Token { get; set; }
@@ -22,7 +24,8 @@ namespace APICalls.Entities
         /// Sepration to be done via semicolon at XML
         /// application/json[;application/jpeg[;...]]
         /// </summary>
-        public string ContentType { get; set; }
+        public string ContentTypes { get; set; }        
+        public string ParamContentType { get; set; }
         public APIMethod Method { get; set; }
     }
 }

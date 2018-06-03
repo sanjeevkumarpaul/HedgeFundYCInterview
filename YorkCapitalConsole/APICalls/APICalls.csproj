@@ -69,12 +69,14 @@
     <Compile Include="Entities\APIAuthenticationType.cs" />
     <Compile Include="Entities\APIAuthorization.cs" />
     <Compile Include="Entities\APIMethod.cs" />
-    <Compile Include="Entities\APINodeBase.cs" />
+    <Compile Include="Configurations\APINodeBase.cs" />
     <Compile Include="Entities\APIRequestHeaders.cs" />
     <Compile Include="Entities\APIProspect.cs" />
     <Compile Include="Entities\IAPIProspect.cs" />
     <Compile Include="APIUtil.cs" />
     <Compile Include="Entities\IAPIResult.cs" />
+    <Compile Include="Example\ExchangeCurrency.cs" />
+    <Compile Include="Example\RealtimeCurrencyExchangeRate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

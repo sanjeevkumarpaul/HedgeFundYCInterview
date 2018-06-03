@@ -16,7 +16,8 @@ namespace APICalls.Configurations
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
         private IEnumerable<XElement> ApiElements;
-        private string BaseUrl;
+        //private string BaseUrl;
+        private APIXmlNode Base;
         private APIObjectParameter objectParams;
 
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
@@ -29,7 +30,8 @@ namespace APICalls.Configurations
             XElement xml = XElement.Load(configurationFilePath);
             var all = xml.Elements();
 
-            BaseUrl = all.Where(n => n.Name == "Base" && n.Attribute("Url") != null).First()?.Attribute("Url").Value;
+            Base = new APIXmlNode(all.Where(n => n.Name == "Base" && n.Attribute("Url") != null).First(), null);
+            objectParams.ObjectParams.Add(Base);
 
             ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
                           let order = elem.Attribute("Order").Value.ToInt()
@@ -96,7 +98,19 @@ namespace APICalls.Configurations
             
             return auth;
         }
-        
+
+        private APIRequestHeaders ContentTypes(APIXmlNode node)
+        {
+            if (node.ContentTypes == null) return null;
+
+            var content = new APIRequestHeaders {   AcceptContentTypes = node.ContentTypes.SplitEx(';'),
+                                                    ParameterContentType = node.ParamContentType,
+                                                    Headers  = node.Headers.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value }).ToArray()
+                                                };
+
+            return content;
+        }
+
         private Dictionary<string, string> InjectObjectParams(APIXmlNode node )
         {
             var parameters = node.Parameters?.Keys.ToList();
@@ -154,19 +168,26 @@ namespace APICalls.Configurations
             return realtype;
         }
         
+        /// <summary>
+        /// Executes API
+        /// First creates XML NODE object, Creates instances of APIProspect<> and APIUti<> and then calls 'Call' method of APIUtil for synchronous call.
+        /// </summary>
+        /// <param name="api"></param>
+        /// <returns></returns>
         private IAPIProspect ExecuteApi( XElement api)
         {
-            var node = new APIXmlNode(api, BaseUrl);
+            var node = new APIXmlNode(api, Base.BaseUrl);
             
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
 
             using (var prosBase = (APIProspectOptionBase)prospect)
             {
-                prosBase.BaseUrl = BaseUrl;
+                prosBase.BaseUrl = Base.BaseUrl;
                 prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
                 prosBase.Method = node.Method;
                 prosBase.Parameters = InjectObjectParams(node);
                 prosBase.Authorization = Authorization(node);
+                prosBase.RequestHeaders = ContentTypes(node);
             }
 
             var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));

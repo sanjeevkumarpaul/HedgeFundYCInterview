@@ -22,6 +22,7 @@ namespace APICalls.Configurations
             //<!-- Urls & Methods -->
             if (element.Attribute("BaseUrl") != null) BaseUrl = element.Attribute("BaseUrl").Value;
             if (element.Attribute("Uri") != null) ApiUri = element.Attribute("Uri").Value;
+            if (element.Attribute("Key") != null) ApiKey = element.Attribute("Key").Value; 
             if (element.Attribute("Method") != null) Method = element.Attribute("Method").Value.ToEnum<APIMethod>();
 
             //<!-- Authorization -->
@@ -35,14 +36,22 @@ namespace APICalls.Configurations
 
             //<!-- Api Paramters -->
             var paramss = element.Element("Parameters");
-            if (paramss != null) Parameters = CreateDictionary(paramss);
+            if (paramss != null)
+            {
+                Parameters = CreateDictionary(paramss);
+                if (paramss.Element("ContentType") != null) ParamContentType = paramss.Element("ContentType").Value;
+            }
 
             //<!-- Extra Headers -->
             var headers = element.Element("Headers");
             if (headers != null) Parameters = CreateDictionary(headers);
 
             //<!-- Content Type (To be seprated by semi colon)-->
-            if (element.Attribute("ContentType") != null) ContentType = element.Attribute("ContentType").Value;
+            if (element.Attribute("ContentType") != null) ContentTypes = element.Attribute("ContentType").Value;
+
+            //<!-- additional Content Types -->
+            var content = element.Element("ContentTypes");
+            if (headers != null && content.Attribute("Values") != null) ContentTypes = content.Attribute("Values").Value;
 
             //At the end Perform Validity Check and include Default Values.
             ValidityChecks(baseUrl);
