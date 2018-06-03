@@ -26,11 +26,12 @@ namespace APIUtilCallDemo
                 
             }
 
-            public void Reponses(IAPIProspect resultProspect, APIXmlConfiguration config)
+            public void Reponses(IAPIProspect resultProspect, APIConfiguration config)
             {
                 ExchangeRate(resultProspect);
                 StockQuotes(resultProspect);
             }
+
 
             //Respones in private methods.
             internal void ExchangeRate(IAPIProspect result)
@@ -59,9 +60,13 @@ namespace APIUtilCallDemo
 
         static void Main(string[] args)
         {
-            var filename = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml";
+            var options = new APIConfigurationOptions
+            {
+                Path = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml",
+                ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() }
+            };
 
-            new APIXmlConfiguration(filename, new ExchangeCurrency(), new StockQuoteSymbols())
+            new APIConfiguration(options)
             .ExecuteApisObservable(new ExchangeCallResults());
 
 

@@ -13,7 +13,7 @@ using Wrappers;
 
 namespace APICalls.Configurations
 {
-    public class APIXmlConfiguration : IDisposable
+    public class APIConfiguration : IDisposable
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
         private IEnumerable<XElement> ApiElements;
@@ -21,22 +21,45 @@ namespace APICalls.Configurations
         private APIXmlNode Base;
         private APIObjectParameter objectParams;
 
-        public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
+        private IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
 
-        public APIXmlConfiguration(string configurationFilePathOrXML, params object[] objectParameters)
+        public APIConfiguration(APIConfigurationOptions options)
+        {
+            Initialize(options.ObjectParams);
+            var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML(options.Path) : InitializeJson(options.Path);
+        }
+
+        public APIConfiguration(string configurationFilePathOrXML, params object[] objectParameters)
+        {
+            Initialize(objectParameters);
+            InitializeXML(configurationFilePathOrXML);
+        }
+
+        private void Initialize(object[] objectParameters)
         {
             //Keeping track.
             (objectParams = new APIObjectParameter()).ObjectParams.AddRange(objectParameters);
+        }
 
+        private bool InitializeXML(string configurationFilePathOrXML)
+        {
             //Try to load it from file or Parase xml string itself.
-            var all = ( WrapIOs.Exists(configurationFilePathOrXML) ?  XElement.Load(configurationFilePathOrXML) : XElement.Parse(configurationFilePathOrXML) ) .Elements() ;
+            var all = (WrapIOs.Exists(configurationFilePathOrXML) ? XElement.Load(configurationFilePathOrXML) : XElement.Parse(configurationFilePathOrXML)).Elements();
 
-            Base = new APIXmlNode(all.Where(n => n.Name == "Base" ).First(), null);            
+            Base = new APIXmlNode(all.Where(n => n.Name == "Base").First(), null);
 
             ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
                           let order = (elem.Attribute("Order")?.Value ?? "0").ToInt()
                           orderby order
                           select elem;
+
+            return true;
+        }
+
+        private bool InitializeJson(string configurationFilePathOrJSON)
+        {
+
+            return true;
         }
 
         #region ^API Calling Sequences

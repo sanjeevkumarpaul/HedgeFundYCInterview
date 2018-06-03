@@ -63,8 +63,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\APIConfigurationOptions.cs" />
     <Compile Include="Configurations\APIObjectParameter.cs" />
-    <Compile Include="Configurations\APIXmlConfiguration.cs" />
+    <Compile Include="Configurations\APIConfiguration.cs" />
     <Compile Include="Configurations\APIXmlNode.cs" />
     <Compile Include="Entities\APIAuthenticationType.cs" />
     <Compile Include="Entities\APIAuthorization.cs" />

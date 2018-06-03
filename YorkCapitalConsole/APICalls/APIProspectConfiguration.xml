@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" ?> 
 
-<!-- Based on API(s) from : https://www.alphavantage.co/documentation/ -->
+<!-- Based on API(s) from : https://www.alphavantage.co/documentation/  Registered here with s...software@gmail.com-->
   
 <APIProspects>
   <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" />

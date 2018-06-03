@@ -1,48 +1,60 @@
 ﻿{
   "APIProspects" :[
-                      { "Base"        : { "Url" : "http://abc/api/" } },
+                      { "Base"        : { "BaseUrl" : "https://www.alphavantage.co/query", "Key":"LBMNIZVTOTUQRGRT" } },
                       
                       { "APIProspect" : {
-                                          "Name"    : "Tokenizer",
+                                          "Name"    : "CurrencyExchangeRate",
                                           "BaseUrl" : "",
-                                          "Uri"     : "login",
-                                          "Method"  : "POST",
-                                        
-                                          "Headers" : 
-                                          [
-                                            { "Header"  :  { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } },
-                                            { "Header"  :  { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } }
-                                          ],
-                                          
-                                          "Parameters" : 
-                                          [
-                                            {"Parameter"   : { "Key" : "client_name", "Value" : "Ai3mse93404,03480" } },
-                                            {"Parameter"   : { "Key" : "client_key",  "Value" : "O937jmd23;9sdj34"  } }
-                                          ]
-                                        }
-                      },
-                      
-                      { "APIProspect" : {
-                                          "Name"    : "InfoGathering",
-                                          "BaseUrl" : "",
-                                          "Uri"     : "Estimates",
+                                          "Uri"     : "",
                                           "Method"  : "GET",
-                                          
-                                          "Authorization" : { "Type" : "Bearer", "Token" : "Token {Tokenizer.Token}" , "TokenAsHeader" : "True" }
+										  "IncludeKeyFromBase" : "apikey",
+										  "GenericType" : "APICalls.Example.RealtimeCurrencyExchange",
                                         
                                           "Headers" : 
                                           [
-                                            { "Header"  :  { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } },
-                                            { "Header"  :  { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } }
+                                            { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } ,
+                                            { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } 
                                           ],
                                           
                                           "Parameters" : 
-                                          [
-                                            { "Parameter"   : { "Key" : "Property", "Value" : "{Project.SomeValue}" } }
-                                          ],
-                                          
-                                          "ContentType" : "application/json"
+										  {
+											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
+											  "ParamValues" :
+											  [
+												{ "Key" : "function", 		"Value" : "CURRENCY_EXCHANGE_RATE" 			},
+												{ "Key" : "from_currency", "Value" : "{ExchangeCurrency.FromCurrency}"  },
+												{ "Key" : "to_currency", 	"Value" : "{ExchangeCurrency.ToCurrency}"  	}
+											  ]
+										  },
+										  "ContentTypes" : "application/json"
                                         }
                       },
+                      
+                      { "APIProspect" : {
+                                          "Name"    : "StockQuotes",
+                                          "BaseUrl" : "",
+                                          "Uri"     : "",
+                                          "Method"  : "GET",										  
+										  "IncludeKeyFromBase" : "apikey",
+										  "GenericType" : "APICalls.Example.RealtimeCurrencyExchange",
+                                          
+                                          "Headers" : 
+                                          [
+                                            { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } ,
+                                            { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } 
+                                          ],
+                                          
+                                          "Parameters" : 
+										  {
+											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
+											  "ParamValues" :
+											  [
+												{ "Key" : "function", "Value" : "BATCH_STOCK_QUOTES"  },
+												{ "Key" : "symbols",  "Value" : "{StockQuoteSymbols.Symbols}"  }
+											  ]
+										  },
+										  "ContentTypes" : "application/json"
+                                        }
+                      }
                   ]
 }
