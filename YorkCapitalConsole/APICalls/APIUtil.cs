@@ -57,8 +57,7 @@ namespace APICalls
 
             return ReturnResult(data);
         }
-
-
+        
         private T ReturnResult(string data)
         {
             Decrypt(data);

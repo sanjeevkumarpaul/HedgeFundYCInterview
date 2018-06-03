@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using APICalls.Entities;
 using Extensions;
+using Wrappers;
 
 namespace APICalls.Configurations
 {
@@ -22,13 +23,13 @@ namespace APICalls.Configurations
 
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
 
-        public APIXmlConfiguration(string configurationFilePath, params object[] objectParameters)
+        public APIXmlConfiguration(string configurationFilePathOrXML, params object[] objectParameters)
         {
             //Keeping track.
             (objectParams = new APIObjectParameter()).ObjectParams.AddRange(objectParameters);
 
-            XElement xml = XElement.Load(configurationFilePath);
-            var all = xml.Elements();
+            //Try to load it from file or Parase xml string itself.
+            var all = ( WrapIOs.Exists(configurationFilePathOrXML) ?  XElement.Load(configurationFilePathOrXML) : XElement.Parse(configurationFilePathOrXML) ) .Elements() ;
 
             Base = new APIXmlNode(all.Where(n => n.Name == "Base" ).First(), null);            
 
