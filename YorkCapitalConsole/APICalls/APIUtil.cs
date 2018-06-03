@@ -69,9 +69,16 @@ namespace APICalls
         {
             if (data != null)
             {
-                var _result = Newtonsoft.Json.JsonConvert.DeserializeObject(data, prospect.Result.GetType());
+                try
+                {
+                    var _result = Newtonsoft.Json.JsonConvert.DeserializeObject(data, typeof(T));
 
-                prospect.Result = (T)_result;
+                    prospect.Result = (T)_result;
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Error: ${ex.Message}");
+                }
             }
         }
 

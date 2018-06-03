@@ -1,15 +1,26 @@
 ﻿<?xml version="1.0" ?> 
 
+<!-- Based on API(s) from : https://www.alphavantage.co/documentation/ -->
+  
 <APIProspects>
-  <Base Url="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" />
+  <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" />
 
-  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="login" Method="POST">
+  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.RealtimeCurrencyExchange">
     
-    <Parameters ContentType="application/json">
+    <Parameters QueryString="True" ContentType="application/json">
       <Parameter Key="function" Value="CURRENCY_EXCHANGE_RATE"/>
       <Parameter Key="from_currency"  Value="{ExchangeCurrency.FromCurrency}"/>
-      <Parameter Key="to_currency"  Value="{ExchangeCurrency.ToCurrency}"/>
-      <Parameter Key="apikey"  Value="{Base.Key}"/>        
+      <Parameter Key="to_currency"  Value="{ExchangeCurrency.ToCurrency}"/>      
+    </Parameters>
+  
+    <ContentTypes Values="application/json" />
+  </APIProspect>
+  
+  <APIProspect Name="StockQuotes" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.StockQuoteMaster">
+    
+    <Parameters QueryString="True" ContentType="application/json">
+      <Parameter Key="function" Value="BATCH_STOCK_QUOTES"/>
+      <Parameter Key="symbols"  Value="{StockQuoteSymbols.Symbols}"/>      
     </Parameters>
   
     <ContentTypes Values="application/json" />

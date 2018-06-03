@@ -14,11 +14,13 @@ namespace APICalls.Configurations
         public string BaseUrl { get; set; }
         public string ApiUri { get; set; }
         public string ApiKey { get; set; }
+        public string IncludeKeyFromBase { get; set; }
         public bool RequiredAuthorization { get; set; }
         public APIAuthenticationType AuthenticationType { get; set; }
         public string Token { get; set; }
         public bool TokenAsHeader { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
+        public bool ParametersAsQueryString { get; set; } = false;
         public Dictionary<string, string> Headers { get; set; }
         /// <summary>
         /// Sepration to be done via semicolon at XML

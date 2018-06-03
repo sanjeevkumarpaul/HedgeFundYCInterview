@@ -75,7 +75,8 @@
     <Compile Include="Entities\IAPIProspect.cs" />
     <Compile Include="APIUtil.cs" />
     <Compile Include="Entities\IAPIResult.cs" />
-    <Compile Include="Example\ExchangeCurrency.cs" />
+    <Compile Include="Example\BastchStockQuotes.cs" />
+    <Compile Include="Example\ExchangeParameters.cs" />
     <Compile Include="Example\RealtimeCurrencyExchangeRate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

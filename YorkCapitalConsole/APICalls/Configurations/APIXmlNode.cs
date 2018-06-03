@@ -13,7 +13,7 @@ namespace APICalls.Configurations
     {       
         internal IAPIProspect Result { get; set; }
 
-        internal APIXmlNode(XElement element, string baseUrl)
+        internal APIXmlNode(XElement element, APIXmlNode Base)
         {
             //<!-- Name & Type -->
             if (element.Attribute("Name") != null) Name = element.Attribute("Name").Value;
@@ -22,7 +22,8 @@ namespace APICalls.Configurations
             //<!-- Urls & Methods -->
             if (element.Attribute("BaseUrl") != null) BaseUrl = element.Attribute("BaseUrl").Value;
             if (element.Attribute("Uri") != null) ApiUri = element.Attribute("Uri").Value;
-            if (element.Attribute("Key") != null) ApiKey = element.Attribute("Key").Value; 
+            if (element.Attribute("Key") != null) ApiKey = element.Attribute("Key").Value;
+            if (element.Attribute("IncludeKeyFromBase") != null) IncludeKeyFromBase = element.Attribute("IncludeKeyFromBase").Value; 
             if (element.Attribute("Method") != null) Method = element.Attribute("Method").Value.ToEnum<APIMethod>();
 
             //<!-- Authorization -->
@@ -36,43 +37,45 @@ namespace APICalls.Configurations
 
             //<!-- Api Paramters -->
             var paramss = element.Element("Parameters");
+            Parameters = CreateDictionary(paramss, Base);
             if (paramss != null)
-            {
-                Parameters = CreateDictionary(paramss);
+            {   
                 if (paramss.Element("ContentType") != null) ParamContentType = paramss.Element("ContentType").Value;
-            }
+                if (paramss.Attribute("QueryString") != null) ParametersAsQueryString = paramss.Attribute("QueryString").Value.ToBool();
+            }            
 
             //<!-- Extra Headers -->
             var headers = element.Element("Headers");
             if (headers != null) Parameters = CreateDictionary(headers);
 
-            //<!-- Content Type (To be seprated by semi colon)-->
-            if (element.Attribute("ContentType") != null) ContentTypes = element.Attribute("ContentType").Value;
-
-            //<!-- additional Content Types -->
-            var content = element.Element("ContentTypes");
-            if (headers != null && content.Attribute("Values") != null) ContentTypes = content.Attribute("Values").Value;
+            //<!-- Additional Content Types (To be seprated by semi colon)-->
+            var contents = element.Element("ContentTypes");
+            if (contents != null && contents.Attribute("Values") != null) ContentTypes = contents.Attribute("Values").Value;
 
             //At the end Perform Validity Check and include Default Values.
-            ValidityChecks(baseUrl);
+            ValidityChecks(Base?.BaseUrl);
         }
 
-        private Dictionary<string, string> CreateDictionary(XElement element)
+        private Dictionary<string, string> CreateDictionary(XElement element, APIXmlNode Base = null)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
-            foreach(var item in element.Elements())
+            if (element != null)
             {
-                if (item.Attribute("Key") != null && item.Attribute("Value") != null)
-                    dict.Add(item.Attribute("Key").Value, item.Attribute("Value").Value );
+                foreach (var item in element.Elements())
+                {
+                    if (item.Attribute("Key") != null && item.Attribute("Value") != null)
+                        dict.Add(item.Attribute("Key").Value, item.Attribute("Value").Value);
+                }
             }
-
+            if (!IncludeKeyFromBase.Empty() && Base != null) dict.Add(IncludeKeyFromBase, Base.ApiKey);
+            
             return dict;
         }
 
         private void ValidityChecks(string baseUrl)
         {
-            if (baseUrl.Empty()) BaseUrl = baseUrl;
+            if (BaseUrl.Empty()) BaseUrl = baseUrl;
             if (!Token.Empty()) RequiredAuthorization = true;
         }
     }   

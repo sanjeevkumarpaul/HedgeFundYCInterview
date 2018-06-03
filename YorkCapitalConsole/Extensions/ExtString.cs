@@ -211,11 +211,21 @@ namespace Extensions
             return result;
         }
 
+        public static double ToDouble(this string str)
+        {
+            double result = 0.0d;
+
+            double.TryParse(str, out result);
+
+            return result;
+        }
+        
+
         public static bool ToBool(this string str)
         {
             bool result = false;
 
-            if (str.Empty()) { str = str.ToLower(); result = str.Equals("true") || str.Equals("1") || str.Equals("y"); }
+            if (!str.Empty()) { str = str.ToLower(); result = str.Equals("true") || str.Equals("1") || str.Equals("y"); }
 
             return result;
         }

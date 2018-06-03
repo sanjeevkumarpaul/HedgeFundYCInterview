@@ -8,7 +8,14 @@ using System.Threading.Tasks;
 
 namespace APICalls.Example
 {
-    public partial class RealtimeCurrencyExchangeRate : IAPIProspect
+
+    public class RealtimeCurrencyExchange : IAPIProspect
+    {
+        [JsonProperty("Realtime Currency Exchange Rate")]
+        public RealtimeCurrencyExchangeRate RealtimeCurrencyExchangeRate { get; set; }
+    }
+       
+    public class RealtimeCurrencyExchangeRate 
     {
         [JsonProperty("1. From_Currency Code")]
         public string FromCurrencyCode { get; set; }
@@ -26,7 +33,7 @@ namespace APICalls.Example
         public string ExchangeRate { get; set; }
 
         [JsonProperty("6. Last Refreshed")]
-        public DateTimeOffset LastRefreshed { get; set; }
+        public DateTime LastRefreshed { get; set; }
 
         [JsonProperty("7. Time Zone")]
         public string TimeZone { get; set; }

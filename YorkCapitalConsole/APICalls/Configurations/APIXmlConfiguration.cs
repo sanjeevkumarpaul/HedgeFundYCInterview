@@ -30,11 +30,10 @@ namespace APICalls.Configurations
             XElement xml = XElement.Load(configurationFilePath);
             var all = xml.Elements();
 
-            Base = new APIXmlNode(all.Where(n => n.Name == "Base" && n.Attribute("Url") != null).First(), null);
-            objectParams.ObjectParams.Add(Base);
+            Base = new APIXmlNode(all.Where(n => n.Name == "Base" ).First(), null);            
 
             ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
-                          let order = elem.Attribute("Order").Value.ToInt()
+                          let order = (elem.Attribute("Order")?.Value ?? "0").ToInt()
                           orderby order
                           select elem;
         }
@@ -101,11 +100,9 @@ namespace APICalls.Configurations
 
         private APIRequestHeaders ContentTypes(APIXmlNode node)
         {
-            if (node.ContentTypes == null) return null;
-
-            var content = new APIRequestHeaders {   AcceptContentTypes = node.ContentTypes.SplitEx(';'),
+            var content = new APIRequestHeaders {   AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
                                                     ParameterContentType = node.ParamContentType,
-                                                    Headers  = node.Headers.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value }).ToArray()
+                                                    Headers  = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
                                                 };
 
             return content;
@@ -176,7 +173,7 @@ namespace APICalls.Configurations
         /// <returns></returns>
         private IAPIProspect ExecuteApi( XElement api)
         {
-            var node = new APIXmlNode(api, Base.BaseUrl);
+            var node = new APIXmlNode(api, Base);
             
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
 
@@ -186,6 +183,7 @@ namespace APICalls.Configurations
                 prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
                 prosBase.Method = node.Method;
                 prosBase.Parameters = InjectObjectParams(node);
+                prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
                 prosBase.Authorization = Authorization(node);
                 prosBase.RequestHeaders = ContentTypes(node);
             }
