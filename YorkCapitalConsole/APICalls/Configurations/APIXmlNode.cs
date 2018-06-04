@@ -77,6 +77,24 @@ namespace APICalls.Configurations
         {
             if (BaseUrl.Empty()) BaseUrl = baseUrl;
             if (!Token.Empty()) RequiredAuthorization = true;
+
+            if (IncludeKeyFromBase.Empty()) IncludeKeyFromBase = null;
+            if (!RequiredAuthorization)
+            {
+                AuthenticationType = APIAuthenticationType.Basic;
+                Token = null;
+                TokenAsHeader = false;
+            }
+
+            if (Parameters != null && Parameters.Count <= 0)
+            {
+                Parameters = null;
+                ParamContentType = null;
+                ParametersAsQueryString = false;
+            }
+
+            if (Headers != null && Headers.Count <= 0) Headers = null;
+            if (ContentTypes.Empty()) ContentTypes = null;
         }
     }   
 }

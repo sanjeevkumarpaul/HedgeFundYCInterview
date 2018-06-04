@@ -11,6 +11,7 @@ using APICalls.Entities;
 using Extensions;
 using Wrappers;
 using JsonSerializers;
+using Newtonsoft.Json.Linq;
 
 namespace APICalls.Configurations
 {
@@ -204,6 +205,11 @@ namespace APICalls.Configurations
         }
         #endregion ~Initization of Options/XML/Json to reflect Nodes
 
+        #region ^End Subcription to Raise. Post and Final
+        /// <summary>
+        /// At the end, Post and Final Subscription to be posted back to the caller.
+        /// </summary>
+        /// <param name="apiResults"></param>
         private void PostEvents(IAPIResult apiResults)
         {
             Task.Factory.StartNew(() => Dispose())
@@ -211,7 +217,9 @@ namespace APICalls.Configurations
                         .ContinueWith(antecendent => apiResults.Final(Apis.Last().Result))
                         .Wait();
         }
-        
+        #endregion
+
+        #region ^API related information, Extract
         private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
@@ -287,7 +295,8 @@ namespace APICalls.Configurations
 
             return realtype;
         }
-        
+        #endregion ~End of methods
+
         /// <summary>
         /// Executes API
         /// First creates XML NODE object, Creates instances of APIProspect<> and APIUti<> and then calls 'Call' method of APIUtil for synchronous call.
