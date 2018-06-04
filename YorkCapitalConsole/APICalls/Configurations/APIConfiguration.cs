@@ -75,6 +75,13 @@ namespace APICalls.Configurations
             if (index <= objectParams.ObjectParams.Count) objectParams.ObjectParams[index] = obj;
         }
 
+        public void UpdateObjectParam(object findObj, object replaceObj)
+        {
+            int index = objectParams.ObjectParams.IndexOf(findObj);
+
+            if (index >= 0) objectParams.ObjectParams[index] = replaceObj;
+        }
+
         public void Dispose()
         {
             objectParams = null;
