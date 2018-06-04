@@ -27,7 +27,7 @@ namespace APICalls.Configurations
         public APIConfiguration(APIConfigurationOptions options)
         {
             Initialize(options.ObjectParams);
-            var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML(options.Path) : InitializeJson(options.Path);
+            var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML(options.PathOrContent) : InitializeJson(options.PathOrContent);
         }
        
         #region ^API Calling Sequences
@@ -77,7 +77,9 @@ namespace APICalls.Configurations
         private void Initialize(object[] objectParameters)
         {
             //Keeping track.
-            (objectParams = new APIObjectParameter()).ObjectParams.AddRange(objectParameters);
+            this.objectParams = new APIObjectParameter();
+            if (objectParameters != null)
+                this.objectParams.ObjectParams.AddRange(objectParameters);
         }
 
         private bool InitializeXML(string configurationFilePathOrXML)
@@ -300,7 +302,7 @@ namespace APICalls.Configurations
 
             using (var prosBase = (APIProspectOptionBase)prospect)
             {
-                prosBase.BaseUrl = Base.BaseUrl;
+                prosBase.BaseUrl = node.BaseUrl;
                 prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
                 prosBase.Method = node.Method;
                 prosBase.Parameters = InjectObjectParams(node);

@@ -70,7 +70,7 @@ namespace APIUtilCallDemo
             //VIA JSON
             var options1 = new APIConfigurationOptions
             {
-                Path = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
+                PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
                 Type = "JSON" //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
             };

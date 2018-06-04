@@ -8,11 +8,11 @@ namespace APICalls.Configurations
 {
     public class APIConfigurationOptions
     {
-        public string Path { get; set; }
         /// <summary>
-        /// Either XML or Json if Path is not provided.
+        /// Either XML or Json direct content or fully wualified path.
         /// </summary>
-        public string ConfigString { get; set; }
+        public string PathOrContent { get; set; }
+              
 
         /// <summary>
         /// Either XML/JSON. If any other string is provided XML will be considered.
