@@ -28,13 +28,13 @@ namespace APIUtilCallDemo
 
             public void Reponses(IAPIProspect resultProspect, APIConfiguration config)
             {
-                ExchangeRate(resultProspect);
+                ExchangeRate(resultProspect, config);
                 StockQuotes(resultProspect);
             }
 
 
             //Respones in private methods.
-            internal void ExchangeRate(IAPIProspect result)
+            internal void ExchangeRate(IAPIProspect result, APIConfiguration config)
             {
                 if (result is RealtimeCurrencyExchange)
                 {
@@ -42,6 +42,8 @@ namespace APIUtilCallDemo
 
                     Console.WriteLine("Exchange Currency Information Received...");
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
+
+                    config.UpdateObjectParam(new StockQuoteSymbols { Symbols = "DIS,AXP" });
                 }
             }
 

@@ -67,6 +67,14 @@ namespace APICalls.Configurations
             objectParams.ObjectParams.AddRange(obj);
         }
 
+        public void UpdateObjectParam(object obj)
+        {
+            int index = 0;
+            objectParams.ObjectParams.ForEach(o => { if (obj.GetType() == o.GetType()) return; else index++; } );
+
+            if (index <= objectParams.ObjectParams.Count) objectParams.ObjectParams[index] = obj;
+        }
+
         public void Dispose()
         {
             objectParams = null;
