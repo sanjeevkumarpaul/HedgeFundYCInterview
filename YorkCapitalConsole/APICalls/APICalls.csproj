@@ -94,6 +94,10 @@
       <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
       <Name>Extensions</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JsonSerializers\JsonSerializers.csproj">
+      <Project>{207f29ff-9afb-4dc6-b40c-5db51bed5051}</Project>
+      <Name>JsonSerializers</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="APIProspectConfiguration.json">

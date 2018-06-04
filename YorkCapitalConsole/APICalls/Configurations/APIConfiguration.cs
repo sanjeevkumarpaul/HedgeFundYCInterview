@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using APICalls.Entities;
 using Extensions;
 using Wrappers;
+using JsonSerializers;
 
 namespace APICalls.Configurations
 {
@@ -27,12 +28,6 @@ namespace APICalls.Configurations
         {
             Initialize(options.ObjectParams);
             var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML(options.Path) : InitializeJson(options.Path);
-        }
-
-        public APIConfiguration(string configurationFilePathOrXML, params object[] objectParameters)
-        {
-            Initialize(objectParameters);
-            InitializeXML(configurationFilePathOrXML);
         }
 
         private void Initialize(object[] objectParameters)
@@ -58,6 +53,12 @@ namespace APICalls.Configurations
 
         private bool InitializeJson(string configurationFilePathOrJSON)
         {
+            string json = WrapIOs.Exists(configurationFilePathOrJSON) ? WrapIOs.ReadAllLines(configurationFilePathOrJSON).ToList().JoinExt(Environment.NewLine) : configurationFilePathOrJSON;
+            if (!JsonValidator.IsValid(json)) return false;
+
+            var elements = JsonValidator.Create(json);
+
+
 
             return true;
         }

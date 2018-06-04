@@ -66,7 +66,14 @@ namespace APIUtilCallDemo
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() }
             };
 
-            new APIConfiguration(options)
+            var options1 = new APIConfigurationOptions
+            {
+                Path = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
+                ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
+                Type = "JSON"
+            };
+
+            new APIConfiguration(options1)
             .ExecuteApisObservable(new ExchangeCallResults());
 
 
