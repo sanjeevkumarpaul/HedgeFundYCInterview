@@ -9,20 +9,14 @@
                                           "Method"  : "GET",
 										  "IncludeKeyFromBase" : "apikey",
 										  "GenericType" : "APICalls.Example.RealtimeCurrencyExchange",
-                                        
-                                          "Headers" : 
-                                          [
-                                            { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } ,
-                                            { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } 
-                                          ],
-                                          
+                                        										  
                                           "Parameters" : 
 										  {
 											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
 											  "ParamValues" :
 											  [
 												{ "Key" : "function", 		"Value" : "CURRENCY_EXCHANGE_RATE" 			},
-												{ "Key" : "from_currency", "Value" : "{ExchangeCurrency.FromCurrency}"  },
+												{ "Key" : "from_currency",  "Value" : "{ExchangeCurrency.FromCurrency}" },
 												{ "Key" : "to_currency", 	"Value" : "{ExchangeCurrency.ToCurrency}"  	}
 											  ]
 										  },
@@ -36,14 +30,8 @@
                                           "Uri"     : "",
                                           "Method"  : "GET",										  
 										  "IncludeKeyFromBase" : "apikey",
-										  "GenericType" : "APICalls.Example.RealtimeCurrencyExchange",
-                                          
-                                          "Headers" : 
-                                          [
-                                            { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } ,
-                                            { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } 
-                                          ],
-                                          
+										  "GenericType" : "APICalls.Example.StockQuoteMaster",
+                                                                                    										  
                                           "Parameters" : 
 										  {
 											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },

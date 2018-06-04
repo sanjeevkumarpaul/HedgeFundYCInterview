@@ -39,15 +39,21 @@ namespace APICalls.Configurations
         private bool InitializeXML(string configurationFilePathOrXML)
         {
             //Try to load it from file or Parase xml string itself.
-            var all = (WrapIOs.Exists(configurationFilePathOrXML) ? XElement.Load(configurationFilePathOrXML) : XElement.Parse(configurationFilePathOrXML)).Elements();
+            try
+            {
+                var all = (WrapIOs.Exists(configurationFilePathOrXML) ? XElement.Load(configurationFilePathOrXML) : XElement.Parse(configurationFilePathOrXML)).Elements();
 
-            Base = new APIXmlNode(all.Where(n => n.Name == "Base").First(), null);
+                Base = new APIXmlNode(all.Where(n => n.Name == "Base").First(), null);
 
-            ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
-                          let order = (elem.Attribute("Order")?.Value ?? "0").ToInt()
-                          orderby order
-                          select elem;
-
+                ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
+                              let order = (elem.Attribute("Order")?.Value ?? "0").ToInt()
+                              orderby order
+                              select elem;
+            }
+            catch(Exception)
+            {                
+                return false;
+            }
             return true;
         }
 
@@ -56,11 +62,99 @@ namespace APICalls.Configurations
             string json = WrapIOs.Exists(configurationFilePathOrJSON) ? WrapIOs.ReadAllLines(configurationFilePathOrJSON).ToList().JoinExt(Environment.NewLine) : configurationFilePathOrJSON;
             if (!JsonValidator.IsValid(json)) return false;
 
-            var elements = JsonValidator.Create(json);
-
-
+            InitializeXML(JsonToXML(json));
 
             return true;
+        }
+
+        private string JsonToXML(string json)
+        {
+            var prospects = JsonValidator.Create(json);
+            var _nl = Environment.NewLine;
+
+            #region ^Xml Formats
+            string xml = $"<?xml version=\"1.0\" ?>{_nl}<APIProspects>{_nl}";
+            string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" />{_nl}";
+            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\">{_nl}";
+            string _authXml = $"<Authorization Type=\"{{0}}\" Token=\"{{1}}\" TokenAsHeader=\"{{2}}\" />{_nl}";
+            string _headerXml = $"<Header Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
+            string _paramHeaderXml = $"<Parameters QueryString=\"{{0}}\" ContentType=\"{{1}}\">{_nl}";
+            string _paramXml = $"<Parameter Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
+            #endregion ~Xml Formats
+
+            #region ^Parsing throught the Json
+            foreach ( var pros in prospects["APIProspects"])
+            {
+                #region ^Base Element
+                if (pros["Base"] != null)
+                {
+                    var _base = pros["Base"];
+                    xml += string.Format(_baseXml, _base["Name"]?.ToString(), _base["BaseUrl"]?.ToString(), _base["Key"]?.ToString());
+                }
+                #endregion ~Base Element
+
+                #region ^Prospect Element
+                else if (pros["APIProspect"] != null)
+                {
+                    var _prospect = pros["APIProspect"];
+                    xml += string.Format(_prospectXml, _prospect["Name"]?.ToString(), 
+                                                       _prospect["BaseUrl"]?.ToString(), 
+                                                       _prospect["Uri"]?.ToString(),
+                                                       _prospect["Method"]?.ToString(),
+                                                       _prospect["IncludeKeyFromBase"]?.ToString(),
+                                                       _prospect["GenericType"]?.ToString(),
+                                                       _prospect["Token"]?.ToString(),                                                       
+                                                       _prospect["ContentTypes"].ToString());
+                    #region ^Authorization Element
+                    if (_prospect["Authorization"] != null)
+                    {
+                        var _auth = _prospect["Authorization"];
+                        xml += string.Format(_authXml, _auth["Type"]?.ToString(), _auth["Token"]?.ToString(), _auth["TokenAsHeader"]?.ToString());
+                    }
+                    #endregion ~Authrization Element
+
+                    #region ^Header(s) Element
+                    if (_prospect["Headers"] != null)
+                    {
+                        xml += $"<Headers>{_nl}";
+                        foreach (var header in _prospect["Headers"])
+                        {
+                            xml += string.Format(_headerXml, header["Key"]?.ToString(), header["Value"]?.ToString());
+                        }
+                        xml += $"</Headers>{_nl}";
+                    }
+                    #endregion ~Header(s) Element
+
+                    #region ^Parameter(s) Element
+                    if (_prospect["Parameters"] != null)
+                    {
+                        if (_prospect["Parameters"]["ParamProperties"] != null)
+                        {
+                            var _props = _prospect["Parameters"]["ParamProperties"];
+                            xml += string.Format(_paramHeaderXml, _props["QueryString"]?.ToString(), _props["ContentType"]?.ToString());
+                        }
+                        else
+                            xml += $"<Parameters>{_nl}";
+                        if (_prospect["Parameters"]["ParamValues"] != null)
+                        {
+                            foreach (var param in _prospect["Parameters"]["ParamValues"])
+                            {
+                                xml += string.Format(_paramXml, param["Key"]?.ToString(), param["Value"]?.ToString());
+                            }
+                        }
+                        xml += $"</Parameters>{_nl}";
+                    }
+                    #endregion ~Parameters(s) Element
+
+                    xml += $"</APIProspect>{_nl}";
+                }
+                #endregion ~Prospect Element
+            }
+            xml += $"</APIProspects>{_nl}";
+            #endregion ~Parsing throught the Json
+
+            return xml;
+
         }
 
         #region ^API Calling Sequences

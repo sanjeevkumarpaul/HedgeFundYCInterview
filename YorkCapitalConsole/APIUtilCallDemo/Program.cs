@@ -41,7 +41,7 @@ namespace APIUtilCallDemo
                     var res = (result as RealtimeCurrencyExchange).RealtimeCurrencyExchangeRate;
 
                     Console.WriteLine("Exchange Currency Information Received...");
-                    Console.WriteLine($@"     >> From {res.FromCurrencyName}({res.FromCurrencyCode}) to {res.ToCurrencyName}({res.ToCurrencyCode}) => Exchange Rate: {res.ExchangeRate}");
+                    Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
                 }
             }
 

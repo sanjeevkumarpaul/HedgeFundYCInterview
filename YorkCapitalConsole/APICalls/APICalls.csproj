@@ -100,6 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ReadMe.txt" />
     <None Include="APIProspectConfiguration.json">
       <SubType>Designer</SubType>
     </None>
