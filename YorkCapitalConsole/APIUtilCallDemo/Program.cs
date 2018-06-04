@@ -60,17 +60,19 @@ namespace APIUtilCallDemo
 
         static void Main(string[] args)
         {
-            var options = new APIConfigurationOptions
-            {
-                Path = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml",
-                ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() }
-            };
+            //VIA XML
+            //var options = new APIConfigurationOptions
+            //{
+            //    Path = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml",
+            //    ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() }
+            //};
 
+            //VIA JSON
             var options1 = new APIConfigurationOptions
             {
                 Path = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
-                Type = "JSON"
+                Type = "JSON" //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
             };
 
             new APIConfiguration(options1)

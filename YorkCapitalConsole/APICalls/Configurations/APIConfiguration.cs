@@ -29,7 +29,51 @@ namespace APICalls.Configurations
             Initialize(options.ObjectParams);
             var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML(options.Path) : InitializeJson(options.Path);
         }
+       
+        #region ^API Calling Sequences
+        /// <summary>
+        /// Sequencial call to all API in a Enumerable.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IAPIProspect> ExecuteApis()
+        {            
+            foreach (var api in ApiElements)            
+                yield return ExecuteApi(api);          
+        }
 
+        /// <summary>
+        /// Reactive Observable way. Subscription to be precisely done via IAPIResult as responses will be thrown to Its method "Responses"
+        /// </summary>
+        /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
+        public void ExecuteApisObservable(IAPIResult apiResults)
+        {
+            ApiElements
+                .Select(api => ExecuteApi(api))
+                .ToObservable(NewThreadScheduler.Default)
+                .Finally(() => PostEvents(apiResults ) )
+                .Subscribe( (result) => apiResults.Reponses(result, this) );            
+        }
+        #endregion ~API Calling Sequences
+            
+        #region ^Extra Functional methods for Usage intermediatery
+        /// <summary>
+        /// Push intermediatry objects to that sequence of API calls can use it for Parameter references.
+        /// When more than one API is called, one of the object within the result of first API call, might be used in second API call. this is where it is handy.
+        /// </summary>
+        /// <param name="obj">Any Object</param>
+        public void InsertObjectParam(params object[] obj)
+        {
+            objectParams.ObjectParams.AddRange(obj);
+        }
+
+        public void Dispose()
+        {
+            objectParams = null;
+        }
+        #endregion ~Extra Functional methods for Usage intermediatery
+
+        #region ^Private methods
+        #region ^Initization of Options/XML/Json to reflect Nodes
         private void Initialize(object[] objectParameters)
         {
             //Keeping track.
@@ -50,8 +94,8 @@ namespace APICalls.Configurations
                               orderby order
                               select elem;
             }
-            catch(Exception)
-            {                
+            catch (Exception)
+            {
                 return false;
             }
             return true;
@@ -83,7 +127,7 @@ namespace APICalls.Configurations
             #endregion ~Xml Formats
 
             #region ^Parsing throught the Json
-            foreach ( var pros in prospects["APIProspects"])
+            foreach (var pros in prospects["APIProspects"])
             {
                 #region ^Base Element
                 if (pros["Base"] != null)
@@ -97,13 +141,13 @@ namespace APICalls.Configurations
                 else if (pros["APIProspect"] != null)
                 {
                     var _prospect = pros["APIProspect"];
-                    xml += string.Format(_prospectXml, _prospect["Name"]?.ToString(), 
-                                                       _prospect["BaseUrl"]?.ToString(), 
+                    xml += string.Format(_prospectXml, _prospect["Name"]?.ToString(),
+                                                       _prospect["BaseUrl"]?.ToString(),
                                                        _prospect["Uri"]?.ToString(),
                                                        _prospect["Method"]?.ToString(),
                                                        _prospect["IncludeKeyFromBase"]?.ToString(),
                                                        _prospect["GenericType"]?.ToString(),
-                                                       _prospect["Token"]?.ToString(),                                                       
+                                                       _prospect["Token"]?.ToString(),
                                                        _prospect["ContentTypes"].ToString());
                     #region ^Authorization Element
                     if (_prospect["Authorization"] != null)
@@ -156,50 +200,8 @@ namespace APICalls.Configurations
             return xml;
 
         }
+        #endregion ~Initization of Options/XML/Json to reflect Nodes
 
-        #region ^API Calling Sequences
-        /// <summary>
-        /// Sequencial call to all API in a Enumerable.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IAPIProspect> ExecuteApis()
-        {            
-            foreach (var api in ApiElements)            
-                yield return ExecuteApi(api);          
-        }
-
-        /// <summary>
-        /// Reactive Observable way. Subscription to be precisely done via IAPIResult as responses will be thrown to Its method "Responses"
-        /// </summary>
-        /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
-        public void ExecuteApisObservable(IAPIResult apiResults)
-        {
-            ApiElements
-                .Select(api => ExecuteApi(api))
-                .ToObservable(NewThreadScheduler.Default)
-                .Finally(() => PostEvents(apiResults ) )
-                .Subscribe( (result) => apiResults.Reponses(result, this) );            
-        }
-        #endregion ~API Calling Sequences
-            
-        #region ^Extra Functional methods for Usage intermediatery
-        /// <summary>
-        /// Push intermediatry objects to that sequence of API calls can use it for Parameter references.
-        /// When more than one API is called, one of the object within the result of first API call, might be used in second API call. this is where it is handy.
-        /// </summary>
-        /// <param name="obj">Any Object</param>
-        public void InsertObjectParam(params object[] obj)
-        {
-            objectParams.ObjectParams.AddRange(obj);
-        }
-
-        public void Dispose()
-        {
-            objectParams = null;
-        }
-        #endregion ~Extra Functional methods for Usage intermediatery
-
-        #region ^Private methods
         private void PostEvents(IAPIResult apiResults)
         {
             Task.Factory.StartNew(() => Dispose())
