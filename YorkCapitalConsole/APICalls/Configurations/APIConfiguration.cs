@@ -73,7 +73,7 @@ namespace APICalls.Configurations
         /// </summary>
         /// <param name="obj">Any object</param>
         public bool UpdateObjectParam(object obj)
-        {
+        {            
             if (this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)            
                 return this.objectParams.Params.Add(obj);                
             
@@ -88,6 +88,15 @@ namespace APICalls.Configurations
         public void UpdateObjectParam(object findObj, object replaceObj)
         {
             if (this.objectParams.Params.Remove(findObj)) this.objectParams.Params.Add(findObj);
+        }
+
+        /// <summary>
+        /// Takes many objects at a time and updates based on data.
+        /// </summary>
+        /// <param name="objs">Any Object</param>
+        public void UpdateObjectParams(params object[] objs)
+        {
+            foreach (var obj in objs) UpdateObjectParam(obj);
         }
 
         public void Dispose()

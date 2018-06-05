@@ -25,7 +25,7 @@ namespace APIUtilCallDemo
 
             public void Post(IEnumerable<IAPIProspect> results)
             {
-                
+                ///TO DO:
             }
 
             public void Reponses(IAPIProspect resultProspect, APIConfiguration config)
@@ -45,7 +45,7 @@ namespace APIUtilCallDemo
                     Console.WriteLine("Exchange Currency Information Received...");
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
-                    config.InsertObjectParam(new ExchangeCurrency { ToCurrency = _exchangeCountry > 0 ? "BDT" : "PKR" }, new StockQuoteSymbols { Symbols = "DIS,AXP" });
+                    config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _exchangeCountry > 0 ? "BDT" : "PKR" }, new StockQuoteSymbols { Symbols = "DIS,AXP" });
                     _exchangeCountry++;
                 }
             }
