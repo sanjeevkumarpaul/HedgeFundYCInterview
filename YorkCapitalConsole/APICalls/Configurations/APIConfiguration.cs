@@ -361,11 +361,22 @@ namespace APICalls.Configurations
             return realtype;
         }
 
+        /// <summary>
+        /// Check to see if User has requested for Cancellation.
+        /// </summary>
+        /// <returns></returns>
         private bool Cancelled()
         {
             return _isCancelled;
         }
 
+        /// <summary>
+        /// Checks if Cancellation for Repeated API is requested. 
+        /// If YES, it would check the current APINODE and compare the name against it, found to be same Cancells the Call.
+        ///    If happen to be different Name, it would negate the cancellation for future and puts executing APINODE to Current.
+        /// </summary>
+        /// <param name="node">APIXML Node object</param>
+        /// <returns></returns>
         private bool CancelledRepeat(APIXmlNode node)
         {
             if (_isCancelledRepeat)
@@ -384,11 +395,9 @@ namespace APICalls.Configurations
         /// <returns></returns>
         private IAPIProspect ExecuteApi( XElement api)
         {
-            if (Cancelled()) return null;
-
+            if (Cancelled()) return null;                    //Cancellation Token
             var node = new APIXmlNode(api, Base);
-
-            if (CancelledRepeat(node)) return null;
+            if (CancelledRepeat(node)) return null;          //Cancellation for Repeat
             
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
 
