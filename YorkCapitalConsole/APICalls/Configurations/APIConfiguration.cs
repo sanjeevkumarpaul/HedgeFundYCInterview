@@ -22,8 +22,10 @@ namespace APICalls.Configurations
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
         private IEnumerable<XElement> ApiElements;       
         private APIXmlNode Base;
+        private APIXmlNode Current;
         private APIObjectParameter objectParams;
         private bool _isCancelled = false;
+        private bool _isCancelledRepeat = false;
         private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
 
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
@@ -109,7 +111,7 @@ namespace APICalls.Configurations
 
         public void CancellCurrentRepeat()
         {
-
+            _isCancelledRepeat = true;
         }
 
         public void Dispose()
@@ -363,6 +365,15 @@ namespace APICalls.Configurations
         {
             return _isCancelled;
         }
+
+        private bool CancelledRepeat(APIXmlNode node)
+        {
+            if (_isCancelledRepeat)
+                if (node.Name == Current?.Name) return true;
+
+            Current = node; _isCancelledRepeat = false;
+            return false;
+        }
         #endregion ~End of methods
 
         /// <summary>
@@ -376,6 +387,8 @@ namespace APICalls.Configurations
             if (Cancelled()) return null;
 
             var node = new APIXmlNode(api, Base);
+
+            if (CancelledRepeat(node)) return null;
             
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
 
