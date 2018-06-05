@@ -23,7 +23,7 @@ namespace APICalls.Configurations
         private APIXmlNode Base;
         private APIObjectParameter objectParams;
 
-        private IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
+        public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
 
         public APIConfiguration(APIConfigurationOptions options)
         {

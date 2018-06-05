@@ -17,6 +17,7 @@ namespace APIUtilCallDemo
         {
             private int _exchangeCountry = 0;
 
+            #region ^IAPIResult Methods, where the APIConfig will Push the results
             public void Final(IAPIProspect result)
             {
                 Console.WriteLine();
@@ -33,7 +34,19 @@ namespace APIUtilCallDemo
                 ExchangeRate(resultProspect, config);
                 StockQuotes(resultProspect);
             }
+            #endregion ~IAPIResult Methods, where the APIConfig will Push the results
 
+            /// <summary>
+            /// To be used in Sequential calls as it requires user to interntact with results. 
+            /// We can code whatever we need to here.
+            /// </summary>
+            /// <param name="config"></param>
+            public void Result(APIConfiguration config)
+            {
+                Final(config.ProspectResults.Last());
+
+                //...
+            }
 
             //Respones in private methods.
             internal void ExchangeRate(IAPIProspect result, APIConfiguration config)
@@ -45,7 +58,9 @@ namespace APIUtilCallDemo
                     Console.WriteLine("Exchange Currency Information Received...");
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
-                    config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _exchangeCountry > 0 ? "BDT" : "PKR" }, new StockQuoteSymbols { Symbols = "DIS,AXP" });
+                    var currency = _exchangeCountry == 0 ? "BDT" :  _exchangeCountry == 1 ? "PKR" : "LKR";
+
+                    config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = currency }, new StockQuoteSymbols { Symbols = "DIS,AXP" });
                     _exchangeCountry++;
                 }
             }
