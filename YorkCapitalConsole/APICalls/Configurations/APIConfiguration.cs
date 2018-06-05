@@ -101,7 +101,6 @@ namespace APICalls.Configurations
             this.objectParams = new APIObjectParameter();            
             InsertObjectParam(objectParameters);            
         }
-
         private bool InitializeXML(string configurationFilePathOrXML)
         {
             //Try to load it from file or Parase xml string itself.
@@ -122,7 +121,6 @@ namespace APICalls.Configurations
             }
             return true;
         }
-
         private bool InitializeJson(string configurationFilePathOrJSON)
         {
             string json = WrapIOs.Exists(configurationFilePathOrJSON) ? WrapIOs.ReadAllLines(configurationFilePathOrJSON).ToList().JoinExt(Environment.NewLine) : configurationFilePathOrJSON;
@@ -132,7 +130,6 @@ namespace APICalls.Configurations
 
             return true;
         }
-
         private string JsonToXML(string json)
         {
             var prospects = JsonValidator.Create(json);
