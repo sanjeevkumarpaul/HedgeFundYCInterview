@@ -15,6 +15,8 @@ namespace APIUtilCallDemo
 
         public class ExchangeCallResults : IAPIResult
         {
+            private int _exchangeCountry = 0;
+
             public void Final(IAPIProspect result)
             {
                 Console.WriteLine();
@@ -43,7 +45,8 @@ namespace APIUtilCallDemo
                     Console.WriteLine("Exchange Currency Information Received...");
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
-                    config.UpdateObjectParam(new StockQuoteSymbols { Symbols = "DIS,AXP" });
+                    config.InsertObjectParam(new ExchangeCurrency { ToCurrency = _exchangeCountry > 0 ? "BDT" : "PKR" }, new StockQuoteSymbols { Symbols = "DIS,AXP" });
+                    _exchangeCountry++;
                 }
             }
 

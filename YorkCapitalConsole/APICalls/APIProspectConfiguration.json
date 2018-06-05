@@ -20,7 +20,8 @@
 												{ "Key" : "to_currency", 	"Value" : "{ExchangeCurrency.ToCurrency}"  	}
 											  ]
 										  },
-										  "ContentTypes" : "application/json"
+										  "ContentTypes" : "application/json",
+										  "Repeat" : "3"
                                         }
                       },
                       

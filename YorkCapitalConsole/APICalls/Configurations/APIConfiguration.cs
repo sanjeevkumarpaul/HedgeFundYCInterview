@@ -16,13 +16,6 @@ using Extensions;
 
 namespace APICalls.Configurations
 {
-    internal class XElementInserts
-    {
-        internal int Index { get; set; }
-        internal XElement Element { get; set; }
-    }
-
-
     public class APIConfiguration : IDisposable
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
