@@ -13,6 +13,7 @@ using Wrappers;
 using JsonSerializers;
 using Newtonsoft.Json.Linq;
 using Extensions;
+using System.Threading;
 
 namespace APICalls.Configurations
 {
@@ -22,6 +23,8 @@ namespace APICalls.Configurations
         private IEnumerable<XElement> ApiElements;       
         private APIXmlNode Base;
         private APIObjectParameter objectParams;
+        private bool _isCancelled = false;
+        private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
 
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
 
@@ -48,12 +51,11 @@ namespace APICalls.Configurations
         /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
         public void ExecuteApisObservable(IAPIResult apiResults)
         {
-
             ApiElements
-                .Select(api => ExecuteApi(api))
-                .ToObservable(NewThreadScheduler.Default)
+                .Select(api => ExecuteApi(api))                
+                .ToObservable(NewThreadScheduler.Default)                
                 .Finally(() => PostEvents(apiResults ) )
-                .Subscribe( (result) => apiResults.Reponses(result, this) );            
+                .Subscribe( (result) => apiResults.Reponses(result, this), _apiCancellation.Token );            
         }
         #endregion ~API Calling Sequences
             
@@ -65,7 +67,7 @@ namespace APICalls.Configurations
         /// <param name="obj">Any Object</param>
         public void InsertObjectParam(params object[] obj)
         {
-            if (obj != null) obj.ToList().ForEach(o => { if (!UpdateObjectParam( o )) this.objectParams.Params.Add(o); });
+            if (obj != null && !Cancelled()) obj.ToList().ForEach(o => { if (!UpdateObjectParam( o )) this.objectParams.Params.Add(o); });
         }
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace APICalls.Configurations
         /// <param name="obj">Any object</param>
         public bool UpdateObjectParam(object obj)
         {            
-            if (this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)            
+            if (!Cancelled() && this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)            
                 return this.objectParams.Params.Add(obj);                
             
             return false;
@@ -87,7 +89,7 @@ namespace APICalls.Configurations
         /// <param name="replaceObj">Any object</param>
         public void UpdateObjectParam(object findObj, object replaceObj)
         {
-            if (this.objectParams.Params.Remove(findObj)) this.objectParams.Params.Add(findObj);
+            if (!Cancelled() && this.objectParams.Params.Remove(findObj)) this.objectParams.Params.Add(findObj);
         }
 
         /// <summary>
@@ -97,6 +99,17 @@ namespace APICalls.Configurations
         public void UpdateObjectParams(params object[] objs)
         {
             foreach (var obj in objs) UpdateObjectParam(obj);
+        }
+
+        public void Cancell()
+        {
+            _isCancelled = true;
+            if (_apiCancellation != null) _apiCancellation.Cancel();
+        }
+
+        public void CancellCurrentRepeat()
+        {
+
         }
 
         public void Dispose()
@@ -345,6 +358,11 @@ namespace APICalls.Configurations
 
             return realtype;
         }
+
+        private bool Cancelled()
+        {
+            return _isCancelled;
+        }
         #endregion ~End of methods
 
         /// <summary>
@@ -355,6 +373,8 @@ namespace APICalls.Configurations
         /// <returns></returns>
         private IAPIProspect ExecuteApi( XElement api)
         {
+            if (Cancelled()) return null;
+
             var node = new APIXmlNode(api, Base);
             
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));

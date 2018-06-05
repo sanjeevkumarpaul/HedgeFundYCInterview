@@ -15,7 +15,13 @@ namespace APIUtilCallDemo
 
         public class ExchangeCallResults : IAPIResult
         {
-            private int _exchangeCountry = 0;
+            private int _exchangeCountry = 1;
+            private string[] _currencies;
+
+            public ExchangeCallResults(params string[] currencyCodes)
+            {
+                _currencies = currencyCodes;
+            }
 
             #region ^IAPIResult Methods, where the APIConfig will Push the results
             public void Final(IAPIProspect result)
@@ -58,10 +64,11 @@ namespace APIUtilCallDemo
                     Console.WriteLine("Exchange Currency Information Received...");
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
-                    var currency = _exchangeCountry == 0 ? "BDT" :  _exchangeCountry == 1 ? "PKR" : "LKR";
+                    if (res?.ExchangeRate.ToDouble() < 10.00) config.Cancell(); //Cancellation Token used.
 
-                    config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = currency }, new StockQuoteSymbols { Symbols = "DIS,AXP" });
-                    _exchangeCountry++;
+                    if (_exchangeCountry < _currencies.Length)
+                        config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++] }, 
+                                                  new StockQuoteSymbols { Symbols = "DIS,AXP" });                    
                 }
             }
 
@@ -96,7 +103,7 @@ namespace APIUtilCallDemo
             };
 
             new APIConfiguration(options1)
-            .ExecuteApisObservable(new ExchangeCallResults());
+            .ExecuteApisObservable(new ExchangeCallResults( "INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR" ));
 
 
             //Synchronouse.
