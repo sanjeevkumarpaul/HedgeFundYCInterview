@@ -11,8 +11,6 @@ using APICalls.Entities;
 using Extensions;
 using Wrappers;
 using JsonSerializers;
-using Newtonsoft.Json.Linq;
-using Extensions;
 using System.Threading;
 
 namespace APICalls.Configurations
@@ -20,22 +18,32 @@ namespace APICalls.Configurations
     public class APIConfiguration : IDisposable
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
-        private IEnumerable<XElement> ApiElements;       
+        private IEnumerable<XElement> ApiElements;
+
+        #region ^Required Objects for the App.
         private APIXmlNode Base;
         private APIXmlNode Current;
         private APIObjectParameter objectParams;
+        #endregion ~Required Objects for the App.
+
+        #region ^Required variables for the App.
         private bool _isCancelled = false;
         private bool _isCancelledRepeat = false;
         private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
+        #endregion ^Required variables for the App.
 
+        #region ^Public Properties
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
+        #endregion ~Public Properties
 
+        #region ^Constructor
         public APIConfiguration(APIConfigurationOptions options)
         {
             Initialize(options.ObjectParams);
             var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML(options.PathOrContent) : InitializeJson(options.PathOrContent);
         }
-       
+        #endregion ~Constructor
+
         #region ^API Calling Sequences
         /// <summary>
         /// Sequencial call to all API in a Enumerable.
@@ -60,8 +68,9 @@ namespace APICalls.Configurations
                 .Subscribe( (result) => apiResults.Reponses(result, this), _apiCancellation.Token );            
         }
         #endregion ~API Calling Sequences
-            
+
         #region ^Extra Functional methods for Usage intermediatery
+        #region ^Object Param Methods
         /// <summary>
         /// Push intermediatry objects to that sequence of API calls can use it for Parameter references.
         /// When more than one API is called, one of the object within the result of first API call, might be used in second API call. this is where it is handy.
@@ -102,7 +111,9 @@ namespace APICalls.Configurations
         {
             foreach (var obj in objs) UpdateObjectParam(obj);
         }
+        #endregion ~Object Param Methods
 
+        #region ^Cancel Token Methods
         public void Cancel()
         {
             _isCancelled = true;
@@ -113,6 +124,7 @@ namespace APICalls.Configurations
         {
             _isCancelledRepeat = true;
         }
+        #endregion ^Cancel Token Methods
 
         public void Dispose()
         {
