@@ -103,13 +103,13 @@ namespace APICalls.Configurations
             foreach (var obj in objs) UpdateObjectParam(obj);
         }
 
-        public void Cancell()
+        public void Cancel()
         {
             _isCancelled = true;
             if (_apiCancellation != null) _apiCancellation.Cancel();
         }
 
-        public void CancellCurrentRepeat()
+        public void CancelCurrentRepeat()
         {
             _isCancelledRepeat = true;
         }
@@ -387,6 +387,16 @@ namespace APICalls.Configurations
             Current = node; _isCancelledRepeat = false;
             return false;
         }
+
+        private APIXmlNode CreateApiNode(XElement api)
+        {
+            if (Cancelled()) return null;                    //Cancellation Token
+            var node = new APIXmlNode(api, Base);
+            if (CancelledRepeat(node)) return null;          //Cancellation for Repeat
+
+            return node;
+        }
+
         #endregion ~End of Cancellation Token Notification.
 
         /// <summary>
@@ -396,35 +406,35 @@ namespace APICalls.Configurations
         /// <param name="api"></param>
         /// <returns></returns>
         private IAPIProspect ExecuteApi( XElement api)
-        {
-            if (Cancelled()) return null;                    //Cancellation Token
-            var node = new APIXmlNode(api, Base);
-            if (CancelledRepeat(node)) return null;          //Cancellation for Repeat
-            
-            var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
-
-            using (var prosBase = (APIProspectOptionBase)prospect)
+        {            
+            if (CreateApiNode(api) != null)
             {
-                prosBase.BaseUrl = node.BaseUrl;
-                prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
-                prosBase.Method = node.Method;
-                prosBase.Parameters = InjectObjectParams(node);
-                prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
-                prosBase.Authorization = Authorization(node);
-                prosBase.RequestHeaders = ContentTypes(node);
+                var node = Current;
+                var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
+
+                using (var prosBase = (APIProspectOptionBase)prospect)
+                {
+                    prosBase.BaseUrl = node.BaseUrl;
+                    prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
+                    prosBase.Method = node.Method;
+                    prosBase.Parameters = InjectObjectParams(node);
+                    prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
+                    prosBase.Authorization = Authorization(node);
+                    prosBase.RequestHeaders = ContentTypes(node);
+                }
+
+                var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
+                var apiObject = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
+
+                var method = constructedType.GetMethod("Call");
+                var res = method.Invoke(apiObject, null);
+
+                node.Result = (IAPIProspect)res;
+                Apis.Add(node);
+                
+                return node.Result;
             }
-
-            var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
-            var apiObject = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
-
-            var method = constructedType.GetMethod("Call");
-            var res = method.Invoke(apiObject, null);
-
-            node.Result = (IAPIProspect)res;
-            Apis.Add(node);
-
-
-            return node.Result;
+            return null;
         }
 
         #endregion ~Private methods       

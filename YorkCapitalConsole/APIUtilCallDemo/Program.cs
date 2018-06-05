@@ -65,7 +65,7 @@ namespace APIUtilCallDemo
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
                     //if (_exchangeCountry > 2) config.Cancell(); //Cancellation Token used.
-                    if (_exchangeCountry > 2) config.CancellCurrentRepeat(); //Cancellation only for current Repeated API.
+                    if (_exchangeCountry > 2) config.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
 
                     if (_exchangeCountry < _currencies.Length)
                         config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++] }, 
