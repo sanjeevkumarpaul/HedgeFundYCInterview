@@ -12,14 +12,21 @@ using Extensions;
 using Wrappers;
 using JsonSerializers;
 using Newtonsoft.Json.Linq;
+using Extensions;
 
 namespace APICalls.Configurations
 {
+    internal class XElementInserts
+    {
+        internal int Index { get; set; }
+        internal XElement Element { get; set; }
+    }
+
+
     public class APIConfiguration : IDisposable
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
-        private IEnumerable<XElement> ApiElements;
-        //private string BaseUrl;
+        private IEnumerable<XElement> ApiElements;       
         private APIXmlNode Base;
         private APIObjectParameter objectParams;
 
@@ -48,6 +55,7 @@ namespace APICalls.Configurations
         /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
         public void ExecuteApisObservable(IAPIResult apiResults)
         {
+
             ApiElements
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)
@@ -64,17 +72,19 @@ namespace APICalls.Configurations
         /// <param name="obj">Any Object</param>
         public void InsertObjectParam(params object[] obj)
         {
-            if (obj != null) obj.ToList().ForEach(o => { this.objectParams.Params.Add(o); });
+            if (obj != null) obj.ToList().ForEach(o => { if (!UpdateObjectParam( o )) this.objectParams.Params.Add(o); });
         }
 
         /// <summary>
         /// Updates object param. Replaces an obj of same type with the argument type passed.
         /// </summary>
         /// <param name="obj">Any object</param>
-        public void UpdateObjectParam(object obj)
+        public bool UpdateObjectParam(object obj)
         {
-            if ( this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0 ) 
-                    this.objectParams.Params.Add(obj);
+            if (this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)            
+                return this.objectParams.Params.Add(obj);                
+            
+            return false;
         }
 
         /// <summary>
@@ -114,12 +124,33 @@ namespace APICalls.Configurations
                               let order = (elem.Attribute("Order")?.Value ?? "0").ToInt()
                               orderby order
                               select elem;
+
+                InsertRepeats(); //Taking ownership of repeat.
             }
             catch (Exception)
             {
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Inserts XElement of the same type where attribute "Repeat" is faciliated. The API will be called that many times yet you can control the results based on parameters on Subscribed events.
+        /// </summary>
+        private void InsertRepeats()
+        {
+            var _inserts = from elem in ApiElements
+                           let repeat = elem.Attribute("Repeat")?.Value.ToInt()
+                           where repeat > 0 select new { Repeat = repeat, Element = elem };
+
+            var allElements = ApiElements.ToList();
+            _inserts.All(_ins =>
+            {
+                for (int r = 1; r < _ins.Repeat; r++) allElements.Insert(allElements.IndexOf(_ins.Element), _ins.Element);
+                return true;
+            });
+            
+            ApiElements = from element in allElements select element;           
         }
         private bool InitializeJson(string configurationFilePathOrJSON)
         {
@@ -138,7 +169,7 @@ namespace APICalls.Configurations
             #region ^Xml Formats
             string xml = $"<?xml version=\"1.0\" ?>{_nl}<APIProspects>{_nl}";
             string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" />{_nl}";
-            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\">{_nl}";
+            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\">{_nl}";
             string _authXml = $"<Authorization Type=\"{{0}}\" Token=\"{{1}}\" TokenAsHeader=\"{{2}}\" />{_nl}";
             string _headerXml = $"<Header Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
             string _paramHeaderXml = $"<Parameters QueryString=\"{{0}}\" ContentType=\"{{1}}\">{_nl}";
@@ -167,7 +198,8 @@ namespace APICalls.Configurations
                                                        _prospect["IncludeKeyFromBase"]?.ToString(),
                                                        _prospect["GenericType"]?.ToString(),
                                                        _prospect["Token"]?.ToString(),
-                                                       _prospect["ContentTypes"].ToString());
+                                                       _prospect["ContentTypes"]?.ToString(),
+                                                       _prospect["Repeat"]?.ToString());
                     #region ^Authorization Element
                     if (_prospect["Authorization"] != null)
                     {

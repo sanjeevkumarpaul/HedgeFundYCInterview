@@ -41,7 +41,7 @@
 												{ "Key" : "symbols",  "Value" : "{StockQuoteSymbols.Symbols}"  }
 											  ]
 										  },
-										  "ContentTypes" : "application/json"
+										  "ContentTypes" : "application/json"				  
                                         }
                       }
                   ]

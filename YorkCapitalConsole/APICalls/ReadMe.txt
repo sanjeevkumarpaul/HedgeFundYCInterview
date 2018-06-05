@@ -1,4 +1,5 @@
-﻿Json Stucture
+﻿Json Stucture/Structure
+=====================
 
 {
   "APIProspects" :[
@@ -33,34 +34,13 @@
 												{ "Key" : "to_currency", 	"Value" : "{ExchangeCurrency.ToCurrency}"  	}
 											  ]
 										  },
-										  "ContentTypes" : "application/json"
+										  "ContentTypes" : "application/json",
+										  "Repeat" : "2"
                                         }
                       },
                       
                       { "APIProspect" : {
-                                          "Name"    : "StockQuotes",
-                                          "BaseUrl" : "",
-                                          "Uri"     : "",
-                                          "Method"  : "GET",										  
-										  "IncludeKeyFromBase" : "apikey",
-										  "GenericType" : "APICalls.Example.RealtimeCurrencyExchange",
-                                                                                    
-										  "Headers" : 
-                                          [
-                                            { "Key" : "CallerKey",       "Value" : "abcCallerInfo"       } ,
-                                            { "Key" : "CalculatedValue", "Value" : "{Project.HardValue}" } 
-                                          ],
-                                          
-                                          "Parameters" : 
-										  {
-											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
-											  "ParamValues" :
-											  [
-												{ "Key" : "function", "Value" : "BATCH_STOCK_QUOTES"  },
-												{ "Key" : "symbols",  "Value" : "{StockQuoteSymbols.Symbols}"  }
-											  ]
-										  },
-										  "ContentTypes" : "application/json"
+                                         ...
                                         }
                       }
                   ]
@@ -77,7 +57,7 @@ xml schema
 <APIProspects>
   <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" />
 
-  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.RealtimeCurrencyExchange">
+  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="2">
     
 	<Authorization Type="Bearer/Token/Auth" Token="{AnyNamedProspect.AnyProperty}" TokenAsHeader="True" />
 
