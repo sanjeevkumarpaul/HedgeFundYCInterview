@@ -64,22 +64,27 @@ namespace APICalls.Configurations
         /// <param name="obj">Any Object</param>
         public void InsertObjectParam(params object[] obj)
         {
-            objectParams.ObjectParams.AddRange(obj);
+            if (obj != null) obj.ToList().ForEach(o => { this.objectParams.Params.Add(o); });
         }
 
+        /// <summary>
+        /// Updates object param. Replaces an obj of same type with the argument type passed.
+        /// </summary>
+        /// <param name="obj">Any object</param>
         public void UpdateObjectParam(object obj)
         {
-            int index = 0;
-            objectParams.ObjectParams.ForEach(o => { if (obj.GetType() == o.GetType()) return; else index++; } );
-
-            if (index <= objectParams.ObjectParams.Count) objectParams.ObjectParams[index] = obj;
+            if ( this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0 ) 
+                    this.objectParams.Params.Add(obj);
         }
 
+        /// <summary>
+        /// Updates object param. Finds findObj and replaces iwth replaceObj.
+        /// </summary>
+        /// <param name="findObj">Any object</param>
+        /// <param name="replaceObj">Any object</param>
         public void UpdateObjectParam(object findObj, object replaceObj)
         {
-            int index = objectParams.ObjectParams.IndexOf(findObj);
-
-            if (index >= 0) objectParams.ObjectParams[index] = replaceObj;
+            if (this.objectParams.Params.Remove(findObj)) this.objectParams.Params.Add(findObj);
         }
 
         public void Dispose()
@@ -93,9 +98,8 @@ namespace APICalls.Configurations
         private void Initialize(object[] objectParameters)
         {
             //Keeping track.
-            this.objectParams = new APIObjectParameter();
-            if (objectParameters != null)
-                this.objectParams.ObjectParams.AddRange(objectParameters);
+            this.objectParams = new APIObjectParameter();            
+            InsertObjectParam(objectParameters);            
         }
 
         private bool InitializeXML(string configurationFilePathOrXML)
@@ -286,12 +290,12 @@ namespace APICalls.Configurations
         }
 
         private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true)
-        {
+        {           
             var val = (locateFromObjectParams ?
-                        objectParams.ObjectParams.Find(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
+                        objectParams.Params.FirstOrDefault(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
                         Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result)
                       ?.GetVal(propertyName);
-            
+
             return placeholderStr.Replace(pattern, val);
         }
         

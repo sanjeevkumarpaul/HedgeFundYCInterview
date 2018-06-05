@@ -8,8 +8,8 @@ namespace APICalls.Configurations
 {
     internal class APIObjectParameter
     {
-        internal List<object> ObjectParams { get; } = null;
+       internal HashSet<object> Params { get; } = null;
 
-        internal APIObjectParameter() { ObjectParams = new List<object>(); }
+        internal APIObjectParameter() { Params = new HashSet<object>(); }
     }    
 }
