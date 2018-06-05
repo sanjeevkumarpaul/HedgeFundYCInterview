@@ -360,7 +360,9 @@ namespace APICalls.Configurations
 
             return realtype;
         }
+        #endregion ~API realted information, Extract
 
+        #region ^Cancellation Token Notification.
         /// <summary>
         /// Check to see if User has requested for Cancellation.
         /// </summary>
@@ -385,7 +387,7 @@ namespace APICalls.Configurations
             Current = node; _isCancelledRepeat = false;
             return false;
         }
-        #endregion ~End of methods
+        #endregion ~End of Cancellation Token Notification.
 
         /// <summary>
         /// Executes API
