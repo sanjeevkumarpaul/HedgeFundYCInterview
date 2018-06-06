@@ -75,7 +75,7 @@ namespace APICalls.Configurations
         /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
         public void ExecuteApisObservable()
         {
-            if (Options.Subcriber == null) throw new Exception("Subscriber need to be passed for Observable Execution");
+            if (Options.Subcriber == null) throw new Exception("Subscriber must be passed for Observable Execution");
 
             ApiElements
                 .Select(api => ExecuteApi(api))                
