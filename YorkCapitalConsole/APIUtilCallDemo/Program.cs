@@ -100,22 +100,21 @@ namespace APIUtilCallDemo
             {
                 PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
-                Type = "JSON" //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
+                Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
+                Subcriber = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR")
             };
 
-            //new APIConfiguration(options1)
-            //.ExecuteApisObservable(new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR"));
+            //Observable
+            new APIConfiguration(options1).ExecuteApisObservable();
 
 
             //Synchronouse.
-            var config = new APIConfiguration(options1);
-            var exchange = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR");
-
-            foreach (var res in config.ExecuteApis(exchange)) ;
+            //var config = new APIConfiguration(options1);
+            //foreach (var res in config.ExecuteApis()) ;
             //
             //                        OR
             //
-            //foreach (var prospect in config.ExecuteApis(exchange))
+            //foreach (var prospect in config.ExecuteApis())
             //{
             //    //exchange.Reponses(prospect, config);  //If you donot provide exchange at .ExecuteApis, you need to call it from within for loop.
             //}

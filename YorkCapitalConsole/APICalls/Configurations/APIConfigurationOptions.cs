@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APICalls.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,6 @@ namespace APICalls.Configurations
         /// Either XML or Json direct content or fully wualified path.
         /// </summary>
         public string PathOrContent { get; set; }
-              
 
         /// <summary>
         /// Either XML/JSON. If any other string is provided XML will be considered.
@@ -20,5 +20,7 @@ namespace APICalls.Configurations
         public string Type { get; set; } = "XML";
 
         public object[] ObjectParams { get; set; }
+
+        public IAPIResult Subcriber { get; set; } = null;
     }
 }

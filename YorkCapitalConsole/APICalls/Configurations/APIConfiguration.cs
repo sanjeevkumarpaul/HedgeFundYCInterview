@@ -25,6 +25,7 @@ namespace APICalls.Configurations
         private IEnumerable<XElement> ApiElements;
 
         #region ^Required Objects for the App.
+        private APIConfigurationOptions Options;
         private APIXmlNode Base;
         private APIXmlNode Current;
         private APIObjectParameter objectParams;
@@ -43,8 +44,9 @@ namespace APICalls.Configurations
         #region ^Constructor
         public APIConfiguration(APIConfigurationOptions options)
         {
-            Initialize(options.ObjectParams);
-            var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML(options.PathOrContent) : InitializeJson(options.PathOrContent);
+            Options = options;
+            Initialize();
+            var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML() : InitializeJson();
         }
         #endregion ~Constructor
 
@@ -53,31 +55,33 @@ namespace APICalls.Configurations
         /// Sequencial call to all API in a Enumerable.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<IAPIProspect> ExecuteApis(IAPIResult apiResults = null)
+        public IEnumerable<IAPIProspect> ExecuteApis()
         {
             foreach (var api in ApiElements)
             {
                 var res = ExecuteApi(api);
                 if (_isCancelled || _isCancelledRepeat) continue;
-                if (apiResults != null) apiResults.Reponses(res, this);
+                if (Options.Subcriber != null) Options.Subcriber.Reponses(res, this);
                 yield return res;
             }
 
             //Post back POST and FINAL with IAPIResults
-            if (apiResults != null) PostEvents(apiResults);
+            if (Options.Subcriber != null) PostEvents();
         }
 
         /// <summary>
         /// Reactive Observable way. Subscription to be precisely done via IAPIResult as responses will be thrown to Its method "Responses"
         /// </summary>
         /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
-        public void ExecuteApisObservable(IAPIResult apiResults)
+        public void ExecuteApisObservable()
         {
+            if (Options.Subcriber == null) throw new Exception("Subscriber need to be passed for Observable Execution");
+
             ApiElements
                 .Select(api => ExecuteApi(api))                
                 .ToObservable(NewThreadScheduler.Default)                
-                .Finally(() => PostEvents( apiResults ) )
-                .Subscribe( (result) => apiResults.Reponses(result, this), _apiCancellation.Token );            
+                .Finally(() => PostEvents( ) )
+                .Subscribe( (result) => Options.Subcriber.Reponses(result, this), _apiCancellation.Token );            
         }
 
         #endregion ~API Calling Sequences
@@ -147,18 +151,20 @@ namespace APICalls.Configurations
 
         #region ^Private methods
         #region ^Initization of Options/XML/Json to reflect Nodes
-        private void Initialize(object[] objectParameters)
+        private void Initialize()
         {
             //Keeping track.
             this.objectParams = new APIObjectParameter();            
-            InsertObjectParam(objectParameters);            
+            InsertObjectParam(Options.ObjectParams);            
         }
-        private bool InitializeXML(string configurationFilePathOrXML)
+        private bool InitializeXML(string xml = null)
         {
             //Try to load it from file or Parase xml string itself.
             try
             {
-                var all = (WrapIOs.Exists(configurationFilePathOrXML) ? XElement.Load(configurationFilePathOrXML) : XElement.Parse(configurationFilePathOrXML)).Elements();
+                xml = xml ?? Options.PathOrContent;
+
+                var all = (WrapIOs.Exists(xml) ? XElement.Load(xml) : XElement.Parse(xml)).Elements();
 
                 Base = new APIXmlNode(all.Where(n => n.Name == "Base").First(), null);
 
@@ -194,9 +200,9 @@ namespace APICalls.Configurations
             
             ApiElements = from element in allElements select element;           
         }
-        private bool InitializeJson(string configurationFilePathOrJSON)
+        private bool InitializeJson()
         {
-            string json = WrapIOs.Exists(configurationFilePathOrJSON) ? WrapIOs.ReadAllLines(configurationFilePathOrJSON).ToList().JoinExt(Environment.NewLine) : configurationFilePathOrJSON;
+            string json = WrapIOs.Exists(Options.PathOrContent) ? WrapIOs.ReadAllLines(Options.PathOrContent).ToList().JoinExt(Environment.NewLine) : Options.PathOrContent;
             if (!JsonValidator.IsValid(json)) return false;
 
             InitializeXML(JsonToXML(json));
@@ -300,11 +306,11 @@ namespace APICalls.Configurations
         /// At the end, Post and Final Subscription to be posted back to the caller.
         /// </summary>
         /// <param name="apiResults"></param>
-        private void PostEvents(IAPIResult apiResults)
+        private void PostEvents()
         {
             Task.Factory.StartNew(() => Dispose())
-                        .ContinueWith(antecendent => apiResults.Post(this.ProspectResults))
-                        .ContinueWith(antecendent => apiResults.Final(Apis.Last().Result))
+                        .ContinueWith(antecendent => Options.Subcriber.Post(this.ProspectResults))
+                        .ContinueWith(antecendent => Options.Subcriber.Final(Apis.Last().Result))
                         .Wait();
         }
         #endregion
