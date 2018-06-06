@@ -19,7 +19,19 @@ using System.Threading;
 
 namespace APICalls.Configurations
 {
-    public class APIConfiguration : IDisposable
+
+    public partial class APIConfiguration : IDisposable
+    {
+        public void Dispose()
+        {
+            objectParams = null;
+        }
+    }
+
+    /// <summary>
+    /// Requried Variables
+    /// </summary>
+    public partial class APIConfiguration
     {
         private List<APIXmlNode> Apis = new List<APIXmlNode>();
         private IEnumerable<XElement> ApiElements;
@@ -36,18 +48,30 @@ namespace APICalls.Configurations
         private bool _isCancelledRepeat = false;
         private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
         #endregion ^Required variables for the App.
+    }
 
+    /// <summary>
+    /// Required Public Properties
+    /// </summary>
+    public partial class APIConfiguration
+    {
         #region ^Public Properties
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
-        
-        public IAPIResult Subscriber { get { return Options.Subcriber;  } }
-        #endregion ~Public Properties
 
+        public IAPIResult Subscriber { get { return Options.Subcriber; } }
+        #endregion ~Public Properties
+    }
+
+    /// <summary>
+    /// Mandatory User Interactive Public Methods
+    /// </summary>
+    public partial class APIConfiguration
+    {
         #region ^Constructor
         public APIConfiguration(APIConfigurationOptions options)
         {
             Options = options;
-            Initialize(() => { var inz = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML() : InitializeJson(); });            
+            Initialize(() => { var inz = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML() : InitializeJson(); });
         }
         #endregion ~Constructor
 
@@ -79,14 +103,20 @@ namespace APICalls.Configurations
             if (Options.Subcriber == null) throw new Exception("Subscriber must be passed for Observable Execution");
 
             ApiElements
-                .Select(api => ExecuteApi(api))                
-                .ToObservable(NewThreadScheduler.Default)                
-                .Finally(() => PostEvents( ) )
-                .Subscribe( (result) => Options.Subcriber.Reponses(result, this), _apiCancellation.Token );            
+                .Select(api => ExecuteApi(api))
+                .ToObservable(NewThreadScheduler.Default)
+                .Finally(() => PostEvents())
+                .Subscribe((result) => Options.Subcriber.Reponses(result, this), _apiCancellation.Token);
         }
 
         #endregion ~API Calling Sequences
+    }
 
+    /// <summary>
+    /// Other public methods, for Users to interact
+    /// </summary>
+    public partial class APIConfiguration
+    {
         #region ^Extra Functional methods for Usage intermediatery
         #region ^Object Param Methods
         /// <summary>
@@ -96,7 +126,7 @@ namespace APICalls.Configurations
         /// <param name="obj">Any Object</param>
         public void InsertObjectParam(params object[] obj)
         {
-            if (obj != null && !Cancelled()) obj.ToList().ForEach(o => { if (!UpdateObjectParam( o )) this.objectParams.Params.Add(o); });
+            if (obj != null && !Cancelled()) obj.ToList().ForEach(o => { if (!UpdateObjectParam(o)) this.objectParams.Params.Add(o); });
         }
 
         /// <summary>
@@ -104,10 +134,10 @@ namespace APICalls.Configurations
         /// </summary>
         /// <param name="obj">Any object</param>
         public bool UpdateObjectParam(object obj)
-        {            
-            if (!Cancelled() && this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)            
-                return this.objectParams.Params.Add(obj);                
-            
+        {
+            if (!Cancelled() && this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)
+                return this.objectParams.Params.Add(obj);
+
             return false;
         }
 
@@ -144,18 +174,20 @@ namespace APICalls.Configurations
         }
         #endregion ^Cancel Token Methods
 
-        public void Dispose()
-        {
-            objectParams = null;
-        }
         #endregion ~Extra Functional methods for Usage intermediatery
+    }
 
-        #region ^Private methods
+    #region ^Private methods
+    /// <summary>
+    /// Initiating Private methods
+    /// </summary>
+    public partial class APIConfiguration
+    {        
         #region ^Initization of Options/XML/Json to reflect Nodes
         private void Initialize(Action apiInvoker)
         {
             //Keeping track.
-            this.objectParams = new APIObjectParameter();            
+            this.objectParams = new APIObjectParameter();
             InsertObjectParam(Options.ObjectParams);
 
             apiInvoker();
@@ -200,8 +232,8 @@ namespace APICalls.Configurations
                 for (int r = 1; r < _ins.Repeat; r++) allElements.Insert(allElements.IndexOf(_ins.Element), _ins.Element);
                 return true;
             });
-            
-            ApiElements = from element in allElements select element;           
+
+            ApiElements = from element in allElements select element;
         }
         private bool InitializeJson()
         {
@@ -303,7 +335,13 @@ namespace APICalls.Configurations
 
         }
         #endregion ~Initization of Options/XML/Json to reflect Nodes
+    }
 
+    /// <summary>
+    /// Subscriber/Subscription Private methods.
+    /// </summary>
+    public partial class APIConfiguration
+    {
         #region ^End Subcription to Raise. Post and Final
         /// <summary>
         /// At the end, Post and Final Subscription to be posted back to the caller.
@@ -317,40 +355,93 @@ namespace APICalls.Configurations
                         .Wait();
         }
         #endregion
+    }
 
+    /// <summary>
+    /// API Extraction and Execution private methods
+    /// </summary>
+    public partial class APIConfiguration
+    {
         #region ^API related information, Extract
+        /// <summary>
+        /// Executes API
+        /// First creates XML NODE object, Creates instances of APIProspect<> and APIUti<> and then calls 'Call' method of APIUtil for synchronous call.
+        /// </summary>
+        /// <param name="api"></param>
+        /// <returns></returns>
+        private IAPIProspect ExecuteApi(XElement api)
+        {
+            if (CreateApiNode(api) != null)
+            {
+                var node = Current;
+                var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
+
+                using (var prosBase = (APIProspectOptionBase)prospect)
+                {
+                    prosBase.BaseUrl = node.BaseUrl;
+                    prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
+                    prosBase.Method = node.Method;
+                    prosBase.Parameters = InjectObjectParams(node);
+                    prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
+                    prosBase.Authorization = Authorization(node);
+                    prosBase.RequestHeaders = ContentTypes(node);
+                }
+
+                var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
+                var apiObject = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
+
+                var method = constructedType.GetMethod("Call");
+                var res = method.Invoke(apiObject, null);
+
+                node.Result = (IAPIProspect)res;
+                Apis.Add(node);
+
+                return node.Result;
+            }
+            return null;
+        }
+
+        private APIXmlNode CreateApiNode(XElement api)
+        {
+            if (Cancelled()) return null;                    //Cancellation Token
+            var node = new APIXmlNode(api, Base);
+            if (CancelledRepeat(node)) return null;          //Cancellation for Repeat
+
+            return node;
+        }
+
         private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
 
-            var auth = new APIAuthorization {  IsTokenAHeader = node.TokenAsHeader, Token = LocateDynamicParamValue(node.Token, false) };
-            
+            var auth = new APIAuthorization { IsTokenAHeader = node.TokenAsHeader, Token = LocateDynamicParamValue(node.Token, false) };
+
             return auth;
         }
 
         private APIRequestHeaders ContentTypes(APIXmlNode node)
         {
-            var content = new APIRequestHeaders {   AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
-                                                    ParameterContentType = node.ParamContentType,
-                                                    Headers  = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
-                                                };
+            var content = new APIRequestHeaders { AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
+                ParameterContentType = node.ParamContentType,
+                Headers = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
+            };
 
             return content;
         }
 
-        private Dictionary<string, string> InjectObjectParams(APIXmlNode node )
+        private Dictionary<string, string> InjectObjectParams(APIXmlNode node)
         {
             var parameters = node.Parameters?.Keys.ToList();
 
             return parameters == null ?
                         node.Parameters :
-                        ( ( Func<Dictionary<string, string>>)( () =>
-                        {
-                              Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
-                              parameters.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(node.Parameters[k])));
+                        ((Func<Dictionary<string, string>>)(() =>
+                     {
+                         Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
+                         parameters.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(node.Parameters[k])));
 
-                              return dictReplacers;
-                        }))();
+                         return dictReplacers;
+                     }))();
         }
 
         private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true)
@@ -365,12 +456,12 @@ namespace APICalls.Configurations
 
                 return true;
             });
-            
-            return placeholderStr;            
+
+            return placeholderStr;
         }
 
         private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true)
-        {           
+        {
             var val = (locateFromObjectParams ?
                         objectParams.Params.FirstOrDefault(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
                         Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result)
@@ -378,10 +469,10 @@ namespace APICalls.Configurations
 
             return placeholderStr.Replace(pattern, val);
         }
-        
+
         private Type CreateGenericType(string prospectType, Type genericType)
         {
-            Type customType = Type.GetType(prospectType);                
+            Type customType = Type.GetType(prospectType);
             Type constructedType = genericType.MakeGenericType(customType);
 
             return constructedType;
@@ -395,7 +486,13 @@ namespace APICalls.Configurations
             return realtype;
         }
         #endregion ~API realted information, Extract
+    }
 
+    /// <summary>
+    /// Private Cancellation Check methods.
+    /// </summary>
+    public partial class APIConfiguration
+    {
         #region ^Cancellation Token Notification.
         /// <summary>
         /// Check to see if User has requested for Cancellation.
@@ -421,56 +518,8 @@ namespace APICalls.Configurations
             Current = node; _isCancelledRepeat = false;
             return false;
         }
-
-        private APIXmlNode CreateApiNode(XElement api)
-        {
-            if (Cancelled()) return null;                    //Cancellation Token
-            var node = new APIXmlNode(api, Base);
-            if (CancelledRepeat(node)) return null;          //Cancellation for Repeat
-
-            return node;
-        }
-
         #endregion ~End of Cancellation Token Notification.
-
-        /// <summary>
-        /// Executes API
-        /// First creates XML NODE object, Creates instances of APIProspect<> and APIUti<> and then calls 'Call' method of APIUtil for synchronous call.
-        /// </summary>
-        /// <param name="api"></param>
-        /// <returns></returns>
-        private IAPIProspect ExecuteApi( XElement api)
-        {            
-            if (CreateApiNode(api) != null)
-            {
-                var node = Current;
-                var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
-
-                using (var prosBase = (APIProspectOptionBase)prospect)
-                {
-                    prosBase.BaseUrl = node.BaseUrl;
-                    prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
-                    prosBase.Method = node.Method;
-                    prosBase.Parameters = InjectObjectParams(node);
-                    prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
-                    prosBase.Authorization = Authorization(node);
-                    prosBase.RequestHeaders = ContentTypes(node);
-                }
-
-                var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
-                var apiObject = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
-
-                var method = constructedType.GetMethod("Call");
-                var res = method.Invoke(apiObject, null);
-
-                node.Result = (IAPIProspect)res;
-                Apis.Add(node);
-                
-                return node.Result;
-            }
-            return null;
-        }
-
-        #endregion ~Private methods       
     }
+
+    #endregion ~End of Private methods.
 }
