@@ -288,7 +288,7 @@ namespace Wrappers
                     // try to get from properties collection first
                     return Properties[key];
                 }
-                catch (KeyNotFoundException ex)
+                catch (KeyNotFoundException)
                 {
                     // try reflection on instanceType
                     object result = null;

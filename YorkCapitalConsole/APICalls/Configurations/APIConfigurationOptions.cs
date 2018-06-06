@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace APICalls.Configurations
 {
+    /// <summary>
+    /// Public class to create Options for API to execute.
+    /// </summary>
     public class APIConfigurationOptions
     {
         /// <summary>
@@ -17,6 +20,9 @@ namespace APICalls.Configurations
         /// Either XML/JSON. If any other string is provided XML will be considered.
         /// </summary>
         public string Type { get; set; } = "XML";
+        /// <summary>
+        /// If TRUE, Repeat configuration will not be executed.
+        /// </summary>
         public bool NoRepeat { get; set; } = false;
         /// <summary>
         /// Objects which are refered inside the Configuration to which Parameters gets their input via Objects properties {Object.Property}
