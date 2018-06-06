@@ -1,17 +1,21 @@
-﻿using System;
+﻿#region ^System Namespaces
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+#endregion ~System Namespaces
+
+#region ^Custom Namespaces
 using APICalls.Entities;
 using Extensions;
 using Wrappers;
 using JsonSerializers;
 using System.Threading;
+#endregion ~Custom Namespaces
 
 namespace APICalls.Configurations
 {
@@ -49,10 +53,18 @@ namespace APICalls.Configurations
         /// Sequencial call to all API in a Enumerable.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<IAPIProspect> ExecuteApis()
-        {            
-            foreach (var api in ApiElements)            
-                yield return ExecuteApi(api);          
+        public IEnumerable<IAPIProspect> ExecuteApis(IAPIResult apiResults = null)
+        {
+            foreach (var api in ApiElements)
+            {
+                var res = ExecuteApi(api);
+                if (_isCancelled || _isCancelledRepeat) continue;
+                if (apiResults != null) apiResults.Reponses(res, this);
+                yield return res;
+            }
+
+            //Post back POST and FINAL with IAPIResults
+            if (apiResults != null) PostEvents(apiResults);
         }
 
         /// <summary>
@@ -64,9 +76,10 @@ namespace APICalls.Configurations
             ApiElements
                 .Select(api => ExecuteApi(api))                
                 .ToObservable(NewThreadScheduler.Default)                
-                .Finally(() => PostEvents(apiResults ) )
+                .Finally(() => PostEvents( apiResults ) )
                 .Subscribe( (result) => apiResults.Reponses(result, this), _apiCancellation.Token );            
         }
+
         #endregion ~API Calling Sequences
 
         #region ^Extra Functional methods for Usage intermediatery

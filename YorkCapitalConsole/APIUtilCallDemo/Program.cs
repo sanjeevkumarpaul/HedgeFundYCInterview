@@ -64,7 +64,7 @@ namespace APIUtilCallDemo
                     Console.WriteLine("Exchange Currency Information Received...");
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
-                    //if (_exchangeCountry > 2) config.Cancell(); //Cancellation Token used.
+                    //if (_exchangeCountry > 2) config.Cancel(); //Cancellation Token used.
                     if (_exchangeCountry > 2) config.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
 
                     if (_exchangeCountry < _currencies.Length)
@@ -103,16 +103,23 @@ namespace APIUtilCallDemo
                 Type = "JSON" //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
             };
 
-            new APIConfiguration(options1)
-            .ExecuteApisObservable(new ExchangeCallResults( "INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR" ));
+            //new APIConfiguration(options1)
+            //.ExecuteApisObservable(new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR"));
 
 
             //Synchronouse.
-            //foreach(var prospect in new APIXmlConfiguration(filename, new ExchangeCurrency()).ExecuteApis())
-            //{
-            //    new ExchangeCallResults().Reponses( prospect, null );
-            //}
+            var config = new APIConfiguration(options1);
+            var exchange = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR");
 
+            foreach (var res in config.ExecuteApis(exchange)) ;
+            //
+            //                        OR
+            //
+            //foreach (var prospect in config.ExecuteApis(exchange))
+            //{
+            //    //exchange.Reponses(prospect, config);  //If you donot provide exchange at .ExecuteApis, you need to call it from within for loop.
+            //}
+            //
 
             Console.ReadKey();
         }
