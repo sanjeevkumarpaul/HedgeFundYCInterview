@@ -101,7 +101,8 @@ namespace APIUtilCallDemo
                 PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
                 Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
-                Subcriber = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR")
+                Subcriber = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR"),
+                //NoRepeat = true
             };
 
             //Observable

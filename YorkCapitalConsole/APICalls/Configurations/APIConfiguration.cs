@@ -19,7 +19,9 @@ using System.Threading;
 
 namespace APICalls.Configurations
 {
-
+    /// <summary>
+    /// Public class
+    /// </summary>
     public partial class APIConfiguration : IDisposable
     {
         public void Dispose()
@@ -27,7 +29,6 @@ namespace APICalls.Configurations
             objectParams = null;
         }
     }
-
     /// <summary>
     /// Requried Variables
     /// </summary>
@@ -49,7 +50,6 @@ namespace APICalls.Configurations
         private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
         #endregion ^Required variables for the App.
     }
-
     /// <summary>
     /// Required Public Properties
     /// </summary>
@@ -61,7 +61,6 @@ namespace APICalls.Configurations
         public IAPIResult Subscriber { get { return Options.Subcriber; } }
         #endregion ~Public Properties
     }
-
     /// <summary>
     /// Mandatory User Interactive Public Methods
     /// </summary>
@@ -111,7 +110,6 @@ namespace APICalls.Configurations
 
         #endregion ~API Calling Sequences
     }
-
     /// <summary>
     /// Other public methods, for Users to interact
     /// </summary>
@@ -222,6 +220,8 @@ namespace APICalls.Configurations
         /// </summary>
         private void InsertRepeats()
         {
+            if (Options.NoRepeat) return;
+
             var _inserts = from elem in ApiElements
                            let repeat = elem.Attribute("Repeat")?.Value.ToInt()
                            where repeat > 0 select new { Repeat = repeat, Element = elem };
