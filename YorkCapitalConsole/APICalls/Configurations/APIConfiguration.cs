@@ -39,6 +39,8 @@ namespace APICalls.Configurations
 
         #region ^Public Properties
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
+        
+        public IAPIResult Subscriber { get { return Options.Subcriber;  } }
         #endregion ~Public Properties
 
         #region ^Constructor
