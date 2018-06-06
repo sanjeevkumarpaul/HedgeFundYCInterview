@@ -45,8 +45,7 @@ namespace APICalls.Configurations
         public APIConfiguration(APIConfigurationOptions options)
         {
             Options = options;
-            Initialize();
-            var initialization = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML() : InitializeJson();
+            Initialize(() => { var inz = options.Type.Equals("XML", StringComparison.CurrentCultureIgnoreCase) ? InitializeXML() : InitializeJson(); });            
         }
         #endregion ~Constructor
 
@@ -151,11 +150,13 @@ namespace APICalls.Configurations
 
         #region ^Private methods
         #region ^Initization of Options/XML/Json to reflect Nodes
-        private void Initialize()
+        private void Initialize(Action apiInvoker)
         {
             //Keeping track.
             this.objectParams = new APIObjectParameter();            
-            InsertObjectParam(Options.ObjectParams);            
+            InsertObjectParam(Options.ObjectParams);
+
+            apiInvoker();
         }
         private bool InitializeXML(string xml = null)
         {
