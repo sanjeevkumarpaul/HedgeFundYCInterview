@@ -165,8 +165,7 @@ namespace APICalls
             }
             catch (Exception e)
             {
-                throw new APIException(response != null ? response : new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message },
-                                       (APIProspectOptionBase)prospect);
+                throw CreateException(response, e);
             }
         }
 
@@ -187,8 +186,7 @@ namespace APICalls
             }
             catch (Exception e)
             {
-                throw new APIException(response != null ? response : new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message },
-                                       (APIProspectOptionBase)prospect);
+                throw CreateException(response, e);
             }
         }
 
@@ -202,7 +200,6 @@ namespace APICalls
                 response = client.GetAsync(prospect.Url).Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    throw new APIException(response, (APIProspectOptionBase)prospect);
                     var data = response.Content.ReadAsStringAsync().Result;
                     return data;
                 }
@@ -210,8 +207,7 @@ namespace APICalls
             }           
             catch (Exception e)
             {
-                throw new APIException(response != null ? response :  new HttpResponseMessage { StatusCode= System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message }, 
-                                       (APIProspectOptionBase)prospect);
+                throw CreateException(response, e);
             }
             
         }
@@ -233,8 +229,7 @@ namespace APICalls
             }
             catch (Exception e)
             {
-                throw new APIException(response != null ? response : new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message },
-                                       (APIProspectOptionBase)prospect);
+                throw CreateException(response, e);
             }
         }
         
