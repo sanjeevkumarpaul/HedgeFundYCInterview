@@ -85,7 +85,7 @@ namespace APICalls.Configurations
             {
                 var res = ExecuteApi(api);
                 if (_isCancelled || _isCancelledRepeat) continue;
-                PostSubscription();
+                PostSubscription(res);
                 yield return res;
             }
 
@@ -106,7 +106,7 @@ namespace APICalls.Configurations
                 .ToObservable(NewThreadScheduler.Default)    
                 //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops               
                 .Finally(() => PostFinalEvents())                
-                .Subscribe((result) => PostSubscription(), 
+                .Subscribe((result) => PostSubscription(result), 
                            //((exp)=> Options.Subcriber.Error<APIException>(exp as APIException, this)),   //This Stops the whole process not even second sequence is considered.
                            _apiCancellation.Token);
 
@@ -350,14 +350,14 @@ namespace APICalls.Configurations
         /// <summary>
         /// After every API Execution, this method is called to post back responses back to Subcribed Class (which user has provided)
         /// </summary>
-        private void PostSubscription()
+        private void PostSubscription(IAPIProspect result)
         {
             if (Options.Subcriber != null)
             {
-                if (Current.Result is APIException)
-                    Options.Subcriber.Error(Current.Result as APIException, this);
+                if (result is APIException)
+                    Options.Subcriber.Error(result as APIException, this);
                 else
-                    Options.Subcriber.Reponses(Current.Result, this);
+                    Options.Subcriber.Reponses(result, this);
             }
         }
         
@@ -417,9 +417,9 @@ namespace APICalls.Configurations
                     var res = method.Invoke(apiObject, null);                    
                     node.Result = (IAPIProspect)res;
                 }
-                catch(APIException ex)
+                catch(Exception ex)
                 {
-                    node.Result = ex;                    
+                    if (ex.InnerException != null && ex.InnerException is APIException) node.Result = (APIException)ex.InnerException;                    
                 }
                 
 

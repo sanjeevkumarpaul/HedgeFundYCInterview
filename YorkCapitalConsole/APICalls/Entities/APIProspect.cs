@@ -18,22 +18,11 @@ namespace APICalls.Entities
         public APIAuthorization Authorization { get; set; }
         public APIRequestHeaders RequestHeaders { get; set; }
 
-        public void Dispose()
-        {
-
-        }
-    }
-
-    public class APIProspect<T> : APIProspectOptionBase where T: IAPIProspect, new()
-    {
-        
-        public T Result { get; set; }
-
         internal HttpMethod HttpMethod
         {
             get
             {
-                switch(Method)
+                switch (Method)
                 {
                     case APIMethod.POST: return HttpMethod.Post;
                     case APIMethod.GET: return HttpMethod.Get;
@@ -50,7 +39,7 @@ namespace APICalls.Entities
         {
             get
             {
-                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + ( (ParametersIsQueryString || Method == APIMethod.POST) ? QueryString : "");
+                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + ((ParametersIsQueryString || Method == APIMethod.POST) ? QueryString : "");
 
                 return _url;
 
@@ -64,10 +53,25 @@ namespace APICalls.Entities
                 string _url = "";
 
                 if (Parameters != null)
-                  Parameters.Keys.All(k => (_url += $"{k}={Parameters[k]}&") != null);
+                    Parameters.Keys.All(k => (_url += $"{k}={Parameters[k]}&") != null);
 
-                return  (!_url.Empty()? "?" : "") + _url.TrimEx("&");
+                return (!_url.Empty() ? "?" : "") + _url.TrimEx("&");
             }
+        }
+
+        public void Dispose()
+        {
+
+        }
+    }
+
+    public class APIProspect<T> : APIProspectOptionBase where T: IAPIProspect, new()
+    {        
+        public T Result { get; set; }
+
+        public APIProspect()
+        {
+            Result = new T();
         }
     }
 }

@@ -151,84 +151,91 @@ namespace APICalls
 
         private async Task<string> GetItAsync()
         {
+            HttpResponseMessage response = null;
             try
             {
                 var request = CreateRequest();
-                HttpResponseMessage response = await client.GetAsync(prospect.Url);
+                response = await client.GetAsync(prospect.Url);
                 if (response.IsSuccessStatusCode)
                 {
                     var data = await response.Content.ReadAsStringAsync();
                     return data;
                 }
+                else throw new Exception();
             }
-            catch
+            catch (Exception e)
             {
-
+                throw new APIException(response != null ? response : new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message },
+                                       (APIProspectOptionBase)prospect);
             }
-            return string.Empty;
         }
 
         private async Task<string> PostItAsync()
         {
+            HttpResponseMessage response = null;
             try
             {
                 var request = CreateRequest();
 
-                var response = await client.SendAsync(request);
+                response = await client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
                     return responseString;
                 }
+                else throw new Exception();
             }
-            catch
+            catch (Exception e)
             {
-
+                throw new APIException(response != null ? response : new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message },
+                                       (APIProspectOptionBase)prospect);
             }
-
-            return string.Empty;
         }
 
         private string GetIt()
         {
+            HttpResponseMessage response = null;
             try
             {
                 var request = CreateRequest();
 
-                HttpResponseMessage response = client.GetAsync(prospect.Url).Result;
+                response = client.GetAsync(prospect.Url).Result;
                 if (response.IsSuccessStatusCode)
                 {
+                    throw new APIException(response, (APIProspectOptionBase)prospect);
                     var data = response.Content.ReadAsStringAsync().Result;
                     return data;
                 }
-                else throw new APIException(response);
-            }
-            catch
+                else throw new Exception();
+            }           
+            catch (Exception e)
             {
-                throw;
+                throw new APIException(response != null ? response :  new HttpResponseMessage { StatusCode= System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message }, 
+                                       (APIProspectOptionBase)prospect);
             }
             
         }
 
         private string PostIt()
         {
+            HttpResponseMessage response = null;
             try
             {
                 var request = CreateRequest();
 
-                var response = client.SendAsync(request).Result;
+                response = client.SendAsync(request).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     var responseString = response.Content.ReadAsStringAsync().Result;
                     return responseString;
                 }
+                else throw new Exception();
             }
-            catch
+            catch (Exception e)
             {
-
+                throw new APIException(response != null ? response : new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message },
+                                       (APIProspectOptionBase)prospect);
             }
-
-            return string.Empty;
         }
 
     }
