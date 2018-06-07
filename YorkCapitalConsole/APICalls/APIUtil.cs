@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -70,9 +71,16 @@ namespace APICalls
             {
                 try
                 {
-                    var _result = Newtonsoft.Json.JsonConvert.DeserializeObject(data, typeof(T));
+                    if (prospect.Method == APIMethod.STREAM || prospect.Method == APIMethod.BYTEARRAY || prospect.Method == APIMethod.STRINGARRAY)
+                    {
+                        prospect.Result = new T { OtherResponses = data };
+                    }
+                    else
+                    {
+                        var _result = Newtonsoft.Json.JsonConvert.DeserializeObject(data, typeof(T));
 
-                    prospect.Result = (T)_result;
+                        prospect.Result = (T)_result;
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -197,7 +205,7 @@ namespace APICalls
             {
                 var request = CreateRequest();
 
-                response = client.GetAsync(prospect.Url).Result;
+                response = client.GetAsync(prospect.Url).Result; 
                 if (response.IsSuccessStatusCode)
                 {
                     var data = response.Content.ReadAsStringAsync().Result;
@@ -232,7 +240,91 @@ namespace APICalls
                 throw CreateException(response, e);
             }
         }
-        
+
+        private string PutIt()
+        {
+            HttpResponseMessage response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = client.PutAsync(prospect.Url, request.Content).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = response.Content.ReadAsStringAsync().Result;
+                    return responseString;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(response, e);
+            }
+        }
+
+        private string DeleteIt()
+        {
+            HttpResponseMessage response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = client.DeleteAsync(prospect.Url).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = response.Content.ReadAsStringAsync().Result;
+                    return responseString;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(response, e);
+            }
+        }
+
+        private string StringIt()
+        {
+            string response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = client.GetStringAsync(prospect.Url).Result;
+                if (response != null)
+                {
+                    return response;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(null, e);
+            }
+        }
+
+
+        private byte[] ByteIt()
+        {
+            byte[] response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = client.GetByteArrayAsync(prospect.Url).Result;
+                if (response != null)
+                {
+                    return response;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(null, e);
+            }
+        }
+
+
         private APIException CreateException(HttpResponseMessage response, Exception e)
         {
             return

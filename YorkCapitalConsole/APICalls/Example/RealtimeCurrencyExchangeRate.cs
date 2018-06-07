@@ -13,6 +13,8 @@ namespace APICalls.Example
     {
         [JsonProperty("Realtime Currency Exchange Rate")]
         public RealtimeCurrencyExchangeRate RealtimeCurrencyExchangeRate { get; set; }
+
+        public dynamic OtherResponses { get; set; }
     }
        
     public class RealtimeCurrencyExchangeRate 

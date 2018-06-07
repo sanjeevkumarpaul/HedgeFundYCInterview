@@ -15,6 +15,8 @@ namespace APICalls.Example
 
         [JsonProperty("Stock Quotes")]
         public StockQuote[] StockQuotes { get; set; }
+
+        public dynamic OtherResponses { get; set; }
     }
 
     public partial class MetaData

@@ -12,7 +12,8 @@ namespace APICalls.Entities
         POST,
         PUT,
         DELETE,
-        HEAD,
-        TRACE
+        STREAM,
+        BYTEARRAY,
+        STRINGARRAY
     }
 }

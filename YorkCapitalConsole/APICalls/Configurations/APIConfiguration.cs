@@ -104,7 +104,7 @@ namespace APICalls.Configurations
             ApiElements
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)    
-                //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops               
+                //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops                
                 .Finally(() => PostFinalEvents())                
                 .Subscribe((result) => PostSubscription(result), 
                            //((exp)=> Options.Subcriber.Error<APIException>(exp as APIException, this)),   //This Stops the whole process not even second sequence is considered.

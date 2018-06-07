@@ -19,5 +19,10 @@ namespace APICalls.Entities
             Url = prospect?.Url;
             Method = prospect?.Method.ToString();            
         }
+
+        /// <summary>
+        /// Has to be there for IAPIProspect to work.
+        /// </summary>
+        dynamic IAPIProspect.OtherResponses { get; set; }
     }
 }

@@ -8,5 +8,6 @@ namespace APICalls.Entities
 {
     public interface IAPIProspect
     {
+        dynamic OtherResponses { get; set; }
     }
 }
