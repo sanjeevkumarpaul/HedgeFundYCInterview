@@ -347,6 +347,9 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
+        /// <summary>
+        /// After every API Execution, this method is called to post back responses back to Subcribed Class (which user has provided)
+        /// </summary>
         private void PostSubscription()
         {
             if (Options.Subcriber != null)
