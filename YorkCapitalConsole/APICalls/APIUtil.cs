@@ -237,6 +237,13 @@ namespace APICalls
                                        (APIProspectOptionBase)prospect);
             }
         }
+        
+        private APIException CreateException(HttpResponseMessage response, Exception e)
+        {
+            return
+            new APIException(response != null ? response : new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.SeeOther, ReasonPhrase = e.Message },
+                                       (APIProspectOptionBase)prospect);
+        }
 
     }
 }
