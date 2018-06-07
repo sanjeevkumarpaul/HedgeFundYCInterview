@@ -31,12 +31,18 @@ namespace APICalls
         /// <returns></returns>
         public T Call()
         {
-            string data = string.Empty;
+            dynamic data;
 
             switch (prospect.Method)
             {
                 case APIMethod.GET: data = GetIt(); break;
                 case APIMethod.POST: data = PostIt(); break;
+                case APIMethod.PUT: data = PostIt(); break;
+                case APIMethod.DELETE: data = PostIt(); break;
+                case APIMethod.STREAM: data = StreamIt(); break;
+                case APIMethod.BYTEARRAY: data = ByteIt(); break;
+                case APIMethod.STRINGARRAY: data = StringIt(); break;
+                default: data = string.Empty; break;
             }
            
             return ReturnResult(data);
@@ -59,13 +65,13 @@ namespace APICalls
             return ReturnResult(data);
         }
         
-        private T ReturnResult(string data)
+        private T ReturnResult(dynamic data)
         {
             Decrypt(data);
             return prospect.Result;
         }
 
-        private void Decrypt(string data)
+        private void Decrypt(dynamic data)
         {
             if (data != null)
             {
@@ -77,7 +83,7 @@ namespace APICalls
                     }
                     else
                     {
-                        var _result = Newtonsoft.Json.JsonConvert.DeserializeObject(data, typeof(T));
+                        var _result = Newtonsoft.Json.JsonConvert.DeserializeObject((string)data, typeof(T));
 
                         prospect.Result = (T)_result;
                     }
@@ -312,6 +318,26 @@ namespace APICalls
                 var request = CreateRequest();
 
                 response = client.GetByteArrayAsync(prospect.Url).Result;
+                if (response != null)
+                {
+                    return response;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(null, e);
+            }
+        }
+
+        private Stream StreamIt()
+        {
+            Stream response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = client.GetStreamAsync(prospect.Url).Result;
                 if (response != null)
                 {
                     return response;
