@@ -31,8 +31,7 @@ namespace APICalls
         /// <returns></returns>
         public T Call()
         {
-            dynamic data = CallSync();
-
+            dynamic data = CallAsyn().Result;
             return ReturnResult(data);
         }
 
@@ -187,50 +186,7 @@ namespace APICalls
                 throw CreateException(response, e);
             }
         }
-
-        private dynamic CallSync()
-        {
-            HttpResponseMessage response = null;
-            dynamic content = null;
-            try
-            {
-                var request = CreateRequest();
-
-                bool readContent = true;
-                switch (prospect.Method)
-                {
-                    case APIMethod.GET: response = client.GetAsync(prospect.Url).Result; break;
-                    case APIMethod.POST: response =  client.SendAsync(request).Result; break;
-                    case APIMethod.PUT: response =  client.PutAsync(prospect.Url, request.Content).Result; break;
-                    case APIMethod.DELETE: response =  client.DeleteAsync(prospect.Url).Result; break;
-
-                    case APIMethod.STREAM: readContent = false; content =  client.GetStreamAsync(prospect.Url).Result; break;
-                    case APIMethod.STRINGARRAY: readContent = false; content =  client.GetStringAsync(prospect.Url).Result; break;
-                    case APIMethod.BYTEARRAY: readContent = false; content =  client.GetByteArrayAsync(prospect.Url).Result; break;
-                }
-
-                if (readContent)
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var responseString =  response.Content.ReadAsStringAsync().Result;
-                        return responseString;
-                    }
-                    else throw new Exception();
-                }
-                else
-                {
-                    if (content != null)                    
-                        return content;                    
-                    else throw new Exception();
-                }
-            }
-            catch (Exception e)
-            {
-                throw CreateException(response, e);
-            }
-        }
-
+        
         private APIException CreateException(HttpResponseMessage response, Exception e)
         {
             return
