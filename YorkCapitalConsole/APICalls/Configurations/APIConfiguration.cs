@@ -103,9 +103,12 @@ namespace APICalls.Configurations
 
             ApiElements
                 .Select(api => ExecuteApi(api))
-                .ToObservable(NewThreadScheduler.Default)
+                .ToObservable(NewThreadScheduler.Default)    
+                //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops               
                 .Finally(() => PostEvents())                
-                .Subscribe((result) => Options.Subcriber.Reponses(result, this), _apiCancellation.Token);
+                .Subscribe((result) => PostSubscription(), 
+                           //((exp)=> Options.Subcriber.Error<APIException>(exp as APIException, this)),   //This Stops the whole process not even second sequence is considered.
+                           _apiCancellation.Token);
 
             //Options.Subcriber.Error<APIException>(null, this)
         }
@@ -344,6 +347,15 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
+        private void PostSubscription()
+        {
+            if (Current.Result is APIException)
+                Options.Subcriber.Error(Current.Result as APIException, this);
+            else
+                Options.Subcriber.Reponses(Current.Result, this);
+        }
+        
+        
         #region ^End Subcription to Raise. Post and Final
         /// <summary>
         /// At the end, Post and Final Subscription to be posted back to the caller.
@@ -376,6 +388,7 @@ namespace APICalls.Configurations
             if (CreateApiNode(api) != null)
             {
                 var node = Current;
+                Apis.Add(node);
                 var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
 
                 using (var prosBase = (APIProspectOptionBase)prospect)
@@ -395,15 +408,14 @@ namespace APICalls.Configurations
                 try
                 {
                     var method = constructedType.GetMethod("Call");
-                    var res = method.Invoke(apiObject, null);
-
+                    var res = method.Invoke(apiObject, null);                    
                     node.Result = (IAPIProspect)res;
                 }
                 catch(APIException ex)
                 {
-                    node.Result = ex;
+                    node.Result = ex;                    
                 }
-                Apis.Add(node);
+                
 
                 return node.Result;
             }

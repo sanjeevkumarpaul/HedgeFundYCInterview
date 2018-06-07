@@ -43,7 +43,8 @@ namespace APIUtilCallDemo
 
             public void Error<T>(T exception, APIConfiguration config, params object[] others) where T: APIException
             {
-                Console.WriteLine($"Error Status({exception.Status})/Message ('{exception.Message})'");
+                if (exception != null)
+                    Console.WriteLine($"Error Status({exception.Status})/Message ('{exception.Message})'");
             }
             #endregion ~IAPIResult Methods, where the APIConfig will Push the results
 
