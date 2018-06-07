@@ -85,12 +85,12 @@ namespace APICalls.Configurations
             {
                 var res = ExecuteApi(api);
                 if (_isCancelled || _isCancelledRepeat) continue;
-                if (Options.Subcriber != null) if (res is APIException) Options.Subcriber.Error(res as APIException , this); else Options.Subcriber.Reponses(res, this);
+                PostSubscription();
                 yield return res;
             }
 
             //Post back POST and FINAL with IAPIResults
-            if (Options.Subcriber != null) PostEvents();
+            PostFinalEvents();
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace APICalls.Configurations
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)    
                 //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops               
-                .Finally(() => PostEvents())                
+                .Finally(() => PostFinalEvents())                
                 .Subscribe((result) => PostSubscription(), 
                            //((exp)=> Options.Subcriber.Error<APIException>(exp as APIException, this)),   //This Stops the whole process not even second sequence is considered.
                            _apiCancellation.Token);
@@ -349,10 +349,13 @@ namespace APICalls.Configurations
     {
         private void PostSubscription()
         {
-            if (Current.Result is APIException)
-                Options.Subcriber.Error(Current.Result as APIException, this);
-            else
-                Options.Subcriber.Reponses(Current.Result, this);
+            if (Options.Subcriber != null)
+            {
+                if (Current.Result is APIException)
+                    Options.Subcriber.Error(Current.Result as APIException, this);
+                else
+                    Options.Subcriber.Reponses(Current.Result, this);
+            }
         }
         
         
@@ -361,7 +364,7 @@ namespace APICalls.Configurations
         /// At the end, Post and Final Subscription to be posted back to the caller.
         /// </summary>
         /// <param name="apiResults"></param>
-        private void PostEvents()
+        private void PostFinalEvents()
         {
             Task.Factory.StartNew(() => Dispose())
                         .ContinueWith(antecendent => Options.Subcriber.Post(this.ProspectResults))
