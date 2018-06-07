@@ -70,9 +70,9 @@ namespace APICalls
                         prospect.Result = (T)_result;
                     }
                 }
-                catch(Exception ex)
+                catch(Exception e)
                 {
-                    Console.WriteLine($"Error: ${ex.Message}");
+                    throw CreateException(null, e);
                 }
             }
         }
