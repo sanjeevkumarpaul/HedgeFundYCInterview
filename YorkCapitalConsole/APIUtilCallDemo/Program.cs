@@ -40,6 +40,11 @@ namespace APIUtilCallDemo
                 ExchangeRate(resultProspect, config);
                 StockQuotes(resultProspect);
             }
+
+            public void Error<T>(T exception, APIConfiguration config, params object[] others) where T: APIException
+            {
+                Console.WriteLine($"Error Status({exception.Status})/Message ('{exception.Message})'");
+            }
             #endregion ~IAPIResult Methods, where the APIConfig will Push the results
 
             /// <summary>

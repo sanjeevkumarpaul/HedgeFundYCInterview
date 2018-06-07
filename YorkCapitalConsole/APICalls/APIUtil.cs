@@ -201,13 +201,13 @@ namespace APICalls
                     var data = response.Content.ReadAsStringAsync().Result;
                     return data;
                 }
+                else throw new APIException(response);
             }
             catch
             {
-
+                throw;
             }
-
-            return string.Empty;
+            
         }
 
         private string PostIt()

@@ -23,5 +23,6 @@ private class APIProspectResults : IAPIResult
         void Reponses(IAPIProspect resultProspect, APIConfiguration config);
         void Post(IEnumerable<IAPIProspect> results);
         void Final(IAPIProspect result);
+        void Error<T>(T exception, APIConfiguration config, params object[] others) where T : APIException;
     }
 }

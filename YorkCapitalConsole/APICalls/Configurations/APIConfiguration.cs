@@ -85,7 +85,7 @@ namespace APICalls.Configurations
             {
                 var res = ExecuteApi(api);
                 if (_isCancelled || _isCancelledRepeat) continue;
-                if (Options.Subcriber != null) Options.Subcriber.Reponses(res, this);
+                if (Options.Subcriber != null) if (res is APIException) Options.Subcriber.Error(res as APIException , this); else Options.Subcriber.Reponses(res, this);
                 yield return res;
             }
 
@@ -104,8 +104,10 @@ namespace APICalls.Configurations
             ApiElements
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)
-                .Finally(() => PostEvents())
+                .Finally(() => PostEvents())                
                 .Subscribe((result) => Options.Subcriber.Reponses(result, this), _apiCancellation.Token);
+
+            //Options.Subcriber.Error<APIException>(null, this)
         }
 
         #endregion ~API Calling Sequences
@@ -390,10 +392,17 @@ namespace APICalls.Configurations
                 var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
                 var apiObject = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
 
-                var method = constructedType.GetMethod("Call");
-                var res = method.Invoke(apiObject, null);
+                try
+                {
+                    var method = constructedType.GetMethod("Call");
+                    var res = method.Invoke(apiObject, null);
 
-                node.Result = (IAPIProspect)res;
+                    node.Result = (IAPIProspect)res;
+                }
+                catch(APIException ex)
+                {
+                    node.Result = ex;
+                }
                 Apis.Add(node);
 
                 return node.Result;
@@ -421,10 +430,12 @@ namespace APICalls.Configurations
 
         private APIRequestHeaders ContentTypes(APIXmlNode node)
         {
-            var content = new APIRequestHeaders { AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
-                ParameterContentType = node.ParamContentType,
-                Headers = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
-            };
+            var content = new APIRequestHeaders
+                            {
+                                AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
+                                ParameterContentType = node.ParamContentType,
+                                Headers = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
+                            };
 
             return content;
         }

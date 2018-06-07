@@ -69,6 +69,7 @@
     <Compile Include="Configurations\APIXmlNode.cs" />
     <Compile Include="Entities\APIAuthenticationType.cs" />
     <Compile Include="Entities\APIAuthorization.cs" />
+    <Compile Include="Entities\APIException.cs" />
     <Compile Include="Entities\APIMethod.cs" />
     <Compile Include="Configurations\APINodeBase.cs" />
     <Compile Include="Entities\APIRequestHeaders.cs" />
