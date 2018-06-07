@@ -204,6 +204,66 @@ namespace APICalls
             }
         }
 
+        private async Task<string> StringItAsync()
+        {
+            string response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = await client.GetStringAsync(prospect.Url);
+                if (response != null)
+                {
+                    return response;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(null, e);
+            }
+        }
+
+        private async Task<byte[]> ByteItAsync()
+        {
+            byte[] response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = await client.GetByteArrayAsync(prospect.Url);
+                if (response != null)
+                {
+                    return response;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(null, e);
+            }
+        }
+
+        private async Task<Stream> StreamItAsync()
+        {
+            Stream response = null;
+            try
+            {
+                var request = CreateRequest();
+
+                response = await client.GetStreamAsync(prospect.Url);
+                if (response != null)
+                {
+                    return response;
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw CreateException(null, e);
+            }
+        }
+
         private string GetIt()
         {
             HttpResponseMessage response = null;
@@ -308,7 +368,6 @@ namespace APICalls
                 throw CreateException(null, e);
             }
         }
-
 
         private byte[] ByteIt()
         {
