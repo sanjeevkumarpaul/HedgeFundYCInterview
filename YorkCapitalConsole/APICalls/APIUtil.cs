@@ -31,20 +31,8 @@ namespace APICalls
         /// <returns></returns>
         public T Call()
         {
-            dynamic data;
+            dynamic data = CallSync();
 
-            switch (prospect.Method)
-            {
-                case APIMethod.GET: data = GetIt(); break;
-                case APIMethod.POST: data = PostIt(); break;
-                case APIMethod.PUT: data = PostIt(); break;
-                case APIMethod.DELETE: data = PostIt(); break;
-                case APIMethod.STREAM: data = StreamIt(); break;
-                case APIMethod.BYTEARRAY: data = ByteIt(); break;
-                case APIMethod.STRINGARRAY: data = StringIt(); break;
-                default: data = string.Empty; break;
-            }
-           
             return ReturnResult(data);
         }
 
@@ -54,13 +42,7 @@ namespace APICalls
         /// <returns></returns>
         public async Task<T> CallAsync()
         {
-            string data = string.Empty;
-
-            switch (prospect.Method)
-            {
-                case APIMethod.GET: data = await GetItAsync(); break;
-                case APIMethod.POST: data = await PostItAsync(); break;                
-            }
+            dynamic data = await CallAsyn();
 
             return ReturnResult(data);
         }
@@ -163,19 +145,44 @@ namespace APICalls
             }
         }
 
-        private async Task<string> GetItAsync()
+        private async Task<dynamic> CallAsyn()
         {
             HttpResponseMessage response = null;
+            dynamic content = null;
             try
             {
                 var request = CreateRequest();
-                response = await client.GetAsync(prospect.Url);
-                if (response.IsSuccessStatusCode)
+
+                bool readContent = true;
+                switch(prospect.Method)
                 {
-                    var data = await response.Content.ReadAsStringAsync();
-                    return data;
+                    case APIMethod.GET: response = await client.GetAsync(prospect.Url); break;
+                    case APIMethod.POST: response = await client.SendAsync(request); break;
+                    case APIMethod.PUT: response = await client.PutAsync(prospect.Url, request.Content); break;
+                    case APIMethod.DELETE: response = await client.DeleteAsync(prospect.Url); break;
+
+                    case APIMethod.STREAM: readContent = false; content = await client.GetStreamAsync(prospect.Url); break;
+                    case APIMethod.STRINGARRAY: readContent = false; content = await client.GetStringAsync(prospect.Url); break;
+                    case APIMethod.BYTEARRAY: readContent = false; content = await client.GetByteArrayAsync(prospect.Url); break;
                 }
-                else throw new Exception();
+
+                if (readContent)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        return responseString;
+                    }
+                    else throw new Exception();
+                }
+                else
+                {
+                    if (content != null)
+                    {
+                        return content;
+                    }
+                    else throw new Exception();
+                }
             }
             catch (Exception e)
             {
@@ -183,20 +190,44 @@ namespace APICalls
             }
         }
 
-        private async Task<string> PostItAsync()
+        private dynamic CallSync()
         {
             HttpResponseMessage response = null;
+            dynamic content = null;
             try
             {
                 var request = CreateRequest();
 
-                response = await client.SendAsync(request);
-                if (response.IsSuccessStatusCode)
+                bool readContent = true;
+                switch (prospect.Method)
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    return responseString;
+                    case APIMethod.GET: response = client.GetAsync(prospect.Url).Result; break;
+                    case APIMethod.POST: response =  client.SendAsync(request).Result; break;
+                    case APIMethod.PUT: response =  client.PutAsync(prospect.Url, request.Content).Result; break;
+                    case APIMethod.DELETE: response =  client.DeleteAsync(prospect.Url).Result; break;
+
+                    case APIMethod.STREAM: readContent = false; content =  client.GetStreamAsync(prospect.Url).Result; break;
+                    case APIMethod.STRINGARRAY: readContent = false; content =  client.GetStringAsync(prospect.Url).Result; break;
+                    case APIMethod.BYTEARRAY: readContent = false; content =  client.GetByteArrayAsync(prospect.Url).Result; break;
                 }
-                else throw new Exception();
+
+                if (readContent)
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString =  response.Content.ReadAsStringAsync().Result;
+                        return responseString;
+                    }
+                    else throw new Exception();
+                }
+                else
+                {
+                    if (content != null)
+                    {
+                        return content;
+                    }
+                    else throw new Exception();
+                }
             }
             catch (Exception e)
             {
@@ -204,210 +235,292 @@ namespace APICalls
             }
         }
 
-        private async Task<string> StringItAsync()
-        {
-            string response = null;
-            try
-            {
-                var request = CreateRequest();
+        //private async Task<string> GetItAsync()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
+        //        response = await client.GetAsync(prospect.Url);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var data = await response.Content.ReadAsStringAsync();
+        //            return data;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
+        //}
 
-                response = await client.GetStringAsync(prospect.Url);
-                if (response != null)
-                {
-                    return response;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(null, e);
-            }
-        }
+        //private async Task<string> PostItAsync()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-        private async Task<byte[]> ByteItAsync()
-        {
-            byte[] response = null;
-            try
-            {
-                var request = CreateRequest();
+        //        response = await client.SendAsync(request);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var responseString = await response.Content.ReadAsStringAsync();
+        //            return responseString;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
+        //}
 
-                response = await client.GetByteArrayAsync(prospect.Url);
-                if (response != null)
-                {
-                    return response;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(null, e);
-            }
-        }
+        //private async Task<string> PutItAsync()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-        private async Task<Stream> StreamItAsync()
-        {
-            Stream response = null;
-            try
-            {
-                var request = CreateRequest();
+        //        response = await client.PutAsync(prospect.Url, request.Content);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var responseString = await response.Content.ReadAsStringAsync();
+        //            return responseString;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
+        //}
 
-                response = await client.GetStreamAsync(prospect.Url);
-                if (response != null)
-                {
-                    return response;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(null, e);
-            }
-        }
+        //private async Task<string> DeleteItAsync()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-        private string GetIt()
-        {
-            HttpResponseMessage response = null;
-            try
-            {
-                var request = CreateRequest();
+        //        response = await client.DeleteAsync(prospect.Url);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var responseString = await response.Content.ReadAsStringAsync();
+        //            return responseString;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
+        //}
+        //private async Task<string> StringItAsync()
+        //{
+        //    string response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-                response = client.GetAsync(prospect.Url).Result; 
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = response.Content.ReadAsStringAsync().Result;
-                    return data;
-                }
-                else throw new Exception();
-            }           
-            catch (Exception e)
-            {
-                throw CreateException(response, e);
-            }
+        //        response = await client.GetStringAsync(prospect.Url);
+        //        if (response != null)
+        //        {
+        //            return response;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(null, e);
+        //    }
+        //}
+
+        //private async Task<byte[]> ByteItAsync()
+        //{
+        //    byte[] response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
+
+        //        response = await client.GetByteArrayAsync(prospect.Url);
+        //        if (response != null)
+        //        {
+        //            return response;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(null, e);
+        //    }
+        //}
+
+        //private async Task<Stream> StreamItAsync()
+        //{
+        //    Stream response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
+
+        //        response = await client.GetStreamAsync(prospect.Url);
+        //        if (response != null)
+        //        {
+        //            return response;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(null, e);
+        //    }
+        //}
+
+        //private string GetIt()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
+
+        //        response = client.GetAsync(prospect.Url).Result; 
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var data = response.Content.ReadAsStringAsync().Result;
+        //            return data;
+        //        }
+        //        else throw new Exception();
+        //    }           
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
             
-        }
+        //}
 
-        private string PostIt()
-        {
-            HttpResponseMessage response = null;
-            try
-            {
-                var request = CreateRequest();
+        //private string PostIt()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-                response = client.SendAsync(request).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseString = response.Content.ReadAsStringAsync().Result;
-                    return responseString;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(response, e);
-            }
-        }
+        //        response = client.SendAsync(request).Result;
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var responseString = response.Content.ReadAsStringAsync().Result;
+        //            return responseString;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
+        //}
 
-        private string PutIt()
-        {
-            HttpResponseMessage response = null;
-            try
-            {
-                var request = CreateRequest();
+        //private string PutIt()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-                response = client.PutAsync(prospect.Url, request.Content).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseString = response.Content.ReadAsStringAsync().Result;
-                    return responseString;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(response, e);
-            }
-        }
+        //        response = client.PutAsync(prospect.Url, request.Content).Result;
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var responseString = response.Content.ReadAsStringAsync().Result;
+        //            return responseString;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
+        //}
 
-        private string DeleteIt()
-        {
-            HttpResponseMessage response = null;
-            try
-            {
-                var request = CreateRequest();
+        //private string DeleteIt()
+        //{
+        //    HttpResponseMessage response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-                response = client.DeleteAsync(prospect.Url).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseString = response.Content.ReadAsStringAsync().Result;
-                    return responseString;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(response, e);
-            }
-        }
+        //        response = client.DeleteAsync(prospect.Url).Result;
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var responseString = response.Content.ReadAsStringAsync().Result;
+        //            return responseString;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(response, e);
+        //    }
+        //}
 
-        private string StringIt()
-        {
-            string response = null;
-            try
-            {
-                var request = CreateRequest();
+        //private string StringIt()
+        //{
+        //    string response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-                response = client.GetStringAsync(prospect.Url).Result;
-                if (response != null)
-                {
-                    return response;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(null, e);
-            }
-        }
+        //        response = client.GetStringAsync(prospect.Url).Result;
+        //        if (response != null)
+        //        {
+        //            return response;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(null, e);
+        //    }
+        //}
 
-        private byte[] ByteIt()
-        {
-            byte[] response = null;
-            try
-            {
-                var request = CreateRequest();
+        //private byte[] ByteIt()
+        //{
+        //    byte[] response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-                response = client.GetByteArrayAsync(prospect.Url).Result;
-                if (response != null)
-                {
-                    return response;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(null, e);
-            }
-        }
+        //        response = client.GetByteArrayAsync(prospect.Url).Result;
+        //        if (response != null)
+        //        {
+        //            return response;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(null, e);
+        //    }
+        //}
 
-        private Stream StreamIt()
-        {
-            Stream response = null;
-            try
-            {
-                var request = CreateRequest();
+        //private Stream StreamIt()
+        //{
+        //    Stream response = null;
+        //    try
+        //    {
+        //        var request = CreateRequest();
 
-                response = client.GetStreamAsync(prospect.Url).Result;
-                if (response != null)
-                {
-                    return response;
-                }
-                else throw new Exception();
-            }
-            catch (Exception e)
-            {
-                throw CreateException(null, e);
-            }
-        }
+        //        response = client.GetStreamAsync(prospect.Url).Result;
+        //        if (response != null)
+        //        {
+        //            return response;
+        //        }
+        //        else throw new Exception();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw CreateException(null, e);
+        //    }
+        //}
 
 
         private APIException CreateException(HttpResponseMessage response, Exception e)
