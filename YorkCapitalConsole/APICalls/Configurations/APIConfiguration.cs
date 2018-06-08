@@ -125,10 +125,11 @@ namespace APICalls.Configurations
         {
             _isParallel = true;
             List<Task<IAPIProspect>> taskProspects = new List<Task<IAPIProspect>>();
+            var progress = SubscribeProgress();
 
             ApiElements
                 //.Distinct()
-                .All( (api) => { taskProspects.Add(Task.Run(() => ParallelExecution(api), _apiCancellation.Token)); return true; });            
+                .All( (api) => { taskProspects.Add(Task.Run(() => ParallelExecution(api, progress))); return true; });            
 
             var results = await Task.WhenAll(taskProspects);
             #region ^example of exxception handlin via tasks.
@@ -394,15 +395,39 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
-        private async Task<IAPIProspect> ParallelExecution(XElement api)
-        {            
+        private async Task<IAPIProspect> ParallelExecution(XElement api, IProgress<IAPIParallelProgress> progress)
+        {
             IAPIParallelResult _result = Options.SubscriberParallel;
             
             var parameters = _result?.ParallelStart();
-            var res = await Task.Run(() => ExecuteApi(api, parameters));
+            var res = await Task.Run(() => ExecuteApi(api, parameters), _apiCancellation.Token);
             _result?.ParallelEnd();
 
+            RaiseProgress(api, progress);
+
             return res;
+        }
+
+        private Progress<IAPIParallelProgress> SubscribeProgress()
+        {
+            if (Options.Progessor != null)
+            {
+                Progress<IAPIParallelProgress> progress = new Progress<IAPIParallelProgress>();
+                progress.ProgressChanged += (sender, target) => { Options.SubscriberParallel?.ParallelProgress((IAPIParallelProgress)target); }; //anaymously handle the event
+
+                return progress;
+            }
+            return null;
+        }
+
+        private void RaiseProgress(XElement api, IProgress<IAPIParallelProgress> progress)
+        {
+            if (progress == null) return;
+
+            var _progress = Options.Progessor;
+            _progress.Url = api.BaseUri;
+            _progress.Percentage = ((Apis.Count * 100) / ApiElements.Count());
+            progress.Report(_progress);
         }
         
         /// <summary>
@@ -418,7 +443,7 @@ namespace APICalls.Configurations
                     Options.Subscriber.Reponses(result, this);
             }
         }
-                
+        
         #region ^End Subcription to Raise. Post and Final
         /// <summary>
         /// At the end, Post and Final Subscription to be posted back to the caller.

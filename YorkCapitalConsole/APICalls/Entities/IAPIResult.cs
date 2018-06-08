@@ -29,8 +29,7 @@ private class APIProspectResults : IAPIResult
     public interface IAPIParallelResult : IAPIResult
     {
         object[] ParallelStart();  //If required any paramters to be taken into consideration.
-        void ParallelProgress();
+        void ParallelProgress(IAPIParallelProgress progress);
         void ParallelEnd();
-
     }
 }

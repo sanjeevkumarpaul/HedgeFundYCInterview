@@ -35,8 +35,10 @@ namespace APICalls.Configurations
         /// </summary>
         public IAPIResult Subscriber { get; set; } = null;
 
-        internal IAPIParallelResult SubscriberParallel { get { return _subscriberParallel;  } }
+        public IAPIParallelProgress Progessor { get; set; } = new APIParallelProgress();
 
+        internal IAPIParallelResult SubscriberParallel { get { return _subscriberParallel;  } }
+        
         internal void Validate()
         {
             _subscriberParallel = Subscriber is IAPIParallelResult ? Subscriber as IAPIParallelResult :  null;

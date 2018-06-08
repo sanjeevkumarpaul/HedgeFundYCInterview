@@ -75,6 +75,7 @@
     <Compile Include="Entities\APIParallelProgress.cs" />
     <Compile Include="Entities\APIRequestHeaders.cs" />
     <Compile Include="Entities\APIProspect.cs" />
+    <Compile Include="Entities\IAPIParallelProgress.cs" />
     <Compile Include="Entities\IAPIProspect.cs" />
     <Compile Include="APIUtil.cs" />
     <Compile Include="Entities\IAPIResult.cs" />

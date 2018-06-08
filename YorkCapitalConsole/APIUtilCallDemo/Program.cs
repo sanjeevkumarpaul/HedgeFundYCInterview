@@ -12,6 +12,12 @@ namespace APIUtilCallDemo
 {
     public class Program
     {
+        public class ExchangeProgress : IAPIParallelProgress
+        {
+            public float Percentage { get; set ; }
+            public int Tasks { get; set; }
+            public string Url { get; set; }
+        }
 
         public class ExchangeCallResults : IAPIParallelResult //IAPIResult
         {
@@ -97,9 +103,12 @@ namespace APIUtilCallDemo
                 return new object[] { new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++ -1] } };
             }
 
-            public void ParallelProgress()
+            public void ParallelProgress(IAPIParallelProgress progress)
             {
-                throw new NotImplementedException();
+                if (progress == null) return;
+                var exch = progress as ExchangeProgress;
+
+                Console.Write($"...{exch?.Percentage}...");
             }
 
             public void ParallelEnd()
@@ -125,7 +134,8 @@ namespace APIUtilCallDemo
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
                 Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
                 Subscriber = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR"),
-                //NoRepeat = true
+                //NoRepeat = true,
+                Progessor = new ExchangeProgress()
             };
 
             //Observable

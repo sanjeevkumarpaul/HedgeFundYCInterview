@@ -9,11 +9,11 @@ namespace APICalls.Entities
     /// <summary>
     /// In Parallel task, it will calcualte the Percentage and Report back.
     /// </summary>
-    public class APIParallelProgress
+    public class APIParallelProgress : IAPIParallelProgress
     {
-        public float Percentage { get; internal set; } = 0.0f;
-        public int Tasks { get; internal set; } = 0;
+        public float Percentage { get; set; } = 0.0f;
+        public int Tasks { get; set; } = 0;
 
-        public string Url { get; internal set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
     }
 }
