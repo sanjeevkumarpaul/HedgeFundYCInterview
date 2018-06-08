@@ -418,8 +418,7 @@ namespace APICalls.Configurations
                     Options.Subscriber.Reponses(result, this);
             }
         }
-        
-        
+                
         #region ^End Subcription to Raise. Post and Final
         /// <summary>
         /// At the end, Post and Final Subscription to be posted back to the caller.
