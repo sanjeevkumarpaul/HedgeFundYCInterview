@@ -123,6 +123,7 @@ namespace APICalls.Configurations
         /// <returns>Task, which is kind of a Void.</returns>        
         public async Task ExecuteApisParallel()
         {
+            _isParallel = true;
             List<Task<IAPIProspect>> taskProspects = new List<Task<IAPIProspect>>();
 
             ApiElements
@@ -394,8 +395,7 @@ namespace APICalls.Configurations
     public partial class APIConfiguration
     {
         private async Task<IAPIProspect> ParallelExecution(XElement api)
-        {
-            _isParallel = true;
+        {            
             IAPIParallelResult _result = Options.SubscriberParallel;
             
             var parameters = _result?.ParallelStart();
