@@ -47,6 +47,7 @@ namespace APICalls.Configurations
         #region ^Required variables for the App.
         private bool _isCancelled = false;
         private bool _isCancelledRepeat = false;
+        private bool _isParallel = false;
         private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
         #endregion ^Required variables for the App.
     }
@@ -113,6 +114,49 @@ namespace APICalls.Configurations
             //Options.Subcriber.Error<APIException>(null, this)
         }
 
+        /// <summary>
+        /// All of the API(s) listed at XML/JSON will run parallely 
+        /// AND ...
+        /// 1. It will not adhere any REPEATS  
+        /// 2. It will only try to input parameter fields frm the OBJECT PARAMS passed at APICONFIGOPTIONS at Constructor
+        /// </summary>
+        /// <returns>Task, which is kind of a Void.</returns>        
+        public async Task ExecuteApisParallel()
+        {
+            List<Task<IAPIProspect>> taskProspects = new List<Task<IAPIProspect>>();
+
+            ApiElements
+                //.Distinct()
+                .All( (api) => { taskProspects.Add(Task.Run(() => ParallelExecution(api), _apiCancellation.Token)); return true; });            
+
+            var results = await Task.WhenAll(taskProspects);
+            #region ^example of exxception handlin via tasks.
+            //To catch any exeception within Tasks we need to do like below
+            /*
+                  try { var results = await Task.WhenAll(taskProspects); }
+                  catch(AggregateException ae)
+                  {
+                     e.Handle(x) =>
+                     {
+                         if (x is UnauthorizedAccessException) // This we know how to handle.
+                         {
+                             Console.WriteLine("You do not have permission to access all folders in this path.");
+                             Console.WriteLine("See your network administrator or try another path.");
+                             return true;
+                          }
+                          return false; // Let anything else stop the application.
+                      });
+
+                      //   OR    //
+
+                      var x = e.Flatten(); //This way it flattens all the exception from all taks and then can be re thrown like - throw x;
+                  }
+             */
+            #endregion ~example of exxception handlin via tasks.
+
+            foreach (var res in results) PostSubscription(res); PostFinalEvents();
+        }
+
         #endregion ~API Calling Sequences
     }
     /// <summary>
@@ -129,7 +173,7 @@ namespace APICalls.Configurations
         /// <param name="obj">Any Object</param>
         public void InsertObjectParam(params object[] obj)
         {
-            if (obj != null && !Cancelled()) obj.ToList().ForEach(o => { if (!UpdateObjectParam(o)) this.objectParams.Params.Add(o); });
+            if (obj != null && !Palleled() && !Cancelled()) obj.ToList().ForEach(o => { if (!UpdateObjectParam(o)) this.objectParams.Params.Add(o); });
         }
 
         /// <summary>
@@ -138,7 +182,7 @@ namespace APICalls.Configurations
         /// <param name="obj">Any object</param>
         public bool UpdateObjectParam(object obj)
         {
-            if (!Cancelled() && this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)
+            if (!Palleled() && !Cancelled() && this.objectParams.Params.RemoveWhere(r => r.GetType() == obj.GetType()) > 0)
                 return this.objectParams.Params.Add(obj);
 
             return false;
@@ -151,7 +195,7 @@ namespace APICalls.Configurations
         /// <param name="replaceObj">Any object</param>
         public void UpdateObjectParam(object findObj, object replaceObj)
         {
-            if (!Cancelled() && this.objectParams.Params.Remove(findObj)) this.objectParams.Params.Add(findObj);
+            if (!Palleled() && !Cancelled() && this.objectParams.Params.Remove(findObj)) this.objectParams.Params.Add(findObj);
         }
 
         /// <summary>
@@ -347,6 +391,19 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
+        private IAPIProspect ParallelExecution(XElement api)
+        {
+            _isParallel = true;
+            IAPIParallelResult _result = null;
+            if (Options.Subcriber is IAPIParallelResult) _result = Options.Subcriber as IAPIParallelResult;
+
+            var parameters = _result?.ParallelStart();
+            var res = ExecuteApi(api, parameters); // await Task.Run(() => ExecuteApi(api, parameters));
+            _result?.ParallelEnd();
+
+            return res;
+        }
+        
         /// <summary>
         /// After every API Execution, this method is called to post back responses back to Subcribed Class (which user has provided)
         /// </summary>
@@ -389,7 +446,7 @@ namespace APICalls.Configurations
         /// </summary>
         /// <param name="api"></param>
         /// <returns></returns>
-        private IAPIProspect ExecuteApi(XElement api)
+        private IAPIProspect ExecuteApi(XElement api, object[] otherParmams = null)
         {
             if (CreateApiNode(api) != null)
             {
@@ -400,9 +457,9 @@ namespace APICalls.Configurations
                 using (var prosBase = (APIProspectOptionBase)prospect)
                 {
                     prosBase.BaseUrl = node.BaseUrl;
-                    prosBase.APIUri = LocateDynamicParamValue(node.ApiUri);
+                    prosBase.APIUri = LocateDynamicParamValue(node.ApiUri, otherParmams: otherParmams);
                     prosBase.Method = node.Method;
-                    prosBase.Parameters = InjectObjectParams(node);
+                    prosBase.Parameters = InjectObjectParams(node, otherParmams: otherParmams);
                     prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
                     prosBase.Authorization = Authorization(node);
                     prosBase.RequestHeaders = ContentTypes(node);
@@ -458,7 +515,7 @@ namespace APICalls.Configurations
             return content;
         }
 
-        private Dictionary<string, string> InjectObjectParams(APIXmlNode node)
+        private Dictionary<string, string> InjectObjectParams(APIXmlNode node, object[] otherParmams = null)
         {
             var parameters = node.Parameters?.Keys.ToList();
 
@@ -467,13 +524,13 @@ namespace APICalls.Configurations
                         ((Func<Dictionary<string, string>>)(() =>
                      {
                          Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
-                         parameters.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(node.Parameters[k])));
+                         parameters.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(node.Parameters[k], otherParmams: otherParmams)));
 
                          return dictReplacers;
                      }))();
         }
 
-        private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true)
+        private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true, object[] otherParmams = null)
         {
             //Find all matches with {...}
             Regex.Matches(placeholderStr, "{(.*)}").Cast<Match>().All(m =>
@@ -481,7 +538,7 @@ namespace APICalls.Configurations
                 var item = m.Groups[1].Value.SplitEx('.'); //Groups[1] stores the group value like (.*). If there are more, more groups are created.
 
                 if (item.Length > 1)
-                    placeholderStr = GetDynamicParamObjectValue(item[0], placeholderStr, m.ToString(), item[1], locateFromObjectParams);
+                    placeholderStr = GetDynamicParamObjectValue(item[0], placeholderStr, m.ToString(), item[1], locateFromObjectParams, otherParmams);
 
                 return true;
             });
@@ -489,14 +546,32 @@ namespace APICalls.Configurations
             return placeholderStr;
         }
 
-        private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true)
+        private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true, object[] otherParams = null)
         {
+            var _objects = GetParamObjects(otherParams);
+
             var val = (locateFromObjectParams ?
-                        objectParams.Params.FirstOrDefault(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
+                        _objects.FirstOrDefault(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
                         Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result)
                       ?.GetVal(propertyName);
 
             return placeholderStr.Replace(pattern, val);
+        }
+
+        public List<object> GetParamObjects(object[] otherParams = null)
+        {
+            List<object> objects = new List<object>();
+            objects.AddRange(objectParams.Params.ToArray());
+
+            foreach(var other in otherParams)
+            {
+                object obj = null;
+                if ((obj = objects.Find(o => o.GetType() == other.GetType())) != null)                
+                    objects.Remove(obj); 
+                objects.Add(other);
+            }
+
+            return objects;
         }
 
         private Type CreateGenericType(string prospectType, Type genericType)
@@ -518,7 +593,7 @@ namespace APICalls.Configurations
     }
 
     /// <summary>
-    /// Private Cancellation Check methods.
+    /// Private Cancellation/Parallel Check methods.
     /// </summary>
     public partial class APIConfiguration
     {
@@ -548,6 +623,11 @@ namespace APICalls.Configurations
             return false;
         }
         #endregion ~End of Cancellation Token Notification.
+
+        private bool Palleled()
+        {
+            return _isParallel;
+        }
     }
 
     #endregion ~End of Private methods.

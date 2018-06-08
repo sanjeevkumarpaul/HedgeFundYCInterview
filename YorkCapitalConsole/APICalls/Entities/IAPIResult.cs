@@ -23,6 +23,14 @@ private class APIProspectResults : IAPIResult
         void Reponses(IAPIProspect resultProspect, APIConfiguration config);
         void Post(IEnumerable<IAPIProspect> results);
         void Final(IAPIProspect result);
-        void Error<T>(T exception, APIConfiguration config, params object[] others) where T : APIException;
+        void Error<T>(T exception, APIConfiguration config, params object[] others) where T : APIException;        
+    }
+
+    public interface IAPIParallelResult : IAPIResult
+    {
+        object[] ParallelStart();  //If required any paramters to be taken into consideration.
+        void ParallelProgress();
+        void ParallelEnd();
+
     }
 }

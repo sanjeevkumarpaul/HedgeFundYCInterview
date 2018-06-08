@@ -13,7 +13,7 @@ namespace APIUtilCallDemo
     public class Program
     {
 
-        public class ExchangeCallResults : IAPIResult
+        public class ExchangeCallResults : IAPIParallelResult //IAPIResult
         {
             private int _exchangeCountry = 1;
             private string[] _currencies;
@@ -71,7 +71,7 @@ namespace APIUtilCallDemo
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
                     //if (_exchangeCountry > 2) config.Cancel(); //Cancellation Token used.
-                    if (_exchangeCountry > 2) config.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
+                    //if (_exchangeCountry > 2) config.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
 
                     if (_exchangeCountry < _currencies.Length)
                         config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++] }, 
@@ -88,6 +88,25 @@ namespace APIUtilCallDemo
                     Console.WriteLine("Stock Quotes Information Received...");
                     Console.WriteLine($@"     >> Price Volume: {res?.Sum(r => r.Price?.ToDouble())} ");
                 }
+            }
+
+
+            //Paralleism
+            public object[] ParallelStart()
+            {
+                Console.WriteLine("Start....");
+
+                return new object[] { new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++ -1] } };
+            }
+
+            public void ParallelProgress()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void ParallelEnd()
+            {
+                Console.WriteLine("End....");
             }
         }
 
@@ -112,8 +131,11 @@ namespace APIUtilCallDemo
             };
 
             //Observable
-            new APIConfiguration(options1).ExecuteApisObservable();
+            //new APIConfiguration(options1).ExecuteApisObservable();
 
+            //Parallel Processing 
+            //Remember Repeats will not work, and also prameter will only be taken from initial ObjectParams of APICOnfigurationOptions.
+            Task.Run( () => new APIConfiguration(options1).ExecuteApisParallel());
 
             //Synchronouse.
             //var config = new APIConfiguration(options1);
