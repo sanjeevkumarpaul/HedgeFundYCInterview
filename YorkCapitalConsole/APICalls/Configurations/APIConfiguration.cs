@@ -59,7 +59,7 @@ namespace APICalls.Configurations
         #region ^Public Properties
         public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
 
-        public IAPIResult Subscriber { get { return Options.Subcriber; } }
+        public IAPIResult Subscriber { get { return Options.Subscriber; } }
         #endregion ~Public Properties
     }
     /// <summary>
@@ -100,7 +100,7 @@ namespace APICalls.Configurations
         /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
         public void ExecuteApisObservable()
         {
-            if (Options.Subcriber == null) throw new Exception("Subscriber must be passed for Observable Execution");
+            if (Options.Subscriber == null) throw new Exception("Subscriber must be passed for Observable Execution");
 
             ApiElements
                 .Select(api => ExecuteApi(api))
@@ -233,6 +233,8 @@ namespace APICalls.Configurations
         #region ^Initization of Options/XML/Json to reflect Nodes
         private void Initialize(Action apiInvoker)
         {
+            Options.Validate();
+            
             //Keeping track.
             this.objectParams = new APIObjectParameter();
             InsertObjectParam(Options.ObjectParams);
@@ -391,14 +393,13 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
-        private IAPIProspect ParallelExecution(XElement api)
+        private async Task<IAPIProspect> ParallelExecution(XElement api)
         {
             _isParallel = true;
-            IAPIParallelResult _result = null;
-            if (Options.Subcriber is IAPIParallelResult) _result = Options.Subcriber as IAPIParallelResult;
-
+            IAPIParallelResult _result = Options.SubscriberParallel;
+            
             var parameters = _result?.ParallelStart();
-            var res = ExecuteApi(api, parameters); // await Task.Run(() => ExecuteApi(api, parameters));
+            var res = await Task.Run(() => ExecuteApi(api, parameters));
             _result?.ParallelEnd();
 
             return res;
@@ -409,12 +410,12 @@ namespace APICalls.Configurations
         /// </summary>
         private void PostSubscription(IAPIProspect result)
         {
-            if (Options.Subcriber != null)
+            if (Options.Subscriber != null)
             {
                 if (result is APIException)
-                    Options.Subcriber.Error(result as APIException, this);
+                    Options.Subscriber.Error(result as APIException, this);
                 else
-                    Options.Subcriber.Reponses(result, this);
+                    Options.Subscriber.Reponses(result, this);
             }
         }
         
@@ -427,8 +428,8 @@ namespace APICalls.Configurations
         private void PostFinalEvents()
         {
             Task.Factory.StartNew(() => Dispose())
-                        .ContinueWith(antecendent => Options.Subcriber.Post(this.ProspectResults))
-                        .ContinueWith(antecendent => Options.Subcriber.Final(Apis.Last().Result))
+                        .ContinueWith(antecendent => Options.Subscriber.Post(this.ProspectResults))
+                        .ContinueWith(antecendent => Options.Subscriber.Final(Apis.Last().Result))
                         .Wait();
         }
         #endregion

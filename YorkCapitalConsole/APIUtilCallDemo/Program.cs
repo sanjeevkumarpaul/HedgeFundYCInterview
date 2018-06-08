@@ -94,8 +94,6 @@ namespace APIUtilCallDemo
             //Paralleism
             public object[] ParallelStart()
             {
-                Console.WriteLine("Start....");
-
                 return new object[] { new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++ -1] } };
             }
 
@@ -126,7 +124,7 @@ namespace APIUtilCallDemo
                 PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
                 Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
-                Subcriber = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR"),
+                Subscriber = new ExchangeCallResults("INR", "BDT", "PKR", "LKR", "MYR", "MVR", "EUR"),
                 //NoRepeat = true
             };
 

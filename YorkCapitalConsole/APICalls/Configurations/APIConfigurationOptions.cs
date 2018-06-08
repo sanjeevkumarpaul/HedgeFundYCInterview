@@ -12,6 +12,8 @@ namespace APICalls.Configurations
     /// </summary>
     public class APIConfigurationOptions
     {
+        private IAPIParallelResult _subscriberParallel = null;
+        
         /// <summary>
         /// Either XML or Json direct content or fully wualified path.
         /// </summary>
@@ -31,6 +33,13 @@ namespace APICalls.Configurations
         /// <summary>
         /// Holds the Subscription result towards which Subscrition would Emit Events into it.
         /// </summary>
-        public IAPIResult Subcriber { get; set; } = null;
+        public IAPIResult Subscriber { get; set; } = null;
+
+        internal IAPIParallelResult SubscriberParallel { get { return _subscriberParallel;  } }
+
+        internal void Validate()
+        {
+            _subscriberParallel = Subscriber is IAPIParallelResult ? Subscriber as IAPIParallelResult :  null;
+        }
     }
 }
