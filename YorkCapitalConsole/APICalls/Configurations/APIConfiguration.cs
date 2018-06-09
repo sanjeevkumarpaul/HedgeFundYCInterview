@@ -42,6 +42,7 @@ namespace APICalls.Configurations
         private APIXmlNode Base;
         private APIXmlNode Current;
         private APIObjectParameter objectParams;
+        private object lockobj = new object();
         #endregion ~Required Objects for the App.
 
         #region ^Required variables for the App.
@@ -121,17 +122,38 @@ namespace APICalls.Configurations
         /// 2. It will only try to input parameter fields frm the OBJECT PARAMS passed at APICONFIGOPTIONS at Constructor
         /// </summary>
         /// <returns>Task, which is kind of a Void.</returns>        
-        public async Task ExecuteApisParallel()
+        public async Task<List<string>> ExecuteApisParallel()
         {
             _isParallel = true;
             List<Task<IAPIProspect>> taskProspects = new List<Task<IAPIProspect>>();
             var progress = SubscribeProgress();
 
-            ApiElements
-                //.Distinct()
-                .All( (api) => { taskProspects.Add(Task.Run(() => ParallelExecution(api, progress))); return true; });            
+            await ExecuteParallel(progress);
+            
+            foreach (var res in Apis) PostSubscription(res.Result); PostFinalEvents();
 
-            var results = await Task.WhenAll(taskProspects);
+            return new List<string>();
+        }
+
+        private async Task<List<IAPIProspect>> ExecuteParallel(IProgress<IAPIParallelProgress> progress)
+        {
+            IAPIParallelResult _result = Options.SubscriberParallel;            
+
+            await Task.Run(() =>
+            {
+                Parallel.ForEach<XElement>(ApiElements, (api) =>
+                {
+                    var parameters = _result?.ParallelStart();
+                    var res = ExecuteApiAsync(api, parameters);
+
+                    lock (lockobj) //Critcal Area.
+                    {
+                        Apis.Add(res);
+                        RaiseProgress(res, progress);
+                        _result?.ParallelEnd();
+                    }
+                });
+            });
             #region ^example of exxception handlin via tasks.
             //To catch any exeception within Tasks we need to do like below
             /*
@@ -156,7 +178,7 @@ namespace APICalls.Configurations
              */
             #endregion ~example of exxception handlin via tasks.
 
-            foreach (var res in results) PostSubscription(res); PostFinalEvents();
+            return ProspectResults.ToList();
         }
 
         #endregion ~API Calling Sequences
@@ -395,37 +417,24 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
-        private async Task<IAPIProspect> ParallelExecution(XElement api, IProgress<IAPIParallelProgress> progress)
-        {
-            IAPIParallelResult _result = Options.SubscriberParallel;
-            
-            var parameters = _result?.ParallelStart();
-            var res = await Task.Run(() => ExecuteApi(api, parameters), _apiCancellation.Token);
-            _result?.ParallelEnd();
-
-            RaiseProgress(api, progress);
-
-            return res;
-        }
-
         private Progress<IAPIParallelProgress> SubscribeProgress()
         {
             if (Options.Progessor != null)
             {
                 Progress<IAPIParallelProgress> progress = new Progress<IAPIParallelProgress>();
-                progress.ProgressChanged += (sender, target) => { Options.SubscriberParallel?.ParallelProgress((IAPIParallelProgress)target); }; //anaymously handle the event
+                progress.ProgressChanged += (sender, target) => { Options.SubscriberParallel?.ParallelProgress(target); }; //anaymously handle the event
 
                 return progress;
             }
             return null;
         }
 
-        private void RaiseProgress(XElement api, IProgress<IAPIParallelProgress> progress)
+        private void RaiseProgress(APIXmlNode node, IProgress<IAPIParallelProgress> progress)
         {
             if (progress == null) return;
 
             var _progress = Options.Progessor;
-            _progress.Url = api.BaseUri;
+            _progress.Url = node.BaseUrl;
             _progress.Percentage = ((Apis.Count * 100) / ApiElements.Count());
             progress.Report(_progress);
         }
@@ -471,43 +480,74 @@ namespace APICalls.Configurations
         /// </summary>
         /// <param name="api"></param>
         /// <returns></returns>
-        private IAPIProspect ExecuteApi(XElement api, object[] otherParmams = null)
+        private IAPIProspect ExecuteApi(XElement api)
         {
             if (CreateApiNode(api) != null)
             {
                 var node = Current;
                 Apis.Add(node);
-                var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
+                var prospect = CreateAndInstantiateProspectNode(node);
+                object apiUtil = null;
+                var method = GetApiCallMethod(node, prospect, ref apiUtil);
 
-                using (var prosBase = (APIProspectOptionBase)prospect)
-                {
-                    prosBase.BaseUrl = node.BaseUrl;
-                    prosBase.APIUri = LocateDynamicParamValue(node.ApiUri, otherParmams: otherParmams);
-                    prosBase.Method = node.Method;
-                    prosBase.Parameters = InjectObjectParams(node, otherParmams: otherParmams);
-                    prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
-                    prosBase.Authorization = Authorization(node);
-                    prosBase.RequestHeaders = ContentTypes(node);
-                }
-
-                var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
-                var apiObject = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
-
-                try
-                {
-                    var method = constructedType.GetMethod("Call");
-                    var res = method.Invoke(apiObject, null);                    
-                    node.Result = (IAPIProspect)res;
-                }
-                catch(Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException is APIException) node.Result = (APIException)ex.InnerException;                    
-                }
+                InvokeApiMethod(node, method, apiUtil);
                 
-
                 return node.Result;
             }
             return null;
+        }
+
+        private APIXmlNode ExecuteApiAsync(XElement api, object[] otherParmams = null)
+        {
+            var node = new APIXmlNode(api, Base);
+            var prospect = CreateAndInstantiateProspectNode(node, otherParmams);
+            object apiUtil = null;
+            var method = GetApiCallMethod(node, prospect, ref apiUtil);
+
+            InvokeApiMethod(node, method, apiUtil);
+
+            return node;
+        }
+
+        private object CreateAndInstantiateProspectNode(APIXmlNode node, object[] otherParmams = null)
+        {
+            var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
+
+            using (var prosBase = (APIProspectOptionBase)prospect)
+            {
+                prosBase.BaseUrl = node.BaseUrl;
+                prosBase.APIUri = LocateDynamicParamValue(node.ApiUri, otherParmams: otherParmams);
+                prosBase.Method = node.Method;
+                prosBase.Parameters = InjectObjectParams(node, otherParmams: otherParmams);
+                prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
+                prosBase.Authorization = Authorization(node);
+                prosBase.RequestHeaders = ContentTypes(node);
+            }
+
+            return prospect;
+        }
+
+        private System.Reflection.MethodInfo GetApiCallMethod(APIXmlNode node, object prospect, ref object apiUtil)
+        {
+            var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
+            apiUtil = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
+
+            var method = constructedType.GetMethod("Call");
+
+            return method;
+        }
+
+        private void InvokeApiMethod(APIXmlNode node, System.Reflection.MethodInfo method, object apiUtil)
+        {
+            try
+            {
+                var res = method.Invoke(apiUtil, null);
+                node.Result = (IAPIProspect)res;
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null && ex.InnerException is APIException) node.Result = (APIException)ex.InnerException;
+            }
         }
 
         private APIXmlNode CreateApiNode(XElement api)
@@ -588,14 +628,16 @@ namespace APICalls.Configurations
             List<object> objects = new List<object>();
             objects.AddRange(objectParams.Params.ToArray());
 
-            foreach(var other in otherParams)
+            if (otherParams != null)
             {
-                object obj = null;
-                if ((obj = objects.Find(o => o.GetType() == other.GetType())) != null)                
-                    objects.Remove(obj); 
-                objects.Add(other);
+                foreach (var other in otherParams)
+                {
+                    object obj = null;
+                    if ((obj = objects.Find(o => o.GetType() == other.GetType())) != null)
+                        objects.Remove(obj);
+                    objects.Add(other);
+                }
             }
-
             return objects;
         }
 

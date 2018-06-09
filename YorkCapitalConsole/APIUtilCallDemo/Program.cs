@@ -139,11 +139,11 @@ namespace APIUtilCallDemo
             };
 
             //Observable
-            //new APIConfiguration(options1).ExecuteApisObservable();
+            new APIConfiguration(options1).ExecuteApisObservable();
 
             //Parallel Processing 
             //Remember Repeats will not work, and also prameter will only be taken from initial ObjectParams of APICOnfigurationOptions.
-            Task.Run( () => new APIConfiguration(options1).ExecuteApisParallel());
+            //Task.Run( () => new APIConfiguration(options1).ExecuteApisParallel());
 
             //Synchronouse.
             //var config = new APIConfiguration(options1);
@@ -156,6 +156,9 @@ namespace APIUtilCallDemo
             //    //exchange.Reponses(prospect, config);  //If you donot provide exchange at .ExecuteApis, you need to call it from within for loop.
             //}
             //
+
+            //Task.Run( ()=> new ParallelismTry().DownloadWebSites());
+            //new ParallelismTry().DownloadWebSites();
 
             Console.ReadKey();
         }
