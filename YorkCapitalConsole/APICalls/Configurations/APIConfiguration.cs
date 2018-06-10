@@ -490,7 +490,13 @@ namespace APICalls.Configurations
             }
             return null;
         }
-
+        /// <summary>
+        /// Same as above with soem Asyn Consideration.
+        /// </summary>
+        /// <param name="api"></param>
+        /// <param name="otherParmams"></param>
+        /// <param name="createdNode"></param>
+        /// <returns></returns>
         private APIXmlNode ExecuteApiAsync(XElement api, object[] otherParmams = null, APIXmlNode createdNode = null)
         {
             var node = createdNode ?? new APIXmlNode(api, Base);
