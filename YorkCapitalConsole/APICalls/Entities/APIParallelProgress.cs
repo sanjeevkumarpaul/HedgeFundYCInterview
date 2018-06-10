@@ -13,7 +13,6 @@ namespace APICalls.Entities
     {
         public float Percentage { get; set; } = 0.0f;
         public int Tasks { get; set; } = 0;
-
         public string Url { get; set; } = string.Empty;
     }
 }

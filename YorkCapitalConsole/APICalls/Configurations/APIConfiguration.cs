@@ -87,8 +87,8 @@ namespace APICalls.Configurations
             {
                 var res = ExecuteApi(api);
                 if (_isCancelled || _isCancelledRepeat) continue;
-                PostSubscription(res);
-                yield return res;
+                PostSubscription(res.Result);
+                yield return res.Result;
             }
 
             //Post back POST and FINAL with IAPIResults
@@ -108,11 +108,9 @@ namespace APICalls.Configurations
                 .ToObservable(NewThreadScheduler.Default)    
                 //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops                
                 .Finally(() => PostFinalEvents())                
-                .Subscribe((result) => PostSubscription(result), 
+                .Subscribe((output) => PostSubscription(output.Result), 
                            //((exp)=> Options.Subcriber.Error<APIException>(exp as APIException, this)),   //This Stops the whole process not even second sequence is considered.
-                           _apiCancellation.Token);
-
-            //Options.Subcriber.Error<APIException>(null, this)
+                           _apiCancellation.Token);           
         }
 
         /// <summary>
@@ -130,7 +128,7 @@ namespace APICalls.Configurations
 
             await ExecuteParallel(progress);
             
-            foreach (var res in Apis) PostSubscription(res.Result); PostFinalEvents();
+            PostFinalEvents();
 
             return new List<string>();
         }
@@ -149,8 +147,8 @@ namespace APICalls.Configurations
                     lock (lockobj) //Critcal Area.
                     {
                         Apis.Add(res);
-                        RaiseProgress(res, progress);
-                        _result?.ParallelEnd();
+                        RaiseProgress(res, progress);                        
+                        PostSubscription(res.Result);
                     }
                 });
             });
@@ -446,10 +444,12 @@ namespace APICalls.Configurations
         {
             if (Options.Subscriber != null)
             {
+                var _config = _isParallel ? null : this; //ApiConfiguraion is only passed if performed non Parallelled.
+
                 if (result is APIException)
-                    Options.Subscriber.Error(result as APIException, this);
+                    Options.Subscriber.Error(result as APIException, _config);
                 else
-                    Options.Subscriber.Reponses(result, this);
+                    Options.Subscriber.Reponses(result, _config); 
             }
         }
         
@@ -480,26 +480,20 @@ namespace APICalls.Configurations
         /// </summary>
         /// <param name="api"></param>
         /// <returns></returns>
-        private IAPIProspect ExecuteApi(XElement api)
+        private APIXmlNode ExecuteApi(XElement api)
         {
             if (CreateApiNode(api) != null)
             {
                 var node = Current;
                 Apis.Add(node);
-                var prospect = CreateAndInstantiateProspectNode(node);
-                object apiUtil = null;
-                var method = GetApiCallMethod(node, prospect, ref apiUtil);
-
-                InvokeApiMethod(node, method, apiUtil);
-                
-                return node.Result;
+                return ExecuteApiAsync(api, null, node);
             }
             return null;
         }
 
-        private APIXmlNode ExecuteApiAsync(XElement api, object[] otherParmams = null)
+        private APIXmlNode ExecuteApiAsync(XElement api, object[] otherParmams = null, APIXmlNode createdNode = null)
         {
-            var node = new APIXmlNode(api, Base);
+            var node = createdNode ?? new APIXmlNode(api, Base);
             var prospect = CreateAndInstantiateProspectNode(node, otherParmams);
             object apiUtil = null;
             var method = GetApiCallMethod(node, prospect, ref apiUtil);
@@ -508,7 +502,12 @@ namespace APICalls.Configurations
 
             return node;
         }
-
+        /// <summary>
+        /// Creates instances of APIProspect<IAPIProspect>, IAPIProspect being any Type Derived from it.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <param name="otherParmams">any object, to be used as Object Parameters. Genrally passed during Parallel Processing.</param>
+        /// <returns>APIProspect<IAPIProspect></returns>
         private object CreateAndInstantiateProspectNode(APIXmlNode node, object[] otherParmams = null)
         {
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
@@ -526,7 +525,13 @@ namespace APICalls.Configurations
 
             return prospect;
         }
-
+        /// <summary>
+        /// Creates APIUtil<IAPIProspect>, IAPIProspect being any Type Derived from it.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <param name="prospect">IAPIProspect</param>
+        /// <param name="apiUtil">object reference to APIUtil is created and passes the pointer back to caller.</param>
+        /// <returns>Returns 'CALL' method refernce for APIUtil<IAPIProspect></returns>
         private System.Reflection.MethodInfo GetApiCallMethod(APIXmlNode node, object prospect, ref object apiUtil)
         {
             var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
@@ -536,7 +541,13 @@ namespace APICalls.Configurations
 
             return method;
         }
-
+        /// <summary>
+        /// Safely invokes APIUtil<IAPIProspect> CALL method and result stored in APIXmlNode.Results
+        /// Also catches any exception and stores at the same location.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <param name="method">MethodInfo for 'CALL' of the object APIUtil<IAPIProspect></param>
+        /// <param name="apiUtil">APIUtil<IAPIProspect> itself.</param>
         private void InvokeApiMethod(APIXmlNode node, System.Reflection.MethodInfo method, object apiUtil)
         {
             try
@@ -549,7 +560,11 @@ namespace APICalls.Configurations
                 if (ex.InnerException != null && ex.InnerException is APIException) node.Result = (APIException)ex.InnerException;
             }
         }
-
+        /// <summary>
+        /// Checks Cancellation and Creates APIXmlNode from XElement(Api reference from either Json/Xml)
+        /// </summary>
+        /// <param name="api">XElement</param>
+        /// <returns>APIXmlNode</returns>
         private APIXmlNode CreateApiNode(XElement api)
         {
             if (Cancelled()) return null;                    //Cancellation Token
@@ -558,7 +573,11 @@ namespace APICalls.Configurations
 
             return node;
         }
-
+        /// <summary>
+        /// APIAuthorization type is created and passed on to the caller from APIXmlNode type.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <returns>APIAuthorization</returns>
         private APIAuthorization Authorization(APIXmlNode node)
         {
             if (node.Token.Empty()) return null;
@@ -567,7 +586,12 @@ namespace APICalls.Configurations
 
             return auth;
         }
-
+        /// <summary>
+        /// Creates APIRequestHeaders from APIXmlNode off the XElement
+        /// This consits of ContentTypes, Content Type for Parameters, and any other Header information.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         private APIRequestHeaders ContentTypes(APIXmlNode node)
         {
             var content = new APIRequestHeaders
@@ -579,7 +603,15 @@ namespace APICalls.Configurations
 
             return content;
         }
-
+        /// <summary>
+        /// Any {Type.Property} under XElement (Json/Xml) needs to be parsed to actual Object Parameters
+        /// and so as this method used for.
+        /// Either ObjectParameters or otherParams are considered to create a Dictionary<string,string>
+        ///   and calls LocatedDynamicParamValue to replace the placeholder {Type.Proeprty}
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <param name="otherParmams">Array of objects, usually passed during parallel processing</param>
+        /// <returns></returns>
         private Dictionary<string, string> InjectObjectParams(APIXmlNode node, object[] otherParmams = null)
         {
             var parameters = node.Parameters?.Keys.ToList();
@@ -594,7 +626,13 @@ namespace APICalls.Configurations
                          return dictReplacers;
                      }))();
         }
-
+        /// <summary>
+        /// Finds {Type.Property} from place holder strings and loads values into it via GetDynamicParamObjectValue.
+        /// </summary>
+        /// <param name="placeholderStr">Placeholder string, usually Token or Parameters of an API</param>
+        /// <param name="locateFromObjectParams">To make sure to be found from Object Params</param>
+        /// <param name="otherParmams">Array of objects, usually passed during parallel processing</param>
+        /// <returns>Replaced Placeholder string with right values. If no values find blanks out Placeholder string and returns back.</returns>
         private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true, object[] otherParmams = null)
         {
             //Find all matches with {...}
@@ -610,7 +648,16 @@ namespace APICalls.Configurations
 
             return placeholderStr;
         }
-
+        /// <summary>
+        /// Replaces placeholder string ({Type.Property}) with right values.
+        /// </summary>
+        /// <param name="typeName">Typename towards which .Property to be extracted within {Type.Property}</param>
+        /// <param name="placeholderStr">Placeholder string, usually Token or Parameters of an API</param>
+        /// <param name="pattern">string of patter which contains exactly {Type.Property}</param>
+        /// <param name="propertyName"></param>
+        /// <param name="locateFromObjectParams">To make sure to be found from Object Params</param>
+        /// <param name="otherParams">Array of objects, usually passed during parallel processing</param>
+        /// <returns>Replaced Placeholder string with right values. If no values find blanks out Placeholder string and returns back.</returns>
         private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true, object[] otherParams = null)
         {
             var _objects = GetParamObjects(otherParams);
@@ -622,7 +669,11 @@ namespace APICalls.Configurations
 
             return placeholderStr.Replace(pattern, val);
         }
-
+        /// <summary>
+        /// Evaluates Object Parameters from ObjectParams object and otherParams, eleminats duplicate(s) and gives right objects.
+        /// </summary>
+        /// <param name="otherParams">Array of objects, usually passed during parallel processing</param>
+        /// <returns>List of mapped distinct Array of objects.</returns>
         public List<object> GetParamObjects(object[] otherParams = null)
         {
             List<object> objects = new List<object>();
@@ -640,7 +691,12 @@ namespace APICalls.Configurations
             }
             return objects;
         }
-
+        /// <summary>
+        /// Create Generic Type from fully qualified Namespace.Type sent. Either APProspect<IAPIProspect> or APIUtil<IAPIProspect>
+        /// </summary>
+        /// <param name="prospectType">fuly qualified Namespace.Type</param>
+        /// <param name="genericType">Typeof GenericType to be qualifeid against </param>
+        /// <returns>Type of Generics constructed</returns>
         private Type CreateGenericType(string prospectType, Type genericType)
         {
             Type customType = Type.GetType(prospectType);
@@ -648,7 +704,13 @@ namespace APICalls.Configurations
 
             return constructedType;
         }
-
+        /// <summary>
+        /// Creates Generic Type and Actual instance of the same type by calling parameterised constructors.
+        /// </summary>
+        /// <param name="prospectType">Either APProspect<IAPIProspect> or APIUtil<IAPIProspect></param>
+        /// <param name="genericType">Typeof GenericType to be qualifeid against</param>
+        /// <param name="parameters"></param>
+        /// <returns>Object Generics constructed</returns>
         private object CreateInstance(string prospectType, Type genericType, params object[] parameters)
         {
             Type constructedType = CreateGenericType(prospectType, genericType);
