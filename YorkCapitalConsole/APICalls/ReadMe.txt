@@ -80,3 +80,17 @@ xml schema
   
 </APIProspects>
 
+
+
+
+<APIProspect Name ="Tokenizer" GenericType = "ProestAPI.ProestData.Tokens" APIUri="login" Method="POST" Order = "1">
+		<Parameters>			
+			<Parameter Key="partner_key" Value="UtZ5UUsaj3eW-HWyxV6N" />
+			<Parameter Key="company_key" Value="JzxqMBk43yAUBRWYySC4" />			
+		</Parameters>
+	</APIProspect>
+	public class Tokens : IAPIProspect
+    {
+        public string Token { get; set; }
+        public dynamic OtherResponses { get; set; }
+    }
