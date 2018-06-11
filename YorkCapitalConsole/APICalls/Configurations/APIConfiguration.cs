@@ -11,6 +11,7 @@ using System.Xml.Linq;
 
 #region ^Custom Namespaces
 using APICalls.Entities;
+using APICalls.Entities.Interfaces;
 using Extensions;
 using Wrappers;
 using JsonSerializers;

@@ -75,10 +75,10 @@
     <Compile Include="Entities\APIParallelProgress.cs" />
     <Compile Include="Entities\APIRequestHeaders.cs" />
     <Compile Include="Entities\APIProspect.cs" />
-    <Compile Include="Entities\IAPIParallelProgress.cs" />
-    <Compile Include="Entities\IAPIProspect.cs" />
+    <Compile Include="Entities\Interfaces\IAPIParallelProgress.cs" />
+    <Compile Include="Entities\Interfaces\IAPIProspect.cs" />
     <Compile Include="APIUtil.cs" />
-    <Compile Include="Entities\IAPIResult.cs" />
+    <Compile Include="Entities\Interfaces\IAPIResult.cs" />
     <Compile Include="Example\BastchStockQuotes.cs" />
     <Compile Include="Example\ExchangeParameters.cs" />
     <Compile Include="Example\RealtimeCurrencyExchangeRate.cs" />

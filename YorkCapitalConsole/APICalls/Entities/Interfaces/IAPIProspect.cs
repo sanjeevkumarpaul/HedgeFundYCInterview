@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APICalls.Entities
+namespace APICalls.Entities.Interfaces
 {
     /// <summary>
     /// All API Results will be alloted with this interface type.

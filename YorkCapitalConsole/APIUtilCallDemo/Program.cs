@@ -1,5 +1,6 @@
 ﻿using APICalls.Configurations;
 using APICalls.Entities;
+using APICalls.Entities.Interfaces;
 using APICalls.Example;
 using System;
 using System.Collections.Generic;

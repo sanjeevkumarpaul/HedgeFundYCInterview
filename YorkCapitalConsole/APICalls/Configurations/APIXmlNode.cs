@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Extensions;
+using APICalls.Entities.Interfaces;
 
 namespace APICalls.Configurations
 {

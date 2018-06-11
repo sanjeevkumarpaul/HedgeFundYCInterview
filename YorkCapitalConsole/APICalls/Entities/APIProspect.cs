@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using APICalls.Entities.Interfaces;
 using Extensions;
 
 namespace APICalls.Entities
