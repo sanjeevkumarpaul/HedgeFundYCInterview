@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace APICalls.Entities
 {
-    public class APIRequestHeaders
+    public sealed class APIRequestHeaders
     {
         public string ParameterContentType { get; set; }
         public APINamePareMedia[] Headers { get; set; }
         public string[] AcceptContentTypes { get; set; }
     }
 
-    public class APINamePareMedia
+    public sealed class APINamePareMedia
     {
         public string Key { get; set; }
         public string Value { get; set; }

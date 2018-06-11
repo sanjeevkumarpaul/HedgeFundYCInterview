@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace APICalls
 {
-    public class APIUtil<T> where T : IAPIProspect, new()
+    public sealed class APIUtil<T> where T : IAPIProspect, new()
     {
         private static readonly HttpClient client = new HttpClient();
         private APIProspect<T> prospect;

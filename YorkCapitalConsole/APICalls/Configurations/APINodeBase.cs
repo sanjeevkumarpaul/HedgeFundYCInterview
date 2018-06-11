@@ -7,28 +7,28 @@ using System.Threading.Tasks;
 
 namespace APICalls.Configurations
 {
-    public class APINodeBase
+    internal class APINodeBase
     {
-        public string Name { get; set; }
-        public string GenericType { get; set; }
-        public string BaseUrl { get; set; }
-        public string ApiUri { get; set; }
-        public string ApiKey { get; set; }
-        public string IncludeKeyFromBase { get; set; }
-        public bool RequiredAuthorization { get; set; }
-        public APIAuthenticationType AuthenticationType { get; set; }
-        public string Token { get; set; }
-        public bool TokenAsHeader { get; set; }
-        public string TokenMaster { get; set; }
-        public Dictionary<string, string> Parameters { get; set; }
-        public bool ParametersAsQueryString { get; set; } = false;
-        public Dictionary<string, string> Headers { get; set; }
+        internal string Name { get; set; }
+        internal string GenericType { get; set; }
+        internal string BaseUrl { get; set; }
+        internal string ApiUri { get; set; }
+        internal string ApiKey { get; set; }
+        internal string IncludeKeyFromBase { get; set; }
+        internal bool RequiredAuthorization { get; set; }
+        internal APIAuthenticationType AuthenticationType { get; set; }
+        internal string Token { get; set; }
+        internal bool TokenAsHeader { get; set; }
+        internal string TokenMaster { get; set; }
+        internal Dictionary<string, string> Parameters { get; set; }
+        internal bool ParametersAsQueryString { get; set; } = false;
+        internal Dictionary<string, string> Headers { get; set; }
         /// <summary>
         /// Sepration to be done via semicolon at XML
         /// application/json[;application/jpeg[;...]]
         /// </summary>
-        public string ContentTypes { get; set; }        
-        public string ParamContentType { get; set; }
-        public APIMethod Method { get; set; }
+        internal string ContentTypes { get; set; }        
+        internal string ParamContentType { get; set; }
+        internal APIMethod Method { get; set; }
     }
 }

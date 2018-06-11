@@ -23,7 +23,7 @@ namespace APICalls.Configurations
     /// <summary>
     /// Public class
     /// </summary>
-    public partial class APIConfiguration : IDisposable
+    public sealed partial class APIConfiguration : IDisposable
     {
         public void Dispose()
         {

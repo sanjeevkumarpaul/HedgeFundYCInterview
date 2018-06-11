@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace APICalls.Configurations
 {
-    internal class APIObjectParameter
+    internal sealed class APIObjectParameter
     {
        internal HashSet<object> Params { get; } = null;
 

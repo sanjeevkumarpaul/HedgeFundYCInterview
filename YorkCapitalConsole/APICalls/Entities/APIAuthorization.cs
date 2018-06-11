@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace APICalls.Entities
 {
-    public class APIAuthorization
+    public sealed class APIAuthorization
     {
         public string Username { get; set; }
         public string Password { get; set; }
