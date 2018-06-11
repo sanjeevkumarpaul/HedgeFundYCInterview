@@ -19,6 +19,7 @@ namespace APICalls.Configurations
         public APIAuthenticationType AuthenticationType { get; set; }
         public string Token { get; set; }
         public bool TokenAsHeader { get; set; }
+        public string TokenMaster { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public bool ParametersAsQueryString { get; set; } = false;
         public Dictionary<string, string> Headers { get; set; }

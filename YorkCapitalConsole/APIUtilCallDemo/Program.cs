@@ -42,7 +42,7 @@ namespace APIUtilCallDemo
             }
 
             public void Reponses(IAPIProspect resultProspect, APIConfiguration config)
-            {
+            {                
                 ExchangeRate(resultProspect, config);
                 StockQuotes(resultProspect);
             }
@@ -76,11 +76,11 @@ namespace APIUtilCallDemo
                     Console.WriteLine("Exchange Currency Information Received...");
                     Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
 
-                    //if (_exchangeCountry > 2) config.Cancel(); //Cancellation Token used.
-                    //if (_exchangeCountry > 2) config.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
+                    //if (_exchangeCountry > 2) config?.Cancel(); //Cancellation Token used.
+                    //if (_exchangeCountry > 2) config?.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
 
                     if (_exchangeCountry < _currencies.Length)
-                        config.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++] }, 
+                        config?.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++] }, 
                                                   new StockQuoteSymbols { Symbols = "DIS,AXP" });                    
                 }
             }
@@ -109,12 +109,7 @@ namespace APIUtilCallDemo
                 var exch = progress as ExchangeProgress;
 
                 Console.Write($"...{exch?.Percentage}...");
-            }
-
-            public void ParallelEnd()
-            {
-                Console.WriteLine("End....");
-            }
+            }            
         }
 
 

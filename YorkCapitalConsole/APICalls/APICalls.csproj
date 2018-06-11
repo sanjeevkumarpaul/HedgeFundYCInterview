@@ -82,6 +82,7 @@
     <Compile Include="Example\BastchStockQuotes.cs" />
     <Compile Include="Example\ExchangeParameters.cs" />
     <Compile Include="Example\RealtimeCurrencyExchangeRate.cs" />
+    <Compile Include="Example\Tokens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

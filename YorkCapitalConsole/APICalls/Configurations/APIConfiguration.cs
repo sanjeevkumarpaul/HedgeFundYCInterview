@@ -58,7 +58,7 @@ namespace APICalls.Configurations
     public partial class APIConfiguration
     {
         #region ^Public Properties
-        public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? Apis.Select(a => a.Result) : null; } }
+        public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? ProspectResultsFiltered().Select(a => a.Result) : null; } }
 
         public IAPIResult Subscriber { get { return Options.Subscriber; } }
         #endregion ~Public Properties
@@ -87,7 +87,7 @@ namespace APICalls.Configurations
             {
                 var res = ExecuteApi(api);
                 if (_isCancelled || _isCancelledRepeat) continue;
-                PostSubscription(res.Result);
+                PostSubscription(res);
                 yield return res.Result;
             }
 
@@ -108,7 +108,7 @@ namespace APICalls.Configurations
                 .ToObservable(NewThreadScheduler.Default)    
                 //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops                
                 .Finally(() => PostFinalEvents())                
-                .Subscribe((output) => PostSubscription(output.Result), 
+                .Subscribe((output) => PostSubscription(output), 
                            //((exp)=> Options.Subcriber.Error<APIException>(exp as APIException, this)),   //This Stops the whole process not even second sequence is considered.
                            _apiCancellation.Token);           
         }
@@ -131,54 +131,7 @@ namespace APICalls.Configurations
             PostFinalEvents();
 
             return new List<string>();
-        }
-
-        private async Task<List<IAPIProspect>> ExecuteParallel(IProgress<IAPIParallelProgress> progress)
-        {
-            IAPIParallelResult _result = Options.SubscriberParallel;            
-
-            await Task.Run(() =>
-            {
-                Parallel.ForEach<XElement>(ApiElements, (api) =>
-                {
-                    var parameters = _result?.ParallelStart();
-                    var res = ExecuteApiAsync(api, parameters);
-
-                    lock (lockobj) //Critcal Area.
-                    {
-                        Apis.Add(res);
-                        RaiseProgress(res, progress);                        
-                        PostSubscription(res.Result);
-                    }
-                });
-            });
-            #region ^example of exxception handlin via tasks.
-            //To catch any exeception within Tasks we need to do like below
-            /*
-                  try { var results = await Task.WhenAll(taskProspects); }
-                  catch(AggregateException ae)
-                  {
-                     e.Handle(x) =>
-                     {
-                         if (x is UnauthorizedAccessException) // This we know how to handle.
-                         {
-                             Console.WriteLine("You do not have permission to access all folders in this path.");
-                             Console.WriteLine("See your network administrator or try another path.");
-                             return true;
-                          }
-                          return false; // Let anything else stop the application.
-                      });
-
-                      //   OR    //
-
-                      var x = e.Flatten(); //This way it flattens all the exception from all taks and then can be re thrown like - throw x;
-                  }
-             */
-            #endregion ~example of exxception handlin via tasks.
-
-            return ProspectResults.ToList();
-        }
-
+        }        
         #endregion ~API Calling Sequences
     }
     /// <summary>
@@ -324,7 +277,7 @@ namespace APICalls.Configurations
 
             #region ^Xml Formats
             string xml = $"<?xml version=\"1.0\" ?>{_nl}<APIProspects>{_nl}";
-            string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" />{_nl}";
+            string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" TokenMaster=\"{{3}}\" />{_nl}";
             string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\">{_nl}";
             string _authXml = $"<Authorization Type=\"{{0}}\" Token=\"{{1}}\" TokenAsHeader=\"{{2}}\" />{_nl}";
             string _headerXml = $"<Header Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
@@ -339,7 +292,7 @@ namespace APICalls.Configurations
                 if (pros["Base"] != null)
                 {
                     var _base = pros["Base"];
-                    xml += string.Format(_baseXml, _base["Name"]?.ToString(), _base["BaseUrl"]?.ToString(), _base["Key"]?.ToString());
+                    xml += string.Format(_baseXml, _base["Name"]?.ToString(), _base["BaseUrl"]?.ToString(), _base["Key"]?.ToString(), _base["TokenMaster"]?.ToString());
                 }
                 #endregion ~Base Element
 
@@ -415,6 +368,58 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
+        /// <summary>
+        /// Parallel execution needs little bit of extra functionality. Where Parallel Loop is executed under Task.Run() in a awaited fashion to  
+        /// let progress client do its other duties and Subscription Events and emited in each process along with progress event
+        /// to let client know the processing and if required accept cancelation switch.
+        /// </summary>
+        /// <param name="progress">IProgress type to let progress event fire at client after each Api execution</param>
+        /// <returns>List Of all IAPIProspects Results</returns>
+        private async Task<List<IAPIProspect>> ExecuteParallel(IProgress<IAPIParallelProgress> progress)
+        {
+            IAPIParallelResult _result = Options.SubscriberParallel;
+
+            await Task.Run(() =>
+            {
+                Parallel.ForEach<XElement>(ApiElements, (api) =>
+                {
+                    var parameters = _result?.ParallelStart();
+                    var res = ExecuteApiAsync(api, parameters);
+
+                    lock (lockobj) //Critcal Area.
+                    {
+                        Apis.Add(res);
+                    }                    
+                    PostSubscription(res);                    
+                });
+            });
+            #region ^example of exxception handlin via tasks.
+            //To catch any exeception within Tasks we need to do like below
+            /*
+                  try { var results = await Task.WhenAll(taskProspects); }
+                  catch(AggregateException ae)
+                  {
+                     e.Handle(x) =>
+                     {
+                         if (x is UnauthorizedAccessException) // This we know how to handle.
+                         {
+                             Console.WriteLine("You do not have permission to access all folders in this path.");
+                             Console.WriteLine("See your network administrator or try another path.");
+                             return true;
+                          }
+                          return false; // Let anything else stop the application.
+                      });
+
+                      //   OR    //
+
+                      var x = e.Flatten(); //This way it flattens all the exception from all taks and then can be re thrown like - throw x;
+                  }
+             */
+            #endregion ~example of exxception handlin via tasks.
+
+            return ProspectResults.ToList();
+        }
+
         private Progress<IAPIParallelProgress> SubscribeProgress()
         {
             if (Options.Progessor != null)
@@ -440,16 +445,19 @@ namespace APICalls.Configurations
         /// <summary>
         /// After every API Execution, this method is called to post back responses back to Subcribed Class (which user has provided)
         /// </summary>
-        private void PostSubscription(IAPIProspect result)
+        private void PostSubscription(APIXmlNode node, IProgress<IAPIParallelProgress> progress = null)
         {
-            if (Options.Subscriber != null)
+
+            RaiseProgress(node, progress);
+
+            if (Options.Subscriber != null && !node.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase))
             {
                 var _config = _isParallel ? null : this; //ApiConfiguraion is only passed if performed non Parallelled.
 
-                if (result is APIException)
-                    Options.Subscriber.Error(result as APIException, _config);
+                if (node.Result is APIException)
+                    Options.Subscriber.Error(node.Result as APIException, _config);
                 else
-                    Options.Subscriber.Reponses(result, _config); 
+                    Options.Subscriber.Reponses(node.Result, _config); 
             }
         }
         
@@ -462,8 +470,14 @@ namespace APICalls.Configurations
         {
             Task.Factory.StartNew(() => Dispose())
                         .ContinueWith(antecendent => Options.Subscriber.Post(this.ProspectResults))
-                        .ContinueWith(antecendent => Options.Subscriber.Final(Apis.Last().Result))
+                        .ContinueWith(antecendent => Options.Subscriber.Final(ProspectResultsFiltered().Last().Result))
                         .Wait();
+        }
+
+        private IEnumerable<APIXmlNode> ProspectResultsFiltered()
+        {
+            return Apis.
+                   Where(a => !a.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase));
         }
         #endregion
     }

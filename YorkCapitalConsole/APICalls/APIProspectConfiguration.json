@@ -1,7 +1,27 @@
 ﻿{
   "APIProspects" :[
-                      { "Base"        : { "BaseUrl" : "https://www.alphavantage.co/query", "Key":"LBMNIZVTOTUQRGRT" } },
+                      { "Base"        : { "BaseUrl" : "https://www.alphavantage.co/query", "Key":"LBMNIZVTOTUQRGRT", "TokenMaster":"TokenReceiver" } },
                       
+					  { "APIProspect" : {
+                                          "Name"    : "TokenReceiver",
+                                          "BaseUrl" : "https://nycsca.proest.com/external_api/v1",
+                                          "Uri"     : "login",
+                                          "Method"  : "POST",										  
+										  "GenericType" : "APICalls.Example.Tokens",
+                                        										  
+                                          "Parameters" : 
+										  {
+											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
+											  "ParamValues" :
+											  [
+												{ "Key" : "partner_key",  "Value" : "UtZ5UUsaj3eW-HWyxV6N" 	},
+												{ "Key" : "company_key",  "Value" : "JzxqMBk43yAUBRWYySC4" }												
+											  ]
+										  },
+										  "ContentTypes" : "application/json"										
+                                        }
+                      },
+					  
                       { "APIProspect" : {
                                           "Name"    : "CurrencyExchangeRate",
                                           "BaseUrl" : "",
@@ -21,7 +41,7 @@
 											  ]
 										  },
 										  "ContentTypes" : "application/json",
-										  "Repeat" : "3"
+										  "Repeat" : "2"
                                         }
                       },
                       

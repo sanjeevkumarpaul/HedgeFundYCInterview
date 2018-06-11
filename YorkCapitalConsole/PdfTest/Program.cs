@@ -10,13 +10,13 @@ namespace PdfTest
     {
         static void Main(string[] args)
         {
-            using (PdfUtility.PdfAction _sharp = new PdfUtility.PdfAction(new PdfUtility.Entities.PdfOptions {  Folder = @"C:\Users\Sanje\Downloads\tax",
-                                                                                                             OutText = "Have a break #name#.",
+            using (PdfUtility.PdfAction _sharp = new PdfUtility.PdfAction(new PdfUtility.Entities.PdfOptions {  Folder = @"C:\Users\Sanje\Downloads\Scanner",
+                                                                                                             OutText = "Tax#name#.",
                                                                                                              Subfolders =true,
-                                                                                                             File = "TaxReturns_2007.pdf",
+                                                                                                             File = "TaxReturns_2017.pdf",
                                                                                                              Ranges = new List<PdfUtility.Entities.PageRange>
                                                                                                              {
-                                                                                                                 new PdfUtility.Entities.PageRange(2,0)
+                                                                                                                 //new PdfUtility.Entities.PageRange(2,0)
                                                                                                              },
                                                                                                              ExcludeFileNames = new string[] { "BOA_2017_Savings 1099-INTt.pdf"},
                                                                                                              ExcludePattern = "w2*.*",
@@ -31,7 +31,7 @@ namespace PdfTest
                 //_sharp.RemovePagesSelection();
                 //_sharp.AddSamplePage();
                 //_sharp.CompressSelection();
-                //_sharp.Compress();
+                _sharp.Compress();
                 //_sharp.DivideSelection();
 
             }

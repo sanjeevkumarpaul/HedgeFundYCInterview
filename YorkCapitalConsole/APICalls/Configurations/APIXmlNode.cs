@@ -32,8 +32,9 @@ namespace APICalls.Configurations
             {                
                 if (auth.Attribute("Type") != null) AuthenticationType = auth.Attribute("Type").Value.ToEnum<APIAuthenticationType>();
                 if (auth.Attribute("Token") != null) Token = auth.Attribute("Token").Value;
-                if (auth.Attribute("TokenAsHeader") != null) TokenAsHeader = auth.Attribute("TokenAsHeader").Value.ToBool(); 
+                if (auth.Attribute("TokenAsHeader") != null) TokenAsHeader = auth.Attribute("TokenAsHeader").Value.ToBool();                
             }
+            if (element.Attribute("TokenMaster") != null) TokenMaster = element.Attribute("TokenMaster").Value;
 
             //<!-- Api Paramters -->
             var paramss = element.Element("Parameters");
