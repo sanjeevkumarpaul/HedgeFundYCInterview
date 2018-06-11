@@ -420,6 +420,10 @@ namespace APICalls.Configurations
             return ProspectResults.ToList();
         }
 
+        /// <summary>
+        /// Creates Progress object and Assigns Event Raiser to it.
+        /// </summary>
+        /// <returns>IProgress object</returns>
         private Progress<IAPIParallelProgress> SubscribeProgress()
         {
             if (Options.Progessor != null)
@@ -432,6 +436,11 @@ namespace APICalls.Configurations
             return null;
         }
 
+        /// <summary>
+        /// Raises Progress event at the Parallelism, only after checking if progress is not null.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="progress"></param>
         private void RaiseProgress(APIXmlNode node, IProgress<IAPIParallelProgress> progress)
         {
             if (progress == null) return;
@@ -447,7 +456,6 @@ namespace APICalls.Configurations
         /// </summary>
         private void PostSubscription(APIXmlNode node, IProgress<IAPIParallelProgress> progress = null)
         {
-
             RaiseProgress(node, progress);
 
             if (Options.Subscriber != null && !node.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase))
@@ -474,6 +482,10 @@ namespace APICalls.Configurations
                         .Wait();
         }
 
+        /// <summary>
+        /// Retrieves all APIProspect rsults except the ones with TokenMater is labled to.
+        /// </summary>
+        /// <returns>Enumerable of ApiXmlNode</returns>
         private IEnumerable<APIXmlNode> ProspectResultsFiltered()
         {
             return Apis.
