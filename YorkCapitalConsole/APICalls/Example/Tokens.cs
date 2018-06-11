@@ -9,7 +9,6 @@ namespace APICalls.Example
 {
     public class Tokens : IAPIProspect
     {
-        public string Token { get; set; }
-        public dynamic OtherResponses { get; set; }
+        public string Token { get; set; }        
     }
 }

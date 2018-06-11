@@ -60,7 +60,13 @@ namespace APICalls
                 {
                     if (prospect.Method == APIMethod.STREAM || prospect.Method == APIMethod.BYTEARRAY || prospect.Method == APIMethod.STRINGARRAY)
                     {
-                        prospect.Result = new T { OtherResponses = data };
+                        if (typeof(T) is IAPIProspectUpgrade)
+                        {
+                            var _upgrade = new T();
+                            ((IAPIProspectUpgrade)_upgrade).OtherResponses = data;
+
+                            prospect.Result = _upgrade;
+                        }
                     }
                     else
                     {
