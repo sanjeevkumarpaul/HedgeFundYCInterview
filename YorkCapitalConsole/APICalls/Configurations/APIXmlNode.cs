@@ -17,7 +17,7 @@ namespace APICalls.Configurations
         internal APIXmlNode(XElement element, APIXmlNode Base)
         {
             //<!-- Name & Type -->
-            if (element.Attribute("Name") != null) Name = element.Attribute("Name").Value;
+            if (element.Attribute("Name") != null) Name = element.Attribute("Name").Value; else Name = $"API_{DateTime.Now}_";
             if (element.Attribute("GenericType") != null) GenericType = element.Attribute("GenericType").Value;
 
             //<!-- Urls & Methods -->

@@ -16,7 +16,7 @@
   </APIProspect>
   
   
-  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.RealtimeCurrencyExchange" Order="6" Repeat="2">
+  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="2">
     
     <Parameters QueryString="True" ContentType="application/json">
       <Parameter Key="function" Value="CURRENCY_EXCHANGE_RATE"/>

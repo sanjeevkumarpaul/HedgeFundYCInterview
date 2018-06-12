@@ -248,7 +248,7 @@ namespace APICalls.Configurations
         {
             var _prospects = all.Where(n => n.Name == "APIProspect").OrderBy(p => (p.Attribute("Order")?.Value ?? "0").ToFloat());            
             var _orderList = _prospects.Where(p => (p.Attribute("Order")?.Value ?? "0").ToFloat() > 0.0).Select(p => (p.Attribute("Order")?.Value ?? "0").ToFloat());
-            var _start = _orderList.Max();
+            var _start = _orderList.Count() <= 0 ? 0 : _orderList.Max();
 
             if (_orderList.Count() < _prospects.Count()) /*only when there is no order for one of the candidate.*/
             {
