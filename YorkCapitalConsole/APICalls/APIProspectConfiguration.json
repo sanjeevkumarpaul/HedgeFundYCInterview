@@ -8,6 +8,7 @@
                                           "Uri"     : "login",
                                           "Method"  : "POST",										  
 										  "GenericType" : "APICalls.Example.Tokens",
+										  
                                         										  
                                           "Parameters" : 
 										  {

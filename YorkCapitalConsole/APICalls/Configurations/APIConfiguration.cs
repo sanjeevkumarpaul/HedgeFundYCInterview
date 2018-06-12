@@ -59,7 +59,7 @@ namespace APICalls.Configurations
     public partial class APIConfiguration
     {
         #region ^Public Properties
-        public IEnumerable<IAPIProspect> ProspectResults { get { return Apis.Count > 0 ? ProspectResultsFiltered().Select(a => a.Result) : null; } }
+        public IEnumerable<IAPIProspect> ProspectResults { get { return ProspectResultsFiltered().Select(a => a.Result); } }
 
         public IAPIResult Subscriber { get { return Options.Subscriber; } }
         #endregion ~Public Properties
@@ -227,11 +227,8 @@ namespace APICalls.Configurations
                 var all = (WrapIOs.Exists(xml) ? XElement.Load(xml) : XElement.Parse(xml)).Elements();
 
                 Base = new APIXmlNode(all.Where(n => n.Name == "Base").First(), null);
-
-                ApiElements = from elem in all.Where(n => n.Name == "APIProspect")
-                              let order = (elem.Attribute("Order")?.Value ?? "0").ToInt()
-                              orderby order
-                              select elem;
+                
+                ApiElements = OrderProspectNodes(all);
 
                 InsertRepeats(); //Taking ownership of repeat.
             }
@@ -240,6 +237,55 @@ namespace APICalls.Configurations
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Reassigns the correct order for APIs
+        /// </summary>
+        /// <param name="all">IEnum of XElement containg API</param>
+        /// <returns></returns>
+        private IEnumerable<XElement> OrderProspectNodes(IEnumerable<XElement> all)
+        {
+            var _prospects = all.Where(n => n.Name == "APIProspect").OrderBy(p => (p.Attribute("Order")?.Value ?? "0").ToFloat());            
+            var _orderList = _prospects.Where(p => (p.Attribute("Order")?.Value ?? "0").ToFloat() > 0.0).Select(p => (p.Attribute("Order")?.Value ?? "0").ToFloat());
+            var _start = _orderList.Max();
+
+            if (_orderList.Count() < _prospects.Count()) /*only when there is no order for one of the candidate.*/
+            {
+                if (_start <= 0) _start++;
+                var _count = _prospects.Count() + _start;
+              
+                for (var index = _start; index < _count; index++)
+                {
+                    var _elem = _prospects.ElementAt(0); //Always Zero(0) since _prospect is sorted IEnum and once Order Attribute is filled it adjusts automatically.
+                    if (!_orderList.Contains(index)) //_ordereList fills up as and when 'Order' attribute gets an value.
+                        SetOrderElement(_elem, index);
+                }
+
+                //only if Token master is assigned check through elements and assign it to be the first.
+                if (!Base.TokenMaster.Empty())
+                {
+                    var _elem = _prospects.FirstOrDefault(p => (p.Attribute("Name")?.Value ?? "").Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase));                    
+                    SetOrderElement(_elem, 0);
+                }
+            }
+            return _prospects;
+        }
+
+        /// <summary>
+        /// Sets/Assigns Order Attribute for XElement to a float value
+        /// </summary>
+        /// <param name="element">XElement</param>
+        /// <param name="value">float value</param>
+        private void SetOrderElement(XElement element, float value)
+        {
+            if (element != null)
+            {
+                if (element.Attribute("Order") != null)
+                    element.Attribute("Order").Value = value.ToString();
+                else
+                    element.Add(new XAttribute("Order", value.ToString()));
+            }
         }
 
         /// <summary>
@@ -253,14 +299,20 @@ namespace APICalls.Configurations
                            let repeat = elem.Attribute("Repeat")?.Value.ToInt()
                            where repeat > 0 select new { Repeat = repeat, Element = elem };
 
-            var allElements = ApiElements.ToList();
+            var allElements = ApiElements.ToList();            
             _inserts.All(_ins =>
             {
-                for (int r = 1; r < _ins.Repeat; r++) allElements.Insert(allElements.IndexOf(_ins.Element), _ins.Element);
+                var _elem = new XElement(_ins.Element); //Deep Copy
+                var _order =_ins.Element.Attribute("Order").Value;
+                for (int r = 1; r < _ins.Repeat; r++)
+                {
+                    SetOrderElement(_elem, ($"{_order}.{r}").ToFloat());
+                    allElements.Insert(allElements.IndexOf(_ins.Element), _elem);
+                }
                 return true;
             });
 
-            ApiElements = from element in allElements select element;
+            ApiElements = from element in allElements.OrderBy(a => a.Attribute("Order").Value.ToFloat()) select element;
         }
         private bool InitializeJson()
         {
@@ -279,7 +331,7 @@ namespace APICalls.Configurations
             #region ^Xml Formats
             string xml = $"<?xml version=\"1.0\" ?>{_nl}<APIProspects>{_nl}";
             string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" TokenMaster=\"{{3}}\" />{_nl}";
-            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\">{_nl}";
+            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\" Order=\"{{9}}\">{_nl}";
             string _authXml = $"<Authorization Type=\"{{0}}\" Token=\"{{1}}\" TokenAsHeader=\"{{2}}\" />{_nl}";
             string _headerXml = $"<Header Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
             string _paramHeaderXml = $"<Parameters QueryString=\"{{0}}\" ContentType=\"{{1}}\">{_nl}";
@@ -309,7 +361,8 @@ namespace APICalls.Configurations
                                                        _prospect["GenericType"]?.ToString(),
                                                        _prospect["Token"]?.ToString(),
                                                        _prospect["ContentTypes"]?.ToString(),
-                                                       _prospect["Repeat"]?.ToString());
+                                                       _prospect["Repeat"]?.ToString(),
+                                                       _prospect["Order"]?.ToString());
                     #region ^Authorization Element
                     if (_prospect["Authorization"] != null)
                     {
@@ -459,7 +512,7 @@ namespace APICalls.Configurations
         {
             RaiseProgress(node, progress);
 
-            if (Options.Subscriber != null && !node.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase))
+            if (Options.Subscriber != null && node.Name != null && !node.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase))
             {
                 var _config = _isParallel ? null : this; //ApiConfiguraion is only passed if performed non Parallelled.
 
@@ -490,7 +543,7 @@ namespace APICalls.Configurations
         private IEnumerable<APIXmlNode> ProspectResultsFiltered()
         {
             return Apis.
-                   Where(a => !a.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase));
+                   Where(a => a.Name != null && !a.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase));
         }
         #endregion
     }

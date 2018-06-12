@@ -54,7 +54,7 @@ namespace Extensions
         {
             return string.IsNullOrWhiteSpace(str);
         }
-
+        
         public static string RemoveSeprators(this string str)
         {
             return Regex.Replace(str, "[^0-9a-zA-Z]+", "");
@@ -207,6 +207,15 @@ namespace Extensions
             int result = 0;
 
             Int32.TryParse(str, out result);
+
+            return result;
+        }
+
+        public static float ToFloat(this string str)
+        {
+            float result = 0.0f;
+
+            float.TryParse(str, out result);
 
             return result;
         }
