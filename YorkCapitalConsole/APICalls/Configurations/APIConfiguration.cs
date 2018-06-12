@@ -512,7 +512,7 @@ namespace APICalls.Configurations
         {
             RaiseProgress(node, progress);
 
-            if (Options.Subscriber != null && node.Name != null && !node.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase))
+            if (Options.Subscriber != null && !node.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase))
             {
                 var _config = _isParallel ? null : this; //ApiConfiguraion is only passed if performed non Parallelled.
 
@@ -543,7 +543,7 @@ namespace APICalls.Configurations
         private IEnumerable<APIXmlNode> ProspectResultsFiltered()
         {
             return Apis.
-                   Where(a => a.Name != null && !a.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase));
+                   Where(a => !a.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase));
         }
         #endregion
     }
