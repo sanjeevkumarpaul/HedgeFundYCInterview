@@ -31,5 +31,6 @@ namespace APICalls.Bases
         internal string ContentTypes { get; set; }        
         internal string ParamContentType { get; set; }
         internal APIMethod Method { get; set; }
+        internal bool Cache { get; set; } = false;        
     }
 }

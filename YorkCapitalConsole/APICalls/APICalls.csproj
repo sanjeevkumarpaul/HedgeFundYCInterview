@@ -72,6 +72,7 @@
     <Compile Include="Enum\APIAuthenticationType.cs" />
     <Compile Include="Entities\Conracts\APIAuthorization.cs" />
     <Compile Include="Entities\Conracts\APIException.cs" />
+    <Compile Include="Enum\APICacheFrequency.cs" />
     <Compile Include="Enum\APIMethod.cs" />
     <Compile Include="Bases\APINodeBase.cs" />
     <Compile Include="Dependents\APIParallelProgress.cs" />
@@ -114,6 +115,8 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Caching\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

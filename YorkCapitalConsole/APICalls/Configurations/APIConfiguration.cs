@@ -334,7 +334,7 @@ namespace APICalls.Configurations
             #region ^Xml Formats
             string xml = $"<?xml version=\"1.0\" ?>{_nl}<APIProspects>{_nl}";
             string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" TokenMaster=\"{{3}}\" />{_nl}";
-            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\" Order=\"{{9}}\">{_nl}";
+            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\" Order=\"{{9}}\" Cache=\"{{10}}\">{_nl}";
             string _authXml = $"<Authorization Type=\"{{0}}\" Token=\"{{1}}\" TokenAsHeader=\"{{2}}\" />{_nl}";
             string _headerXml = $"<Header Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
             string _paramHeaderXml = $"<Parameters QueryString=\"{{0}}\" ContentType=\"{{1}}\">{_nl}";
@@ -348,7 +348,10 @@ namespace APICalls.Configurations
                 if (pros["Base"] != null)
                 {
                     var _base = pros["Base"];
-                    xml += string.Format(_baseXml, _base["Name"]?.ToString(), _base["BaseUrl"]?.ToString(), _base["Key"]?.ToString(), _base["TokenMaster"]?.ToString());
+                    xml += string.Format(_baseXml, _base["Name"]?.ToString(), 
+                                                   _base["BaseUrl"]?.ToString(), 
+                                                   _base["Key"]?.ToString(), 
+                                                   _base["TokenMaster"]?.ToString());
                 }
                 #endregion ~Base Element
 
@@ -365,7 +368,8 @@ namespace APICalls.Configurations
                                                        _prospect["Token"]?.ToString(),
                                                        _prospect["ContentTypes"]?.ToString(),
                                                        _prospect["Repeat"]?.ToString(),
-                                                       _prospect["Order"]?.ToString());
+                                                       _prospect["Order"]?.ToString(),
+                                                       _prospect["Cache"]?.ToString());
                     #region ^Authorization Element
                     if (_prospect["Authorization"] != null)
                     {

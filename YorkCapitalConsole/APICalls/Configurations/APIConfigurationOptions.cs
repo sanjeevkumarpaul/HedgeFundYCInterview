@@ -1,6 +1,7 @@
 ﻿using APICalls.Dependents;
 using APICalls.Entities;
 using APICalls.Entities.Interfaces;
+using APICalls.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,9 @@ namespace APICalls.Configurations
         public IAPIResult Subscriber { get; set; } = null;
 
         public IAPIParallelProgress Progessor { get; set; } = new APIParallelProgress();
+
+        public Int32 CacheDuration { get; set; } = 0;
+        public APICacheFrequency ChacheFrequency { get; set; } = APICacheFrequency.M; //denotes month 
 
         internal IAPIParallelResult SubscriberParallel { get { return _subscriberParallel;  } }
         

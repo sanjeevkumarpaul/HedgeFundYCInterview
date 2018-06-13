@@ -29,6 +29,9 @@ namespace APICalls.Configurations
             if (element.Attribute("IncludeKeyFromBase") != null) IncludeKeyFromBase = element.Attribute("IncludeKeyFromBase").Value; 
             if (element.Attribute("Method") != null) Method = element.Attribute("Method").Value.ToEnum<APIMethod>();
 
+            //<!-- Cache -->
+            if (element.Attribute("Cache") != null) Cache = element.Attribute("Cache").Value.ToBool();
+
             //<!-- Authorization -->
             var auth = element.Element("Authorization");
             if (auth != null )
