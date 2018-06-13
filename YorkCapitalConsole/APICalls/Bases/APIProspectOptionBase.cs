@@ -1,13 +1,14 @@
-﻿using System;
+﻿using APICalls.Entities.Contracts;
+using APICalls.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using APICalls.Entities.Interfaces;
 using Extensions;
 
-namespace APICalls.Entities
+namespace APICalls.Bases
 {
     public abstract class APIProspectOptionBase : IDisposable
     {
@@ -64,16 +65,6 @@ namespace APICalls.Entities
         public void Dispose()
         {
 
-        }
-    }
-
-    public class APIProspect<T> : APIProspectOptionBase where T: IAPIProspect, new()
-    {        
-        public T Result { get; set; }
-
-        public APIProspect()
-        {
-            Result = new T();
         }
     }
 }

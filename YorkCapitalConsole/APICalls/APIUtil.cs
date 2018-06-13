@@ -1,5 +1,9 @@
-﻿using APICalls.Entities;
+﻿using APICalls.Bases;
+using APICalls.Dependents;
+using APICalls.Entities;
+using APICalls.Entities.Contracts;
 using APICalls.Entities.Interfaces;
+using APICalls.Enum;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;

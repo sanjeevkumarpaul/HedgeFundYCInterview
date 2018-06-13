@@ -16,6 +16,9 @@ using Extensions;
 using Wrappers;
 using JsonSerializers;
 using System.Threading;
+using APICalls.Entities.Contracts;
+using APICalls.Dependents;
+using APICalls.Bases;
 #endregion ~Custom Namespaces
 
 namespace APICalls.Configurations

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APICalls.Entities
+namespace APICalls.Dependents
 {
     /// <summary>
     /// In Parallel task, it will calcualte the Percentage and Report back.

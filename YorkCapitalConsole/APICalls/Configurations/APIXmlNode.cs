@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Extensions;
 using APICalls.Entities.Interfaces;
+using APICalls.Bases;
+using APICalls.Enum;
 
 namespace APICalls.Configurations
 {
