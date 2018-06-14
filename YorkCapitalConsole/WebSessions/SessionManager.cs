@@ -7,7 +7,7 @@ using System.Web;
 
 namespace WebSessions
 {
-    public class SessionManager
+    public static class SessionManager
     {
         #region ^Public Methods
         /// <summary>

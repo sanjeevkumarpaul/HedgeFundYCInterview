@@ -105,6 +105,10 @@
       <Project>{207f29ff-9afb-4dc6-b40c-5db51bed5051}</Project>
       <Name>JsonSerializers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebCache\WebCache.csproj">
+      <Project>{e7c24e2a-dbb8-4a16-9532-61d9d812cf60}</Project>
+      <Name>WebCache</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ReadMe.txt" />

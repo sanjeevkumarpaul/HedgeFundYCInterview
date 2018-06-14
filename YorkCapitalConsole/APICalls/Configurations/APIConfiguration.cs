@@ -54,6 +54,7 @@ namespace APICalls.Configurations
         private bool _isCancelledRepeat = false;
         private bool _isParallel = false;
         private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
+        private WebCache.CacheWeb _cache = WebCache.CacheWeb.Cache;
         #endregion ^Required variables for the App.
     }
     /// <summary>
