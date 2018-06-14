@@ -1,40 +1,37 @@
 ﻿using System;
-using System.Web.Caching;
+using System.Collections;
 
 namespace WebCache
 {
-    public sealed class CacheWeb : CacheManager<Cache>
+    public sealed class CacheHashtable : CacheManager<Hashtable>
     {
-        public volatile static CacheWeb Cache;
+        public volatile static CacheHashtable Cache;
         
-        static CacheWeb() //Can not create instance since it has Static constructor.
+        static CacheHashtable() //Can not create instance since it has Static constructor.
         {
             if (Cache == null)
             {
                 lock (lockobj)
                 {
-                    if (Cache == null) Cache = new CacheWeb();
+                    if (Cache == null) Cache = new CacheHashtable();
                 }
             }
         }
 
-        private CacheWeb() : base() { }
+        private CacheHashtable() : base() { }
 
         public override void RemoveAll()
         {
-            foreach (var item in Storage)
-            {
-                Storage.Remove(((System.Collections.DictionaryEntry)item).Key.ToString());
-            }
+            Storage.Clear();
         }
 
         //Private methods
         protected override T Set<T>(string key, T value, Nullable<TimeSpan> time = null)
         {
             //Always delete it before inserting it.
-            Delete<T>(key);  
+            Delete<T>(key);
             //Caching temporary for an hour
-            Storage.Insert(key, value, null, time.HasValue ? DateTime.UtcNow.AddTicks(time.Value.Ticks) : DateTime.UtcNow.AddHours(1), TimeSpan.Zero); 
+            Storage.Add(key, value); //null, time.HasValue ? DateTime.UtcNow.AddTicks(time.Value.Ticks) : DateTime.UtcNow.AddHours(1), TimeSpan.Zero); 
             return value;
         }
 
@@ -60,7 +57,7 @@ namespace WebCache
 
         protected override bool Exists(string key)
         {
-            return Storage[key] != null;
+            return Storage.ContainsKey(key);
         }
     }
 }

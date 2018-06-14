@@ -16,14 +16,14 @@ namespace WebCache
             Storage = new CacheType();
         }
 
-        public T Add<T>(string key, T item)
-        {
-            return Set<T>(key, item);
-        }
-
-        public T Add<T>(string key, T item, TimeSpan time)
+        public T Add<T>(string key, T item, Nullable<TimeSpan> time = null)
         {
             return Set<T>(key, item, time);
+        }
+
+        public T Update<T>(string key, Func<T> action, Nullable<TimeSpan> time = null)
+        {
+            return Change<T>(key, action, time);
         }
 
         public T Get<T>(string key)
@@ -37,8 +37,9 @@ namespace WebCache
         }
 
         public abstract void RemoveAll();
-
+        
         protected abstract T Set<T>(string key, T item, Nullable<TimeSpan> time = null);
+        protected abstract T Change<T>(string key, Func<T> action, Nullable<TimeSpan> time = null);
         protected abstract T Fetch<T>(string key);
         protected abstract bool Exists(string key);
         protected abstract T Delete<T>(string key);

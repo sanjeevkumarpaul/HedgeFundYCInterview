@@ -38,6 +38,12 @@ namespace WebCache
             return value;
         }
 
+        protected override T Change<T>(string key, Func<T> action, Nullable<TimeSpan> time = null)
+        {
+            var _value = action();
+            return Set<T>(key, _value, time);
+        }
+
         protected override T Delete<T>(string key)
         {
             var _val = Fetch<T>(key);
