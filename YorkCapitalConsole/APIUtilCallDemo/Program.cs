@@ -139,8 +139,9 @@ namespace APIUtilCallDemo
 
             //Observable
             var config = new APIConfiguration(options1);
-            config.ExecuteApisObservable(true);
-            //cons.ExecuteApisObservable(); //This is here to see if caching is working.
+            config.ExecuteApisObservable();
+            //System.Threading.Thread.Sleep(5000);  //Sleep is required for caching concept to see through, otherwise all overservable will fire at once in async mode.
+            //config.ExecuteApisObservable(true); //This is here to see if caching is working.
 
             //Parallel Processing 
             //Remember Repeats will not work, and also prameter will only be taken from initial ObjectParams of APICOnfigurationOptions.
@@ -148,7 +149,8 @@ namespace APIUtilCallDemo
 
             //Synchronouse.
             //var config = new APIConfiguration(options1);
-            //foreach (var res in config.ExecuteApis()) ;            
+            //foreach (var res in config.ExecuteApis()) ;
+            //foreach (var res in config.ExecuteApis(true)) ;
             //
             //                        OR
             //

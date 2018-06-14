@@ -87,6 +87,7 @@ namespace APICalls.Configurations
         /// <returns></returns>
         public IEnumerable<IAPIProspect> ExecuteApis(bool resetCache = false)
         {
+            CleanItUp();
             foreach (var api in ApiElements)
             {
                 var res = ExecuteApi(api);
@@ -107,6 +108,7 @@ namespace APICalls.Configurations
         {
             if (Options.Subscriber == null) throw new Exception("Subscriber must be passed for Observable Execution");
 
+            CleanItUp();
             ApiElements
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)    
@@ -126,6 +128,7 @@ namespace APICalls.Configurations
         /// <returns>Task, which is kind of a Void.</returns>        
         public async Task<List<string>> ExecuteApisParallel(bool resetCache = false)
         {
+            CleanItUp();
             _isParallel = true;
             List<Task<IAPIProspect>> taskProspects = new List<Task<IAPIProspect>>();
             var progress = SubscribeProgress();
@@ -438,6 +441,10 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
+        private void CleanItUp()
+        {
+            Apis.Clear();
+        }
         /// <summary>
         /// Parallel execution needs little bit of extra functionality. Where Parallel Loop is executed under Task.Run() in a awaited fashion to  
         /// let progress client do its other duties and Subscription Events and emited in each process along with progress event
