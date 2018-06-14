@@ -140,15 +140,15 @@ namespace APIUtilCallDemo
             //Observable
             var cons = new APIConfiguration(options1);
             cons.ExecuteApisObservable();
-            cons.ExecuteApisObservable();
+            //cons.ExecuteApisObservable(); //This is here to see if caching is working.
 
             //Parallel Processing 
             //Remember Repeats will not work, and also prameter will only be taken from initial ObjectParams of APICOnfigurationOptions.
             //Task.Run( () => new APIConfiguration(options1).ExecuteApisParallel());
 
             //Synchronouse.
-            //var config = new APIConfiguration(options1);
-            //foreach (var res in config.ExecuteApis()) ;
+            var config = new APIConfiguration(options1);
+            //foreach (var res in config.ExecuteApis()) ;            
             //
             //                        OR
             //

@@ -282,12 +282,16 @@ namespace APICalls.Configurations
         /// <param name="value">float value</param>
         private void SetOrderElement(XElement element, float value)
         {
+            var _value = value.ToString();
             if (element != null)
             {
                 if (element.Attribute("Order") != null)
-                    element.Attribute("Order").Value = value.ToString();
+                    element.Attribute("Order").Value = _value;
                 else
-                    element.Add(new XAttribute("Order", value.ToString()));
+                    element.Add(new XAttribute("Order", _value));
+
+                if (element.Attribute("Name") != null)
+                    element.Attribute("Name").Value = $"{element.Attribute("Name").Value }..{_value}";  //This is setting the name so that Caching is done properly.
             }
         }
 
@@ -537,7 +541,7 @@ namespace APICalls.Configurations
         /// <param name="apiResults"></param>
         private void PostFinalEvents()
         {
-            Task.Factory.StartNew(() => Dispose())
+            Task.Factory.StartNew(() => { })
                         .ContinueWith(antecendent => Options.Subscriber.Post(this.ProspectResults))
                         .ContinueWith(antecendent => Options.Subscriber.Final(ProspectResultsFiltered().Last().Result))
                         .Wait();

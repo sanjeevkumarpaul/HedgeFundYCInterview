@@ -23,8 +23,11 @@ namespace WebCache
       
         //Private methods
         protected override T Set<T>(string key, T value, Nullable<TimeSpan> time = null)
-        {            
-            Storage.Insert(key, value, null, DateTime.Now.AddDays(1), time ?? new TimeSpan(1,0,0)); //Caching temporary for an hour and/or a Day.
+        {
+            if (time.HasValue)
+              Storage.Insert(key, value, null, DateTime.UtcNow.AddTicks(time.Value.Ticks), TimeSpan.Zero); 
+            else
+               Storage.Insert(key, value, null, DateTime.UtcNow.AddHours(1), TimeSpan.Zero); //Caching temporary for an hour
 
             return value;
         }
