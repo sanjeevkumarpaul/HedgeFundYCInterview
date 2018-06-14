@@ -85,7 +85,7 @@ namespace APICalls.Configurations
         /// Sequencial call to all API in a Enumerable.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<IAPIProspect> ExecuteApis()
+        public IEnumerable<IAPIProspect> ExecuteApis(bool resetCache = false)
         {
             foreach (var api in ApiElements)
             {
@@ -96,7 +96,7 @@ namespace APICalls.Configurations
             }
 
             //Post back POST and FINAL with IAPIResults
-            PostFinalEvents();
+            PostFinalEvents(resetCache);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace APICalls.Configurations
         /// 2. It will only try to input parameter fields frm the OBJECT PARAMS passed at APICONFIGOPTIONS at Constructor
         /// </summary>
         /// <returns>Task, which is kind of a Void.</returns>        
-        public async Task<List<string>> ExecuteApisParallel()
+        public async Task<List<string>> ExecuteApisParallel(bool resetCache = false)
         {
             _isParallel = true;
             List<Task<IAPIProspect>> taskProspects = new List<Task<IAPIProspect>>();
@@ -132,7 +132,7 @@ namespace APICalls.Configurations
 
             await ExecuteParallel(progress);
             
-            PostFinalEvents();
+            PostFinalEvents(resetCache);
 
             return new List<string>();
         }        
