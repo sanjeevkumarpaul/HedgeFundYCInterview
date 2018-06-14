@@ -5,7 +5,7 @@
 <APIProspects>
   <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" TokenMaster="TokenReceiver"/>
 
-  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" GenericType="APICalls.Example.Tokens">
+  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" GenericType="APICalls.Example.Tokens" Cache="True">
     
     <Parameters QueryString="True" ContentType="application/json">
       <Parameter Key="partner_key" Value="UtZ5UUsaj3eW-HWyxV6N"/>

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebCache;
 
 namespace APICalls.Configurations
 {
@@ -42,6 +43,8 @@ namespace APICalls.Configurations
 
         public Int32 CacheDuration { get; set; } = 0;
         public APICacheFrequency ChacheFrequency { get; set; } = APICacheFrequency.M; //denotes month 
+
+        public ICacheManagerFactory Cache { get; set; } = WebCache.CacheWeb.Cache;
 
         internal IAPIParallelResult SubscriberParallel { get { return _subscriberParallel;  } }
         

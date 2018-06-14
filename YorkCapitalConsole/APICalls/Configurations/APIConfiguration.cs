@@ -53,8 +53,7 @@ namespace APICalls.Configurations
         private bool _isCancelled = false;
         private bool _isCancelledRepeat = false;
         private bool _isParallel = false;
-        private CancellationTokenSource _apiCancellation = new CancellationTokenSource();
-        private WebCache.CacheWeb _cache = WebCache.CacheWeb.Cache;
+        private CancellationTokenSource _apiCancellation = new CancellationTokenSource();      
         #endregion ^Required variables for the App.
     }
     /// <summary>
@@ -550,8 +549,17 @@ namespace APICalls.Configurations
         /// <returns>Enumerable of ApiXmlNode</returns>
         private IEnumerable<APIXmlNode> ProspectResultsFiltered()
         {
-            return Apis.
-                   Where(a => !a.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase));
+            return Apis.Where(a => !IsTokenManager(a));
+        }
+
+        /// <summary>
+        /// Checks if a particular APIXmlNode is token Manager.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <returns>Boolean</returns>
+        private bool IsTokenManager(APIXmlNode node)
+        {
+            return node.Name.Equals(Base.TokenMaster, StringComparison.CurrentCultureIgnoreCase);
         }
         #endregion
     }
@@ -588,14 +596,46 @@ namespace APICalls.Configurations
         private APIXmlNode ExecuteApiAsync(XElement api, object[] otherParmams = null, APIXmlNode createdNode = null)
         {
             var node = createdNode ?? new APIXmlNode(api, Base);
-            var prospect = CreateAndInstantiateProspectNode(node, otherParmams);
-            object apiUtil = null;
-            var method = GetApiCallMethod(node, prospect, ref apiUtil);
+            var _result = CheckInCache(node);
 
-            InvokeApiMethod(node, method, apiUtil);
+            if (_result == null)
+            {
+                var prospect = CreateAndInstantiateProspectNode(node, otherParmams);
+                object apiUtil = null;
+                var method = GetApiCallMethod(node, prospect, ref apiUtil);
+
+                InvokeApiMethod(node, method, apiUtil);
+            }
+            else node.Result = _result;
 
             return node;
         }
+
+        /// <summary>
+        /// Checks if information is available in cache.
+        /// takes it from there.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <returns>IAPIProspect</returns>
+        private IAPIProspect CheckInCache(APIXmlNode node)
+        {
+            if (Options.Cache == null || !node.Cache || IsTokenManager(node)) return null;
+
+            var prospect = Options.Cache.Get<IAPIProspect>(node.Name);
+
+            return prospect;
+        }
+        /// <summary>
+        /// Chaches the result into cache based on Name given.        
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        private void AddInCache(APIXmlNode node)
+        {
+            if (Options.Cache == null || !node.Cache || IsTokenManager(node)) return;
+
+            Options.Cache.Add<IAPIProspect>(node.Name, node.Result);
+        }
+
         /// <summary>
         /// Creates instances of APIProspect<IAPIProspect>, IAPIProspect being any Type Derived from it.
         /// </summary>
@@ -648,6 +688,7 @@ namespace APICalls.Configurations
             {
                 var res = method.Invoke(apiUtil, null);
                 node.Result = (IAPIProspect)res;
+                AddInCache(node); //Adds into Cache.
             }
             catch (Exception ex)
             {

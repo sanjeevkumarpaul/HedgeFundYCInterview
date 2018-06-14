@@ -19,7 +19,7 @@ namespace APICalls.Configurations
         internal APIXmlNode(XElement element, APIXmlNode Base)
         {
             //<!-- Name & Type -->
-            if (element.Attribute("Name") != null) Name = element.Attribute("Name").Value;
+            if (element.Attribute("Name") != null) Name = $"__API__{element.Attribute("Name").Value}__.__";
             if (element.Attribute("GenericType") != null) GenericType = element.Attribute("GenericType").Value;
 
             //<!-- Urls & Methods -->
@@ -40,7 +40,7 @@ namespace APICalls.Configurations
                 if (auth.Attribute("Token") != null) Token = auth.Attribute("Token").Value;
                 if (auth.Attribute("TokenAsHeader") != null) TokenAsHeader = auth.Attribute("TokenAsHeader").Value.ToBool();                
             }
-            if (element.Attribute("TokenMaster") != null) TokenMaster = element.Attribute("TokenMaster").Value;
+            if (element.Attribute("TokenMaster") != null) TokenMaster = $"__API__{element.Attribute("TokenMaster").Value}__.__";
 
             //<!-- Api Paramters -->
             var paramss = element.Element("Parameters");
@@ -84,7 +84,7 @@ namespace APICalls.Configurations
         {
             if (BaseUrl.Empty()) BaseUrl = baseUrl;
             if (!Token.Empty()) RequiredAuthorization = true;
-            if (Name.Empty()) Name = $"API_{Guid.NewGuid()}_";
+            if (Name.Empty()) { Name = $"__API__{Guid.NewGuid()}__.__"; Cache = false; } //Caching is not possible without a name
 
             if (IncludeKeyFromBase.Empty()) IncludeKeyFromBase = null;
             if (!RequiredAuthorization)

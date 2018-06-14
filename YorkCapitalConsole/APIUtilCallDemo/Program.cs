@@ -138,7 +138,9 @@ namespace APIUtilCallDemo
             //};
 
             //Observable
-            new APIConfiguration(options1).ExecuteApisObservable();
+            var cons = new APIConfiguration(options1);
+            cons.ExecuteApisObservable();
+            cons.ExecuteApisObservable();
 
             //Parallel Processing 
             //Remember Repeats will not work, and also prameter will only be taken from initial ObjectParams of APICOnfigurationOptions.

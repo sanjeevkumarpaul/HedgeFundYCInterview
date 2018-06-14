@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace WebCache
 {
-    public interface ICacheManager<CacheType>
+    public interface ICacheManagerFactory
     {
         T Add<T>(string key, T item);
         T Get<T>(string key);
+    }
+
+    public interface ICacheManager<CacheType> : ICacheManagerFactory
+    {
+        
     }
 }
