@@ -441,6 +441,9 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
+        /// <summary>
+        /// Clears/Removes all previous API calls and Results.
+        /// </summary>
         private void CleanItUp()
         {
             Apis.Clear();
@@ -635,7 +638,7 @@ namespace APICalls.Configurations
         /// <returns>IAPIProspect</returns>
         private IAPIProspect CheckInCache(APIXmlNode node)
         {
-            if (Options.Cache == null || !node.Cache || IsTokenManager(node)) return null;
+            if (!IsCachable(node)) return null;
 
             var prospect = Options.Cache.Get<IAPIProspect>(node.Name);
 
@@ -647,9 +650,19 @@ namespace APICalls.Configurations
         /// <param name="node">APIXmlNode</param>
         private void AddInCache(APIXmlNode node)
         {
-            if (Options.Cache == null || !node.Cache || IsTokenManager(node)) return;
+            if (!IsCachable(node)) return;
 
             Options.Cache.Add<IAPIProspect>(node.Name, node.Result);
+        }
+
+        /// <summary>
+        /// Checks if node can be Cachavle with all different kinds of attribute to validate from.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <returns>Boolean</returns>
+        private bool IsCachable(APIXmlNode node)
+        {
+            return (Options.Cache == null || !node.Cache || IsTokenManager(node)) ;
         }
 
         /// <summary>
