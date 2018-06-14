@@ -615,7 +615,7 @@ namespace APICalls.Configurations
         private APIXmlNode ExecuteApiAsync(XElement api, object[] otherParmams = null, APIXmlNode createdNode = null)
         {
             var node = createdNode ?? new APIXmlNode(api, Base);
-            var _result = CheckInCache(node);
+            var _result = RetrieveCache(node);
 
             if (_result == null)
             {
@@ -636,7 +636,7 @@ namespace APICalls.Configurations
         /// </summary>
         /// <param name="node">APIXmlNode</param>
         /// <returns>IAPIProspect</returns>
-        private IAPIProspect CheckInCache(APIXmlNode node)
+        private IAPIProspect RetrieveCache(APIXmlNode node)
         {
             if (!IsCachable(node)) return null;
 
@@ -648,7 +648,7 @@ namespace APICalls.Configurations
         /// Chaches the result into cache based on Name given.        
         /// </summary>
         /// <param name="node">APIXmlNode</param>
-        private void AddInCache(APIXmlNode node)
+        private void SubmitCache(APIXmlNode node)
         {
             if (!IsCachable(node)) return;
 
@@ -717,7 +717,7 @@ namespace APICalls.Configurations
             {
                 var res = method.Invoke(apiUtil, null);
                 node.Result = (IAPIProspect)res;
-                AddInCache(node); //Adds into Cache.
+                SubmitCache(node); //Adds into Cache.
             }
             catch (Exception ex)
             {

@@ -31,12 +31,10 @@ namespace WebCache
         //Private methods
         protected override T Set<T>(string key, T value, Nullable<TimeSpan> time = null)
         {
-            Delete<T>(key);  //Always delete it before inserting it.
-            if (time.HasValue)
-              Storage.Insert(key, value, null, DateTime.UtcNow.AddTicks(time.Value.Ticks), TimeSpan.Zero); 
-            else
-               Storage.Insert(key, value, null, DateTime.UtcNow.AddHours(1), TimeSpan.Zero); //Caching temporary for an hour
-
+            //Always delete it before inserting it.
+            Delete<T>(key);  
+            //Caching temporary for an hour
+            Storage.Insert(key, value, null, time.HasValue ? DateTime.UtcNow.AddTicks(time.Value.Ticks) : DateTime.UtcNow.AddHours(1), TimeSpan.Zero); 
             return value;
         }
 
