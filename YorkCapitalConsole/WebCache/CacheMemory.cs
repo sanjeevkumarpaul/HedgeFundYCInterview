@@ -22,11 +22,7 @@ namespace WebCache
 
         public override void RemoveAll()
         {
-            foreach (var item in MemoryCache)
-            {
-                MemoryCache.Default.Remove(item.Key);
-                MemoryCache.Default.Remove(GetAbsoluteKey(item.Key));
-            }
+            MemoryCache.Default.Trim(100);
         }
 
         //Private methods
@@ -65,14 +61,13 @@ namespace WebCache
         {
             try
             {
-                return MemoryCache.Default.GetCacheItem(key) != null;
+                //return MemoryCache.Default.GetCacheItem(key) != null;
+                return MemoryCache.Default.Contains(key);
             }
             catch
             {
-
+                return false;
             }
-
-            return false;
         }
 
         //Private Methods...
@@ -97,7 +92,7 @@ namespace WebCache
 
         private string GetAbsoluteKey(string name)
         {
-            return string.Format("Absolute~", name);
+            return $"Absolute~${name}";
         }
     }
 }
