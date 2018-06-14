@@ -138,8 +138,8 @@ namespace APIUtilCallDemo
             //};
 
             //Observable
-            var cons = new APIConfiguration(options1);
-            cons.ExecuteApisObservable();
+            var config = new APIConfiguration(options1);
+            config.ExecuteApisObservable(true);
             //cons.ExecuteApisObservable(); //This is here to see if caching is working.
 
             //Parallel Processing 
@@ -147,7 +147,7 @@ namespace APIUtilCallDemo
             //Task.Run( () => new APIConfiguration(options1).ExecuteApisParallel());
 
             //Synchronouse.
-            var config = new APIConfiguration(options1);
+            //var config = new APIConfiguration(options1);
             //foreach (var res in config.ExecuteApis()) ;            
             //
             //                        OR
@@ -161,6 +161,7 @@ namespace APIUtilCallDemo
             //Task.Run( ()=> new ParallelismTry().DownloadWebSites());
             //new ParallelismTry().DownloadWebSites();
 
+            //config.ResetCache();
             Console.ReadKey();
         }
     }

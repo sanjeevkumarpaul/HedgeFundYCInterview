@@ -20,10 +20,18 @@ namespace WebCache
 
         private CacheWeb() : base() { }
 
-      
+        public override void RemoveAll()
+        {
+            foreach (var item in Storage)
+            {
+                Storage.Remove(((System.Collections.DictionaryEntry)item).Key.ToString());
+            }
+        }
+
         //Private methods
         protected override T Set<T>(string key, T value, Nullable<TimeSpan> time = null)
         {
+            Delete<T>(key);  //Always delete it before inserting it.
             if (time.HasValue)
               Storage.Insert(key, value, null, DateTime.UtcNow.AddTicks(time.Value.Ticks), TimeSpan.Zero); 
             else
@@ -31,6 +39,15 @@ namespace WebCache
 
             return value;
         }
+
+        protected override T Delete<T>(string key)
+        {
+            var _val = Fetch<T>(key);
+            if (_val != null) Storage.Remove(key);
+
+            return _val;
+        }
+              
 
         protected override T Fetch<T>(string key)
         {

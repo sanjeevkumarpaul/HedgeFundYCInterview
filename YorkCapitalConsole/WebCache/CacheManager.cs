@@ -31,8 +31,16 @@ namespace WebCache
             return Fetch<T>(key);
         }
 
+        public T Remove<T>(string key)
+        {
+            return Delete<T>(key);
+        }
+
+        public abstract void RemoveAll();
+
         protected abstract T Set<T>(string key, T item, Nullable<TimeSpan> time = null);
         protected abstract T Fetch<T>(string key);
         protected abstract bool Exists(string key);
+        protected abstract T Delete<T>(string key);
     }
 }

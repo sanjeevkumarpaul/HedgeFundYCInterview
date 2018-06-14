@@ -10,6 +10,8 @@ namespace WebCache
     {
         T Add<T>(string key, T item);
         T Get<T>(string key);
+        T Remove<T>(string key);
+        void RemoveAll();
     }
 
     public interface ICacheManager<CacheType> : ICacheManagerFactory

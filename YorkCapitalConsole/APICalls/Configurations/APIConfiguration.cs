@@ -103,7 +103,7 @@ namespace APICalls.Configurations
         /// Reactive Observable way. Subscription to be precisely done via IAPIResult as responses will be thrown to Its method "Responses"
         /// </summary>
         /// <param name="apiResults">IAPIResult object to get Reults there Asynchronously</param>
-        public void ExecuteApisObservable()
+        public void ExecuteApisObservable(bool resetCache = false)
         {
             if (Options.Subscriber == null) throw new Exception("Subscriber must be passed for Observable Execution");
 
@@ -111,7 +111,7 @@ namespace APICalls.Configurations
                 .Select(api => ExecuteApi(api))
                 .ToObservable(NewThreadScheduler.Default)    
                 //.Catch( Observable.Return( this.Current?.Result ) )   //This actually starts a second sequence where first sequence stops in this case .Select(api => ... stops                
-                .Finally(() => PostFinalEvents())                
+                .Finally(() => PostFinalEvents(resetCache))                
                 .Subscribe((output) => PostSubscription(output), 
                            //((exp)=> Options.Subcriber.Error<APIException>(exp as APIException, this)),   //This Stops the whole process not even second sequence is considered.
                            _apiCancellation.Token);           
@@ -200,6 +200,11 @@ namespace APICalls.Configurations
         }
         #endregion ^Cancel Token Methods
 
+
+        public void ResetCache()
+        {
+            if (Options.Cache != null) Options.Cache.RemoveAll();
+        }
         #endregion ~Extra Functional methods for Usage intermediatery
     }
 
@@ -539,9 +544,9 @@ namespace APICalls.Configurations
         /// At the end, Post and Final Subscription to be posted back to the caller.
         /// </summary>
         /// <param name="apiResults"></param>
-        private void PostFinalEvents()
+        private void PostFinalEvents(bool resetCache = false)
         {
-            Task.Factory.StartNew(() => { })
+            Task.Factory.StartNew(() => { if (resetCache) ResetCache(); })
                         .ContinueWith(antecendent => Options.Subscriber.Post(this.ProspectResults))
                         .ContinueWith(antecendent => Options.Subscriber.Final(ProspectResultsFiltered().Last().Result))
                         .Wait();
