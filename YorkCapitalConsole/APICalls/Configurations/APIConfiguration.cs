@@ -662,7 +662,7 @@ namespace APICalls.Configurations
         /// <returns>Boolean</returns>
         private bool IsCachable(APIXmlNode node)
         {
-            return (Options.Cache == null || !node.Cache || IsTokenManager(node)) ;
+            return (!(Options.Cache == null || !node.Cache || IsTokenManager(node))) ;
         }
 
         /// <summary>
