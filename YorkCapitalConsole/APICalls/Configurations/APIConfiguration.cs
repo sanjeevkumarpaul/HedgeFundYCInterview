@@ -588,7 +588,7 @@ namespace APICalls.Configurations
     /// </summary>
     public partial class APIConfiguration
     {
-        #region ^API related information, Extract
+        #region ^API related Execution Wrapper
         /// <summary>
         /// Executes API
         /// First creates XML NODE object, Creates instances of APIProspect<> and APIUti<> and then calls 'Call' method of APIUtil for synchronous call.
@@ -629,8 +629,9 @@ namespace APICalls.Configurations
 
             return node;
         }
-               
+        #endregion ~API related Execution Wrapper
 
+        #region ^API related information, Extract
         /// <summary>
         /// Creates instances of APIProspect<IAPIProspect>, IAPIProspect being any Type Derived from it.
         /// </summary>
