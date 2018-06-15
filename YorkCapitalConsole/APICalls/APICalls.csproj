@@ -69,6 +69,7 @@
     <Compile Include="Configurations\APIConfiguration.cs" />
     <Compile Include="Configurations\APIXmlNode.cs" />
     <Compile Include="Dependents\APINamedParedMedia.cs" />
+    <Compile Include="Dependents\APIParameter.cs" />
     <Compile Include="Enum\APIAuthenticationType.cs" />
     <Compile Include="Entities\Conracts\APIAuthorization.cs" />
     <Compile Include="Entities\Conracts\APIException.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Entities\Interfaces\IAPIProspect.cs" />
     <Compile Include="APIUtil.cs" />
     <Compile Include="Entities\Interfaces\IAPIResult.cs" />
+    <Compile Include="Enum\APIKeyPlacement.cs" />
     <Compile Include="Example\BastchStockQuotes.cs" />
     <Compile Include="Example\ExchangeParameters.cs" />
     <Compile Include="Example\RealtimeCurrencyExchangeRate.cs" />

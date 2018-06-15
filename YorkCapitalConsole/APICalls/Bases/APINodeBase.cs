@@ -1,4 +1,5 @@
-﻿using APICalls.Entities;
+﻿using APICalls.Dependents;
+using APICalls.Entities;
 using APICalls.Enum;
 using System;
 using System.Collections.Generic;
@@ -16,12 +17,14 @@ namespace APICalls.Bases
         internal string ApiUri { get; set; }
         internal string ApiKey { get; set; }
         internal string IncludeKeyFromBase { get; set; }
+        internal APIKeyPlacement KeyPlacement { get; set; } = APIKeyPlacement.QUERYSTRING;
         internal bool RequiredAuthorization { get; set; }
         internal APIAuthenticationType AuthenticationType { get; set; }
         internal string Token { get; set; }
         internal bool TokenAsHeader { get; set; }
         internal string TokenMaster { get; set; }
         internal Dictionary<string, string> Parameters { get; set; }
+        internal List<APIParameter> Parameters1 { get; set; }
         internal bool ParametersAsQueryString { get; set; } = false;
         internal Dictionary<string, string> Headers { get; set; }
         /// <summary>

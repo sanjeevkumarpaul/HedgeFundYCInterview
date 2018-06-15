@@ -51,7 +51,7 @@
                                           "BaseUrl" : "",
                                           "Uri"     : "",
                                           "Method"  : "GET",										  
-										  "IncludeKeyFromBase" : "apikey",
+										  "IncludeKeyFromBase" : "True",
 										  "GenericType" : "APICalls.Example.StockQuoteMaster",
                                                                                     										  
                                           "Parameters" : 

@@ -30,9 +30,12 @@ namespace Extensions
                 .SingleOrDefault();
         }
 
-        public static T ToEnum<T>(this string str)
+        public static T ToEnum<T>(this string str, T defaultValue = default(T)) where T : struct
         {
-            return (T)Enum.Parse(typeof(T), str);
+            T res = defaultValue;
+            Enum.TryParse<T>(str, out res);
+
+            return res;
         }
         
     }

@@ -9,6 +9,7 @@ using Extensions;
 using APICalls.Entities.Interfaces;
 using APICalls.Bases;
 using APICalls.Enum;
+using APICalls.Dependents;
 
 namespace APICalls.Configurations
 {
@@ -25,10 +26,13 @@ namespace APICalls.Configurations
             //<!-- Urls & Methods -->
             if (element.Attribute("BaseUrl") != null) BaseUrl = element.Attribute("BaseUrl").Value;
             if (element.Attribute("Uri") != null) ApiUri = element.Attribute("Uri").Value;
-            if (element.Attribute("Key") != null) ApiKey = element.Attribute("Key").Value;
-            if (element.Attribute("IncludeKeyFromBase") != null) IncludeKeyFromBase = element.Attribute("IncludeKeyFromBase").Value; 
             if (element.Attribute("Method") != null) Method = element.Attribute("Method").Value.ToEnum<APIMethod>();
 
+            //<!-- Key -->
+            if (element.Attribute("Key") != null) ApiKey = element.Attribute("Key").Value;
+            if (element.Attribute("IncludeKeyFromBase") != null) IncludeKeyFromBase = element.Attribute("IncludeKeyFromBase").Value;
+            if (element.Attribute("KeyPlacement") != null) KeyPlacement = element.Attribute("KeyPlacement").Value.ToUpper().ToEnum(APIKeyPlacement.QUERYSTRING);                               
+            
             //<!-- Cache -->
             if (element.Attribute("Cache") != null) Cache = element.Attribute("Cache").Value.ToBool();
 
@@ -43,6 +47,7 @@ namespace APICalls.Configurations
             if (element.Attribute("TokenMaster") != null) TokenMaster = $"__API__{element.Attribute("TokenMaster").Value}__.__";
 
             //<!-- Api Paramters -->
+            var _params = SetParameters(element.Elements("Parameters"), Base);
             var paramss = element.Element("Parameters");
             Parameters = CreateDictionary(paramss, Base);
             if (paramss != null)
@@ -63,7 +68,7 @@ namespace APICalls.Configurations
             ValidityChecks(Base?.BaseUrl);
         }
 
-        private Dictionary<string, string> CreateDictionary(XElement element, APIXmlNode Base = null)
+        private Dictionary<string, string> CreateDictionary(XElement element, APIXmlNode Base = null, bool Querystring = false)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
@@ -75,9 +80,37 @@ namespace APICalls.Configurations
                         dict.Add(item.Attribute("Key").Value, item.Attribute("Value").Value);
                 }
             }
-            if (!IncludeKeyFromBase.Empty() && Base != null) dict.Add(IncludeKeyFromBase, Base.ApiKey);
+            if (!IncludeKeyFromBase.Empty() && Base != null)
+            {
+                if ((KeyPlacement == APIKeyPlacement.QUERYSTRING && Querystring) || (KeyPlacement == APIKeyPlacement.BODY && !Querystring))
+                {
+                    dict.Add(IncludeKeyFromBase, Base.ApiKey);
+                    IncludeKeyFromBase = ""; //empty it there after so that it does not repeat addition.
+                }
+            }
             
             return dict;
+        }
+
+        private List<APIParameter> SetParameters(IEnumerable<XElement> elements, APIXmlNode Base = null)
+        {
+            List<APIParameter> _parameters = new List<APIParameter>();
+
+            if (elements != null)
+            {
+                foreach (var pelement in elements)
+                {
+                    var _isQueryString =  pelement.Attribute("QueryString")?.Value?.ToBool() ?? false;
+
+                    _parameters.Add(new APIParameter
+                    {
+                        ParametersAsQueryString = _isQueryString,
+                        Items = CreateDictionary(pelement, Base, _isQueryString)
+                    }); 
+                }
+            }
+                        
+            return _parameters;
         }
 
         private void ValidityChecks(string baseUrl)
