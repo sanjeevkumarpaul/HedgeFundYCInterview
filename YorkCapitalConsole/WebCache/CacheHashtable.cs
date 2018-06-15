@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Timers;
 
 namespace WebCache
 {
@@ -32,6 +33,15 @@ namespace WebCache
             Delete<T>(key);
             //Caching temporary for an hour
             Storage.Add(key, value); //null, time.HasValue ? DateTime.UtcNow.AddTicks(time.Value.Ticks) : DateTime.UtcNow.AddHours(1), TimeSpan.Zero); 
+
+            //A timer to handle expiration.
+            if (time.HasValue && time.Value != TimeSpan.Zero )
+            {
+                var timer = new Timer(time.Value.TotalMilliseconds);
+                timer.Elapsed += (s, o) => { Delete<T>(key); timer.Stop(); timer.Dispose(); };
+                timer.Start();
+            }
+
             return value;
         }
 
