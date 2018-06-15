@@ -652,15 +652,15 @@ namespace APICalls.Configurations
         {
             if (!IsCachable(node)) return;
 
-            TimeSpan? _expiration = null;
+            TimeSpan? _expiration = new TimeSpan(1,0,0,0); //lets take defaulted to 1 hour.
             if (Options.CacheDuration > 0)
             {
                 switch (Options.ChacheFrequency)
                 {
-                    case Enum.APICacheFrequency.D: _expiration = new TimeSpan(Options.CacheDuration, 0, 0, 0, 0); break;
-                    case Enum.APICacheFrequency.S: _expiration = new TimeSpan(0, 0, Options.CacheDuration); break;
-                    case Enum.APICacheFrequency.M: _expiration = new TimeSpan(0, Options.CacheDuration, 0); break;
-                    case Enum.APICacheFrequency.H: _expiration = new TimeSpan(Options.CacheDuration, 0, 0); break;
+                    case Enum.APICacheFrequency.DAYS: _expiration = new TimeSpan(Options.CacheDuration, 0, 0, 0, 0); break;
+                    case Enum.APICacheFrequency.SECONDS: _expiration = new TimeSpan(0, 0, Options.CacheDuration); break;
+                    case Enum.APICacheFrequency.MINUTES: _expiration = new TimeSpan(0, Options.CacheDuration, 0); break;
+                    case Enum.APICacheFrequency.HOURS: _expiration = new TimeSpan(Options.CacheDuration, 0, 0); break;                        
                 }
             }
             Options.Cache.Add<IAPIProspect>(node.Name, node.Result, _expiration);

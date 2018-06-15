@@ -42,7 +42,7 @@ namespace APICalls.Configurations
         public IAPIParallelProgress Progessor { get; set; } = new APIParallelProgress();
 
         public Int32 CacheDuration { get; set; } = 0;
-        public APICacheFrequency ChacheFrequency { get; set; } = APICacheFrequency.M; //denotes month 
+        public APICacheFrequency ChacheFrequency { get; set; } = APICacheFrequency.MINUTES; //denotes month 
 
         public ICacheManagerFactory Cache { get; set; } = WebCache.CacheWeb.Cache;
 

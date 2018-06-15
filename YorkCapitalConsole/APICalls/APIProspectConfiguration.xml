@@ -5,7 +5,7 @@
 <APIProspects>
   <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" TokenMaster="TokenReceiver"/>
 
-  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" GenericType="APICalls.Example.Tokens" Cache="True">
+  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" GenericType="APICalls.Example.Tokens" Cache="False">
     
     <Parameters QueryString="True" ContentType="application/json">
       <Parameter Key="partner_key" Value="UtZ5UUsaj3eW-HWyxV6N"/>
@@ -16,7 +16,7 @@
   </APIProspect>
   
   
-  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="2" Cache="True">
+  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="2" Cache="False">
     
     <Parameters QueryString="True" ContentType="application/json">
       <Parameter Key="function" Value="CURRENCY_EXCHANGE_RATE"/>
@@ -27,7 +27,7 @@
     <ContentTypes Values="application/json" />
   </APIProspect>
   
-  <APIProspect BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.StockQuoteMaster" Cache="True">
+  <APIProspect BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.StockQuoteMaster" Cache="False">
     
     <Parameters QueryString="True" ContentType="application/json">
       <Parameter Key="function" Value="BATCH_STOCK_QUOTES"/>

@@ -8,9 +8,9 @@ namespace APICalls.Enum
 {
     public enum APICacheFrequency
     {
-        S, //Seconds
-        M, //Minutes
-        H, //Hours
-        D  //Days
+        SECONDS, //Seconds
+        MINUTES, //Minutes
+        HOURS, //Hours
+        DAYS  //Days
     }
 }
