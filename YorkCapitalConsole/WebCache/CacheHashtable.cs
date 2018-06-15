@@ -32,7 +32,7 @@ namespace WebCache
             //Always delete it before inserting it.
             Delete<T>(key);
             //Caching temporary for an hour
-            Storage.Add(key, value); //null, time.HasValue ? DateTime.UtcNow.AddTicks(time.Value.Ticks) : DateTime.UtcNow.AddHours(1), TimeSpan.Zero); 
+            Storage.Add(key, value);
 
             //A timer to handle expiration.
             if (time.HasValue && time.Value != TimeSpan.Zero )

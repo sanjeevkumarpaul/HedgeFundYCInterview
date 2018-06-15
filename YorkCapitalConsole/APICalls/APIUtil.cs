@@ -86,7 +86,7 @@ namespace APICalls
 
         private HttpRequestMessage CreateRequest()
         {
-            AddContentTypes();
+            AddContentTypes();            
             HttpRequestMessage request = AddParameters(new HttpRequestMessage(prospect.HttpMethod, prospect.Url));
             AddAuthorization(request);
 
@@ -123,7 +123,7 @@ namespace APICalls
             {
                 foreach (var header in headers)
                 {
-                    if (prospect.HttpMethod != HttpMethod.Get)
+                    if (prospect.Method != APIMethod.GET)
                         request.Headers.Add(header.Key, header.Value);
                     else
                     {

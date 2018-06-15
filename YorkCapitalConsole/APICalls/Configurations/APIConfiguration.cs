@@ -120,10 +120,7 @@ namespace APICalls.Configurations
         }
 
         /// <summary>
-        /// All of the API(s) listed at XML/JSON will run parallely 
-        /// AND ...
-        /// 1. It will not adhere any REPEATS  
-        /// 2. It will only try to input parameter fields frm the OBJECT PARAMS passed at APICONFIGOPTIONS at Constructor
+        /// All of the API(s) listed at XML/JSON will run parallely         
         /// </summary>
         /// <returns>Task, which is kind of a Void.</returns>        
         public async Task<List<string>> ExecuteApisParallel(bool resetCache = false)
@@ -547,9 +544,9 @@ namespace APICalls.Configurations
                 else
                     Options.Subscriber.Reponses(node.Result, _config); 
             }
-        }
-        
+        }        
         #region ^End Subcription to Raise. Post and Final
+
         /// <summary>
         /// At the end, Post and Final Subscription to be posted back to the caller.
         /// </summary>

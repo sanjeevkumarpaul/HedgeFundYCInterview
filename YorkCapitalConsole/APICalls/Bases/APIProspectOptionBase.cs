@@ -30,10 +30,9 @@ namespace APICalls.Bases
                     case APIMethod.GET: return HttpMethod.Get;
                     case APIMethod.PUT: return HttpMethod.Put;
                     case APIMethod.DELETE: return HttpMethod.Delete;
-                    case APIMethod.STREAM: return HttpMethod.Trace;
-                    case APIMethod.STRINGARRAY: return HttpMethod.Trace;
-                    case APIMethod.BYTEARRAY: return HttpMethod.Trace;
-
+                    case APIMethod.STREAM:
+                    case APIMethod.STRINGARRAY: 
+                    case APIMethod.BYTEARRAY: 
                     default: return HttpMethod.Post;
                 }
             }
