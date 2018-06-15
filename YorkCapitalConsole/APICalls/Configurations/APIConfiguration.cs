@@ -629,52 +629,7 @@ namespace APICalls.Configurations
 
             return node;
         }
-
-        /// <summary>
-        /// Checks if information is available in cache.
-        /// takes it from there.
-        /// </summary>
-        /// <param name="node">APIXmlNode</param>
-        /// <returns>IAPIProspect</returns>
-        private IAPIProspect RetrieveCache(APIXmlNode node)
-        {
-            if (!IsCachable(node)) return null;
-
-            var prospect = Options.Cache.Get<IAPIProspect>(node.Name);
-
-            return prospect;
-        }
-        /// <summary>
-        /// Chaches the result into cache based on Name given.        
-        /// </summary>
-        /// <param name="node">APIXmlNode</param>
-        private void SubmitCache(APIXmlNode node)
-        {
-            if (!IsCachable(node)) return;
-
-            TimeSpan? _expiration = new TimeSpan(1,0,0,0); //lets take defaulted to 1 hour.
-            if (Options.CacheDuration > 0)
-            {
-                switch (Options.ChacheFrequency)
-                {
-                    case Enum.APICacheFrequency.DAYS: _expiration = new TimeSpan(Options.CacheDuration, 0, 0, 0, 0); break;
-                    case Enum.APICacheFrequency.SECONDS: _expiration = new TimeSpan(0, 0, Options.CacheDuration); break;
-                    case Enum.APICacheFrequency.MINUTES: _expiration = new TimeSpan(0, Options.CacheDuration, 0); break;
-                    case Enum.APICacheFrequency.HOURS: _expiration = new TimeSpan(Options.CacheDuration, 0, 0); break;                        
-                }
-            }
-            Options.Cache.Add<IAPIProspect>(node.Name, node.Result, _expiration);
-        }
-
-        /// <summary>
-        /// Checks if node can be Cachavle with all different kinds of attribute to validate from.
-        /// </summary>
-        /// <param name="node">APIXmlNode</param>
-        /// <returns>Boolean</returns>
-        private bool IsCachable(APIXmlNode node)
-        {
-            return (!(Options.Cache == null || !node.Cache || IsTokenManager(node))) ;
-        }
+               
 
         /// <summary>
         /// Creates instances of APIProspect<IAPIProspect>, IAPIProspect being any Type Derived from it.
@@ -894,6 +849,59 @@ namespace APICalls.Configurations
             return realtype;
         }
         #endregion ~API realted information, Extract
+    }
+
+    /// <summary>
+    /// Caching related methods
+    /// </summary>
+    public partial class APIConfiguration
+    {
+        #region ^Caching related methods
+        /// <summary>
+        /// Checks if information is available in cache.
+        /// takes it from there.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <returns>IAPIProspect</returns>
+        private IAPIProspect RetrieveCache(APIXmlNode node)
+        {
+            if (!IsCachable(node)) return null;
+
+            var prospect = Options.Cache.Get<IAPIProspect>(node.Name);
+
+            return prospect;
+        }
+        /// <summary>
+        /// Chaches the result into cache based on Name given.        
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        private void SubmitCache(APIXmlNode node)
+        {
+            if (!IsCachable(node)) return;
+
+            TimeSpan? _expiration = new TimeSpan(1, 0, 0, 0); //lets take defaulted to 1 hour.
+            if (Options.CacheDuration > 0)
+            {
+                switch (Options.ChacheFrequency)
+                {
+                    case Enum.APICacheFrequency.DAYS: _expiration = new TimeSpan(Options.CacheDuration, 0, 0, 0, 0); break;
+                    case Enum.APICacheFrequency.SECONDS: _expiration = new TimeSpan(0, 0, Options.CacheDuration); break;
+                    case Enum.APICacheFrequency.MINUTES: _expiration = new TimeSpan(0, Options.CacheDuration, 0); break;
+                    case Enum.APICacheFrequency.HOURS: _expiration = new TimeSpan(Options.CacheDuration, 0, 0); break;
+                }
+            }
+            Options.Cache.Add<IAPIProspect>(node.Name, node.Result, _expiration);
+        }
+        /// <summary>
+        /// Checks if node can be Cachavle with all different kinds of attribute to validate from.
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <returns>Boolean</returns>
+        private bool IsCachable(APIXmlNode node)
+        {
+            return (!(Options.Cache == null || !node.Cache || IsTokenManager(node)));
+        }
+        #endregion ~Caching related methods
     }
 
     /// <summary>
