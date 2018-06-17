@@ -118,24 +118,24 @@ namespace APIUtilCallDemo
         static void Main(string[] args)
         {
             //VIA XML
-            var options1 = new APIConfigurationOptions
-            {
-                PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml",
-                ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
-                Subscriber = new ExchangeCallResults("INR", "PKR", "BDT", "LKR", "MYR", "MVR", "EUR"),
-                Progessor = new ExchangeProgress()
-            };
-
-            //VIA JSON
             //var options1 = new APIConfigurationOptions
             //{
-            //    PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
+            //    PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml",
             //    ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
-            //    Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
             //    Subscriber = new ExchangeCallResults("INR", "PKR", "BDT", "LKR", "MYR", "MVR", "EUR"),
-            //    //NoRepeat = true,
             //    Progessor = new ExchangeProgress()
             //};
+
+            //VIA JSON
+            var options1 = new APIConfigurationOptions
+            {
+                PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
+                ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
+                Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
+                Subscriber = new ExchangeCallResults("INR", "PKR", "BDT", "LKR", "MYR", "MVR", "EUR"),
+                //NoRepeat = true,
+                Progessor = new ExchangeProgress()
+            };
 
             //Observable
             var config = new APIConfiguration(options1);

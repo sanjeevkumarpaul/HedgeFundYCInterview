@@ -3,37 +3,37 @@
 <!-- Based on API(s) from : https://www.alphavantage.co/documentation/  Registered here with s...software@gmail.com-->
   
 <APIProspects>
-  <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" TokenMaster="TokenReceiver"/>
+  <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" TokenMaster="TokenReceiver" />
 
-  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" GenericType="APICalls.Example.Tokens" Cache="False" IncludeKeyFromBase="apikey">
+  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" GenericType="APICalls.Example.Tokens" Cache="False" ParameterContentType="application/json">
     
-    <Parameters QueryString="True" ContentType="application/json">
+    <Parameters>
       <Parameter Key="partner_key" Value="UtZ5UUsaj3eW-HWyxV6N"/>
       <Parameter Key="company_key"  Value="JzxqMBk43yAUBRWYySC4"/>      
     </Parameters>
 	
-	<Parameters ContentType="application/json">
-	    <Parameter Key="Point" Value="1" />
-	</Parameters>
-  
     <ContentTypes Values="application/json" />
   </APIProspect>
   
   
-  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey"  KeyPlacement="HEADER" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="2" Cache="False">
+  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey"  KeyPlacement="QUERY" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="4" Cache="False">
     
     <Parameters QueryString="True">
       <Parameter Key="function" Value="CURRENCY_EXCHANGE_RATE"/>
       <Parameter Key="from_currency"  Value="{ExchangeCurrency.FromCurrency}"/>
       <Parameter Key="to_currency"  Value="{ExchangeCurrency.ToCurrency}"/>      
     </Parameters>
+	
+	<Parameters>
+	    <Parameter Key="Point" Value="1" />
+	</Parameters>
   
     <ContentTypes Values="application/json" />
   </APIProspect>
   
   <APIProspect BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.StockQuoteMaster" Cache="False">
     
-    <Parameters QueryString="True" ContentType="application/json">
+    <Parameters QueryString="True">
       <Parameter Key="function" Value="BATCH_STOCK_QUOTES"/>
       <Parameter Key="symbols"  Value="{StockQuoteSymbols.Symbols}"/>      
     </Parameters>

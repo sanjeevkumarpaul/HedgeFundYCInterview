@@ -46,19 +46,13 @@ namespace APICalls.Configurations
             }
             if (element.Attribute("TokenMaster") != null) TokenMaster = $"__API__{element.Attribute("TokenMaster").Value}__.__";
 
-            //<!-- Api Paramters -->
-            var _params = SetParameters(element.Elements("Parameters"), Base);
-            var paramss = element.Element("Parameters");
-            Parameters = CreateDictionary(paramss, Base);
-            if (paramss != null)
-            {   
-                if (paramss.Element("ContentType") != null) ParamContentType = paramss.Element("ContentType").Value;
-                if (paramss.Attribute("QueryString") != null) ParametersAsQueryString = paramss.Attribute("QueryString").Value.ToBool();
-            }            
+            //<!-- Paramters -->
+            var Parameters = SetParameters(element.Elements("Parameters"), Base);
+            if (element.Attribute("ParameterContentType") != null) ParameterContentType = element.Attribute("ParameterContentType").Value;
 
             //<!-- Extra Headers -->
             var headers = element.Element("Headers");
-            if (headers != null) Parameters = CreateDictionary(headers);
+            if (headers != null) Headers = CreateDictionary(headers, Base, false, true);
 
             //<!-- Additional Content Types (To be seprated by semi colon)-->
             var contents = element.Element("ContentTypes");
@@ -68,12 +62,12 @@ namespace APICalls.Configurations
             ValidityChecks(Base?.BaseUrl);
         }
 
-        private Dictionary<string, string> CreateDictionary(XElement element, APIXmlNode Base = null, bool Querystring = false)
+        private Dictionary<string, string> CreateDictionary(XElement element, APIXmlNode Base = null, bool Querystring = false, bool header = false)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
-
+            
             if (element != null)
-            {
+            {                
                 foreach (var item in element.Elements())
                 {
                     if (item.Attribute("Key") != null && item.Attribute("Value") != null)
@@ -82,7 +76,9 @@ namespace APICalls.Configurations
             }
             if (!IncludeKeyFromBase.Empty() && Base != null)
             {
-                if ((KeyPlacement == APIKeyPlacement.QUERYSTRING && Querystring) || (KeyPlacement == APIKeyPlacement.BODY && !Querystring))
+                if ((KeyPlacement == APIKeyPlacement.QUERYSTRING && Querystring && !header) || 
+                    (KeyPlacement == APIKeyPlacement.BODY && !Querystring && !header) || 
+                    (KeyPlacement == APIKeyPlacement.HEADER && !Querystring && header) )
                 {
                     dict.Add(IncludeKeyFromBase, Base.ApiKey);
                     IncludeKeyFromBase = ""; //empty it there after so that it does not repeat addition.
@@ -105,11 +101,14 @@ namespace APICalls.Configurations
                     _parameters.Add(new APIParameter
                     {
                         ParametersAsQueryString = _isQueryString,
-                        Items = CreateDictionary(pelement, Base, _isQueryString)
+                        Items = CreateDictionary(pelement, Base, _isQueryString, false)
                     }); 
                 }
             }
-                        
+
+            _parameters.Where(p => p.ParametersAsQueryString).SelectMany(p => p.Items).All(i => { ParametersQuery.Add(i.Key, i.Value);  return true; }); 
+            _parameters.Where(p => !p.ParametersAsQueryString).SelectMany(p => p.Items).All(i => { ParametersBody.Add(i.Key, i.Value); return true; });
+
             return _parameters;
         }
 
@@ -127,11 +126,14 @@ namespace APICalls.Configurations
                 TokenAsHeader = false;
             }
 
-            if (Parameters != null && Parameters.Count <= 0)
+            if (ParametersQuery != null && ParametersQuery.Count <= 0)            
+                ParametersQuery = null;
+
+
+            if (ParametersBody != null && ParametersBody.Count <= 0)
             {
-                Parameters = null;
-                ParamContentType = null;
-                ParametersAsQueryString = false;
+                ParametersBody = null;
+                ParameterContentType = null;
             }
 
             if (Headers != null && Headers.Count <= 0) Headers = null;

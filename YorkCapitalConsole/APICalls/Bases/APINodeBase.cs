@@ -23,16 +23,17 @@ namespace APICalls.Bases
         internal string Token { get; set; }
         internal bool TokenAsHeader { get; set; }
         internal string TokenMaster { get; set; }
-        internal Dictionary<string, string> Parameters { get; set; }
-        internal List<APIParameter> Parameters1 { get; set; }
-        internal bool ParametersAsQueryString { get; set; } = false;
+        internal Dictionary<string, string> ParametersQuery { get; set; } = new Dictionary<string, string>();
+        internal Dictionary<string, string> ParametersBody { get; set; } = new Dictionary<string, string>();
+        internal string ParameterContentType { get; set; }
+        //internal List<APIParameter> Parameters { get; set; }
+        //internal bool ParametersAsQueryString { get; set; } = false;
         internal Dictionary<string, string> Headers { get; set; }
         /// <summary>
         /// Sepration to be done via semicolon at XML
         /// application/json[;application/jpeg[;...]]
         /// </summary>
-        internal string ContentTypes { get; set; }        
-        internal string ParamContentType { get; set; }
+        internal string ContentTypes { get; set; }                
         internal APIMethod Method { get; set; }
         internal bool Cache { get; set; } = false;        
     }

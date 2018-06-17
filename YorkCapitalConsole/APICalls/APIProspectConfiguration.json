@@ -8,17 +8,20 @@
                                           "Uri"     : "login",
                                           "Method"  : "POST",										  
 										  "GenericType" : "APICalls.Example.Tokens",
+										  "ParameterContentType" : "application/json",
 										  
                                         										  
                                           "Parameters" : 
-										  {
-											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
-											  "ParamValues" :
-											  [
-												{ "Key" : "partner_key",  "Value" : "UtZ5UUsaj3eW-HWyxV6N" 	},
-												{ "Key" : "company_key",  "Value" : "JzxqMBk43yAUBRWYySC4" }												
-											  ]
-										  },
+										  [
+											{
+												"ParamProperties" : {  "QueryString" : "False" },
+												"ParamValues" :
+												[
+													{ "Key" : "partner_key",  "Value" : "UtZ5UUsaj3eW-HWyxV6N" 	},
+													{ "Key" : "company_key",  "Value" : "JzxqMBk43yAUBRWYySC4" }												
+												]
+											}
+										  ],
 										  "ContentTypes" : "application/json"										
                                         }
                       },
@@ -29,18 +32,31 @@
                                           "Uri"     : "",
                                           "Method"  : "GET",
 										  "IncludeKeyFromBase" : "apikey",
+										  "KeyPlacement":"QUERY",
 										  "GenericType" : "APICalls.Example.RealtimeCurrencyExchange",
-                                        										  
+										  "ParameterContentType" : "application/json",
+										                                          										  
                                           "Parameters" : 
-										  {
-											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
+										  [
+											{
+											  "ParamProperties" : {  "QueryString" : "True" },
 											  "ParamValues" :
 											  [
-												{ "Key" : "function", 		"Value" : "CURRENCY_EXCHANGE_RATE" 			},
-												{ "Key" : "from_currency",  "Value" : "{ExchangeCurrency.FromCurrency}" },
-												{ "Key" : "to_currency", 	"Value" : "{ExchangeCurrency.ToCurrency}"  	}
-											  ]
-										  },
+												  { "Key" : "function", 	 "Value" : "CURRENCY_EXCHANGE_RATE" 		 },
+												  { "Key" : "from_currency", "Value" : "{ExchangeCurrency.FromCurrency}" },
+												  { "Key" : "to_currency", 	 "Value" : "{ExchangeCurrency.ToCurrency}"   }
+											   ]
+										    },
+												   
+										    {
+											  "ParamProperties" : {  "QueryString" : "False" },
+											  "ParamValues" :
+											  [
+												  { "Key" : "Point", 	     "Value" : "1" 		 }
+											   ]
+										    }
+											  
+										  ],
 										  "ContentTypes" : "application/json",
 										  "Repeat" : "2"
                                         }
@@ -51,18 +67,22 @@
                                           "BaseUrl" : "",
                                           "Uri"     : "",
                                           "Method"  : "GET",										  
-										  "IncludeKeyFromBase" : "True",
+										  "IncludeKeyFromBase" : "apikey",
+										  "KeyPlacement":"QUERY",
 										  "GenericType" : "APICalls.Example.StockQuoteMaster",
+										  "ParameterContentType" : "application/json",
                                                                                     										  
                                           "Parameters" : 
-										  {
-											  "ParamProperties" : {  "QueryString" : "True", "ContentType" : "application/json" },
-											  "ParamValues" :
-											  [
-												{ "Key" : "function", "Value" : "BATCH_STOCK_QUOTES"  },
-												{ "Key" : "symbols",  "Value" : "{StockQuoteSymbols.Symbols}"  }
-											  ]
-										  },
+										  [
+											{  
+												"ParamProperties" : {  "QueryString" : "True" },
+												"ParamValues" :
+												[
+													{ "Key" : "function", "Value" : "BATCH_STOCK_QUOTES"  },
+													{ "Key" : "symbols",  "Value" : "{StockQuoteSymbols.Symbols}"  }
+												]
+											}
+										  ],
 										  "ContentTypes" : "application/json",
                                           "Cache" : "True"										  
                                         }

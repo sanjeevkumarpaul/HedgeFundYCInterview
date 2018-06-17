@@ -107,8 +107,8 @@ namespace APICalls
 
         private W AddParameters<W>(W request)
         {
-            if (request is HttpRequestMessage && !prospect.ParametersIsQueryString && prospect.Parameters != null)
-                (request as HttpRequestMessage).Content = new StringContent(JsonConvert.SerializeObject(prospect.Parameters), Encoding.UTF8, prospect.RequestHeaders?.ParameterContentType ?? "application/json");
+            if (request is HttpRequestMessage && prospect.ParameterBody != null)
+                (request as HttpRequestMessage).Content = new StringContent(JsonConvert.SerializeObject(prospect.ParameterBody), Encoding.UTF8, prospect.RequestHeaders?.ParameterContentType ?? "application/json");
 
             //TODO: extended further if something comes up.
 

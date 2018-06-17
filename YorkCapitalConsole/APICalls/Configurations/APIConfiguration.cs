@@ -343,10 +343,10 @@ namespace APICalls.Configurations
             #region ^Xml Formats
             string xml = $"<?xml version=\"1.0\" ?>{_nl}<APIProspects>{_nl}";
             string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" TokenMaster=\"{{3}}\" />{_nl}";
-            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\" Order=\"{{9}}\" Cache=\"{{10}}\">{_nl}";
+            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\" Order=\"{{9}}\" Cache=\"{{10}}\" KeyPlacement=\"{{11}}\" ParameterContentType=\"{{12}}\">{_nl}";
             string _authXml = $"<Authorization Type=\"{{0}}\" Token=\"{{1}}\" TokenAsHeader=\"{{2}}\" />{_nl}";
             string _headerXml = $"<Header Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
-            string _paramHeaderXml = $"<Parameters QueryString=\"{{0}}\" ContentType=\"{{1}}\">{_nl}";
+            string _paramHeaderXml = $"<Parameters QueryString=\"{{0}}\">{_nl}";
             string _paramXml = $"<Parameter Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
             #endregion ~Xml Formats
 
@@ -378,7 +378,9 @@ namespace APICalls.Configurations
                                                        _prospect["ContentTypes"]?.ToString(),
                                                        _prospect["Repeat"]?.ToString(),
                                                        _prospect["Order"]?.ToString(),
-                                                       _prospect["Cache"]?.ToString());
+                                                       _prospect["Cache"]?.ToString(),
+                                                       _prospect["KeyPlacement"]?.ToString(),
+                                                       _prospect["ParameterContentType"].ToString());
                     #region ^Authorization Element
                     if (_prospect["Authorization"] != null)
                     {
@@ -402,21 +404,24 @@ namespace APICalls.Configurations
                     #region ^Parameter(s) Element
                     if (_prospect["Parameters"] != null)
                     {
-                        if (_prospect["Parameters"]["ParamProperties"] != null)
+                        foreach(var _paramss in _prospect["Parameters"])
                         {
-                            var _props = _prospect["Parameters"]["ParamProperties"];
-                            xml += string.Format(_paramHeaderXml, _props["QueryString"]?.ToString(), _props["ContentType"]?.ToString());
-                        }
-                        else
-                            xml += $"<Parameters>{_nl}";
-                        if (_prospect["Parameters"]["ParamValues"] != null)
-                        {
-                            foreach (var param in _prospect["Parameters"]["ParamValues"])
+                            if (_paramss["ParamProperties"] != null)
                             {
-                                xml += string.Format(_paramXml, param["Key"]?.ToString(), param["Value"]?.ToString());
+                                var _props = _paramss["ParamProperties"];
+                                xml += string.Format(_paramHeaderXml, _props["QueryString"]?.ToString());
                             }
+                            else
+                                xml += $"<Parameters>{_nl}";
+                            if (_paramss["ParamValues"] != null)
+                            {
+                                foreach (var param in _paramss["ParamValues"])
+                                {
+                                    xml += string.Format(_paramXml, param["Key"]?.ToString(), param["Value"]?.ToString());
+                                }
+                            }
+                            xml += $"</Parameters>{_nl}";
                         }
-                        xml += $"</Parameters>{_nl}";
                     }
                     #endregion ~Parameters(s) Element
 
@@ -644,8 +649,8 @@ namespace APICalls.Configurations
                 prosBase.BaseUrl = node.BaseUrl;
                 prosBase.APIUri = LocateDynamicParamValue(node.ApiUri, otherParmams: otherParmams);
                 prosBase.Method = node.Method;
-                prosBase.Parameters = InjectObjectParams(node, otherParmams: otherParmams);
-                prosBase.ParametersIsQueryString = node.ParametersAsQueryString;
+                prosBase.ParameterQuery = InjectObjectParams(node, otherParmams, true);
+                prosBase.ParameterBody = InjectObjectParams(node, otherParmams);                
                 prosBase.Authorization = Authorization(node);
                 prosBase.RequestHeaders = ContentTypes(node);
             }
@@ -725,7 +730,7 @@ namespace APICalls.Configurations
             var content = new APIRequestHeaders
                             {
                                 AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
-                                ParameterContentType = node.ParamContentType,
+                                ParameterContentType = node.ParameterContentType,
                                 Headers = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
                             };
 
@@ -740,16 +745,17 @@ namespace APICalls.Configurations
         /// <param name="node">APIXmlNode</param>
         /// <param name="otherParmams">Array of objects, usually passed during parallel processing</param>
         /// <returns></returns>
-        private Dictionary<string, string> InjectObjectParams(APIXmlNode node, object[] otherParmams = null)
+        private Dictionary<string, string> InjectObjectParams(APIXmlNode node, object[] otherParmams = null, bool queryParams = false)
         {
-            var parameters = node.Parameters?.Keys.ToList();
+            var keys = queryParams ? node.ParametersQuery?.Keys.ToList() : node.ParametersBody?.Keys.ToList();
+            var paramss = (queryParams ? node.ParametersQuery : node.ParametersBody);
 
-            return parameters == null ?
-                        node.Parameters :
+            return keys == null ?
+                        paramss :
                         ((Func<Dictionary<string, string>>)(() =>
                      {
                          Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
-                         parameters.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(node.Parameters[k], otherParmams: otherParmams)));
+                         keys.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(paramss[k], otherParmams: otherParmams)));
 
                          return dictReplacers;
                      }))();

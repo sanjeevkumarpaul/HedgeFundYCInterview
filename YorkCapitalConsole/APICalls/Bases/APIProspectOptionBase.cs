@@ -15,8 +15,8 @@ namespace APICalls.Bases
         public string BaseUrl { get; set; }
         public string APIUri { get; set; }
         public APIMethod Method { get; set; } = APIMethod.POST;
-        public Dictionary<string, string> Parameters { get; set; }
-        public bool ParametersIsQueryString { get; set; }
+        public Dictionary<string, string> ParameterQuery { get; set; }
+        public Dictionary<string, string> ParameterBody { get; set; }        
         public APIAuthorization Authorization { get; set; }
         public APIRequestHeaders RequestHeaders { get; set; }
 
@@ -41,7 +41,7 @@ namespace APICalls.Bases
         {
             get
             {
-                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + ((ParametersIsQueryString || Method == APIMethod.POST) ? QueryString : "");
+                string _url = $"{BaseUrl}{ (APIUri.Empty() ? "" : "/") }{APIUri}".Trim() + (ParameterQuery != null ? QueryString : "");
 
                 return _url;
 
@@ -54,8 +54,8 @@ namespace APICalls.Bases
             {
                 string _url = "";
 
-                if (Parameters != null)
-                    Parameters.Keys.All(k => (_url += $"{k}={Parameters[k]}&") != null);
+                if (ParameterQuery != null)
+                    ParameterQuery.Keys.All(k => (_url += $"{k}={ParameterQuery[k]}&") != null);
 
                 return (!_url.Empty() ? "?" : "") + _url.TrimEx("&");
             }
