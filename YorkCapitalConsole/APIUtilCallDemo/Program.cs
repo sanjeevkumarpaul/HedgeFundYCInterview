@@ -138,8 +138,8 @@ namespace APIUtilCallDemo
             };
 
             //Observable
-            var config = new APIConfiguration(options1);
-            config.ExecuteApisObservable();
+            //var config = new APIConfiguration(options1);
+            //config.ExecuteApisObservable();
             //System.Threading.Thread.Sleep(5000);  //Sleep is required for caching concept to see through, otherwise all overservable will fire at once in async mode.
             //config.ExecuteApisObservable(true); //This is here to see if caching is working.
 
@@ -163,8 +163,27 @@ namespace APIUtilCallDemo
             //Task.Run( ()=> new ParallelismTry().DownloadWebSites());
             //new ParallelismTry().DownloadWebSites();
 
-            //config.ResetCache();
+            /*
+            var api = new APICalls.APIUtil<Tokens>(new APIProspect<Tokens>
+            {
+                BaseUrl = "https://nycsca.proest.com/external_api/v1",
+                APIUri = "login",
+                Method= APICalls.Enum.APIMethod.POST,
+                ParameterBody = new Dictionary<string, string>
+                {
+                    { "partner_key", "UtZ5UUsaj3eW-HWyxV6N" },
+                    { "company_key", "JzxqMBk43yAUBRWYySC4" }
+                },
+                RequestHeaders = new APIRequestHeaders { ParameterContentType = "application/json" },
+                //Authorization = new APIAuthorization {  }
+            });
+
+            var result = api.Call();
+            Console.WriteLine($"Is Result = {result.GetType()}");
+            */
             Console.ReadKey();
         }
     }
+
+    
 }

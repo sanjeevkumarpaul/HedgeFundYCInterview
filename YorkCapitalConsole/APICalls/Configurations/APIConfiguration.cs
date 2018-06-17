@@ -728,11 +728,11 @@ namespace APICalls.Configurations
         private APIRequestHeaders ContentTypes(APIXmlNode node)
         {
             var content = new APIRequestHeaders
-                            {
-                                AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
-                                ParameterContentType = node.ParameterContentType,
-                                Headers = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
-                            };
+                          {
+                            AcceptContentTypes = node.ContentTypes?.SplitEx(';'),
+                            ParameterContentType = node.ParameterContentType,
+                            Headers = node.Headers?.Select(h => new APINamePareMedia { Key = h.Key, Value = h.Value })?.ToArray()
+                          };
 
             return content;
         }
