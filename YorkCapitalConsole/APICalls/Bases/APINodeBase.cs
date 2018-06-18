@@ -1,4 +1,5 @@
-﻿using APICalls.Dependents;
+﻿using APICalls.Configurations;
+using APICalls.Dependents;
 using APICalls.Entities;
 using APICalls.Enum;
 using System;
@@ -35,6 +36,8 @@ namespace APICalls.Bases
         /// </summary>
         internal string ContentTypes { get; set; }                
         internal APIMethod Method { get; set; }
-        internal bool Cache { get; set; } = false;        
+        internal bool Cache { get; set; } = false;
+
+        internal List<APICondition> Conditions { get; set; } = new List<APICondition>();
     }
 }

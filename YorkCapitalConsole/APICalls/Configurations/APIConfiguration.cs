@@ -231,7 +231,7 @@ namespace APICalls.Configurations
             try
             {
                 xml = xml ?? Options.PathOrContent;
-
+                
                 var all = (WrapIOs.Exists(xml) ? XElement.Load(xml) : XElement.Parse(xml)).Elements();
 
                 Base = new APIXmlNode(all.Where(n => n.Name == "Base").First(), null);
@@ -640,17 +640,18 @@ namespace APICalls.Configurations
         /// <param name="node">APIXmlNode</param>
         /// <param name="otherParmams">any object, to be used as Object Parameters. Genrally passed during Parallel Processing.</param>
         /// <returns>APIProspect<IAPIProspect></returns>
-        private object CreateAndInstantiateProspectNode(APIXmlNode node, object[] otherParmams = null)
+        private object CreateAndInstantiateProspectNode(APIXmlNode node, object[] otherParams = null)
         {
             var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
+            var objects = GetParamObjects(otherParams);
 
             using (var prosBase = (APIProspectOptionBase)prospect)
             {
                 prosBase.BaseUrl = node.BaseUrl;
-                prosBase.APIUri = LocateDynamicParamValue(node.ApiUri, otherParmams: otherParmams);
+                prosBase.APIUri = InjectObjectParams(node, node.ApiUri, objects);
                 prosBase.Method = node.Method;
-                prosBase.ParameterQuery = InjectObjectParams(node, otherParmams, true);
-                prosBase.ParameterBody = InjectObjectParams(node, otherParmams);                
+                prosBase.ParameterQuery = InjectObjectParams(node, objects, true);
+                prosBase.ParameterBody = InjectObjectParams(node, objects);                
                 prosBase.Authorization = Authorization(node);
                 prosBase.RequestHeaders = ContentTypes(node);
             }
@@ -715,7 +716,7 @@ namespace APICalls.Configurations
         {
             if (node.Token.Empty()) return null;
 
-            var auth = new APIAuthorization { IsTokenAHeader = node.TokenAsHeader, Token = LocateDynamicParamValue(node.Token, false) };
+            var auth = new APIAuthorization { IsTokenAHeader = node.TokenAsHeader, Token = InjectObjectParams(node, node.Token, null) };
 
             return auth;
         }
@@ -745,21 +746,34 @@ namespace APICalls.Configurations
         /// <param name="node">APIXmlNode</param>
         /// <param name="otherParmams">Array of objects, usually passed during parallel processing</param>
         /// <returns></returns>
-        private Dictionary<string, string> InjectObjectParams(APIXmlNode node, object[] otherParmams = null, bool queryParams = false)
+        private Dictionary<string, string> InjectObjectParams(APIXmlNode node, List<object> objectParameters = null, bool queryParams = false)
         {
             var keys = queryParams ? node.ParametersQuery?.Keys.ToList() : node.ParametersBody?.Keys.ToList();
             var paramss = (queryParams ? node.ParametersQuery : node.ParametersBody);
-
+          
             return keys == null ?
                         paramss :
                         ((Func<Dictionary<string, string>>)(() =>
                      {
                          Dictionary<string, string> dictReplacers = new Dictionary<string, string>();
-                         keys.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(paramss[k], otherParmams: otherParmams)));
+                         keys.ForEach(k => dictReplacers.Add(k, LocateDynamicParamValue(node, paramss[k], objectParameters, k)));
 
                          return dictReplacers;
                      }))();
         }
+
+        /// <summary>
+        /// Replace placeholder for API/Uri(s)
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <param name="placeholderStr">Placeholder string {Type.property}</param>
+        /// <param name="otherParams">any other objects needs to be considered.</param>
+        /// <returns></returns>
+        private string InjectObjectParams(APIXmlNode node, string placeholderStr, List<object> objectParameters = null)
+        {
+           return LocateDynamicParamValue(node, placeholderStr, objectParameters, "", false);
+        }
+
         /// <summary>
         /// Finds {Type.Property} from place holder strings and loads values into it via GetDynamicParamObjectValue.
         /// </summary>
@@ -767,7 +781,7 @@ namespace APICalls.Configurations
         /// <param name="locateFromObjectParams">To make sure to be found from Object Params</param>
         /// <param name="otherParmams">Array of objects, usually passed during parallel processing</param>
         /// <returns>Replaced Placeholder string with right values. If no values find blanks out Placeholder string and returns back.</returns>
-        private string LocateDynamicParamValue(string placeholderStr, bool locateFromObjectParams = true, object[] otherParmams = null)
+        private string LocateDynamicParamValue(APIXmlNode node, string placeholderStr, List<object> objectParameters, string paramKey = "", bool locateFromObjectParams = true)
         {
             //Find all matches with {...}
             Regex.Matches(placeholderStr, "{(.*)}").Cast<Match>().All(m =>
@@ -775,7 +789,7 @@ namespace APICalls.Configurations
                 var item = m.Groups[1].Value.SplitEx('.'); //Groups[1] stores the group value like (.*). If there are more, more groups are created.
 
                 if (item.Length > 1)
-                    placeholderStr = GetDynamicParamObjectValue(item[0], placeholderStr, m.ToString(), item[1], locateFromObjectParams, otherParmams);
+                    placeholderStr = GetDynamicParamObjectValue(node, item[0], placeholderStr, m.ToString(), item[1], objectParameters, paramKey, locateFromObjectParams);
 
                 return true;
             });
@@ -792,35 +806,60 @@ namespace APICalls.Configurations
         /// <param name="locateFromObjectParams">To make sure to be found from Object Params</param>
         /// <param name="otherParams">Array of objects, usually passed during parallel processing</param>
         /// <returns>Replaced Placeholder string with right values. If no values find blanks out Placeholder string and returns back.</returns>
-        private string GetDynamicParamObjectValue(string typeName, string placeholderStr, string pattern, string propertyName, bool locateFromObjectParams = true, object[] otherParams = null)
+        private string GetDynamicParamObjectValue(APIXmlNode node, string typeName, string placeholderStr, string pattern, string propertyName, List<object> objectParameters, string paramKey = "", bool locateFromObjectParams = true)
         {
-            var _objects = GetParamObjects(otherParams);
+            var _object = (locateFromObjectParams ?
+                       objectParameters.FirstOrDefault(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
+                       Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result);
 
-            var val = (locateFromObjectParams ?
-                        _objects.FirstOrDefault(o => o.GetType().Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)) :
-                        Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result)
-                      ?.GetVal(propertyName);
+            var val =_object?.GetVal(propertyName);
+
+            val = ConditionalValue(node, objectParameters, paramKey, val);
 
             return placeholderStr.Replace(pattern, val);
         }
+
+        private string ConditionalValue(APIXmlNode node, List<object> objectParameters, string paramKey, string value)
+        {
+            //Check if conditions are not empty
+            IEnumerable<APICondition> conditions = null;
+            if (!paramKey.Empty() && (conditions = node.Conditions.Where(c => c.ParamterKey.Equals(paramKey, StringComparison.CurrentCultureIgnoreCase))) != null)
+            {
+                //objectParameters.AddRange(Apis.Where(a => a.Result != null).Select(a => a.Result));
+
+                foreach (var condition in conditions)
+                {
+                    var operands = condition.Condition.SplitEx(";");
+                    if (operands.Length != 3) continue; //Meaning not a valid type.
+                    var val = new APIExpression(objectParameters, operands[0], operands[1], operands[2]).GetVal();
+                    if (val == null) continue;
+                }
+            }
+
+            return value;
+        }
+
         /// <summary>
         /// Evaluates Object Parameters from ObjectParams object and otherParams, eleminats duplicate(s) and gives right objects.
         /// </summary>
         /// <param name="otherParams">Array of objects, usually passed during parallel processing</param>
         /// <returns>List of mapped distinct Array of objects.</returns>
-        public List<object> GetParamObjects(object[] otherParams = null)
+        public List<object> GetParamObjects(object[] otherParams = null, bool locateFromObjectParams = true)
         {
             List<object> objects = new List<object>();
-            objects.AddRange(objectParams.Params.ToArray());
-
-            if (otherParams != null)
+            if (locateFromObjectParams)
             {
-                foreach (var other in otherParams)
+                objects.AddRange(objectParams.Params.ToArray());
+
+                if (otherParams != null)
                 {
-                    object obj = null;
-                    if ((obj = objects.Find(o => o.GetType() == other.GetType())) != null)
-                        objects.Remove(obj);
-                    objects.Add(other);
+                    foreach (var other in otherParams)
+                    {
+                        object obj = null;
+                        if ((obj = objects.Find(o => o.GetType() == other.GetType())) != null)
+                            objects.Remove(obj);
+                        objects.Add(other);
+                    }
                 }
             }
             return objects;

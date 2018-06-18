@@ -47,7 +47,7 @@ namespace APICalls.Configurations
             if (element.Attribute("TokenMaster") != null) TokenMaster = $"__API__{element.Attribute("TokenMaster").Value}__.__";
 
             //<!-- Paramters -->
-            var Parameters = SetParameters(element.Elements("Parameters"), Base);
+            var Parameters = GetParameters(element.Elements("Parameters"), Base);
             if (element.Attribute("ParameterContentType") != null) ParameterContentType = element.Attribute("ParameterContentType").Value;
 
             //<!-- Extra Headers -->
@@ -57,6 +57,10 @@ namespace APICalls.Configurations
             //<!-- Additional Content Types (To be seprated by semi colon)-->
             var contents = element.Element("ContentTypes");
             if (contents != null && contents.Attribute("Values") != null) ContentTypes = contents.Attribute("Values").Value;
+
+            //<!-- Parameter Conditions -->
+            var conditions = GetConditions(element.Element("Conditions"));
+
 
             //At the end Perform Validity Check and include Default Values.
             ValidityChecks(Base?.BaseUrl);
@@ -88,7 +92,7 @@ namespace APICalls.Configurations
             return dict;
         }
 
-        private List<APIParameter> SetParameters(IEnumerable<XElement> elements, APIXmlNode Base = null)
+        private List<APIParameter> GetParameters(IEnumerable<XElement> elements, APIXmlNode Base = null)
         {
             List<APIParameter> _parameters = new List<APIParameter>();
 
@@ -110,6 +114,22 @@ namespace APICalls.Configurations
             _parameters.Where(p => !p.ParametersAsQueryString).SelectMany(p => p.Items).All(i => { ParametersBody.Add(i.Key, i.Value); return true; });
 
             return _parameters;
+        }
+
+        private List<APICondition> GetConditions(XElement element)
+        {
+            if (element != null)
+            {
+                var wheres = element.Elements("Where");
+                if (wheres != null)
+                {
+                    foreach (var where in wheres)
+                        Conditions.Add(new APICondition { ParamterKey = where.Attribute("ParameterKey")?.Value, Condition = where.Attribute("Condition")?.Value });
+                }
+                Conditions.RemoveAll(c => c.ParamterKey.Empty() || c.Condition.Empty()); //Remove all conditions if found to be empty either Key or Condition.
+            }
+
+            return Conditions;
         }
 
         private void ValidityChecks(string baseUrl)

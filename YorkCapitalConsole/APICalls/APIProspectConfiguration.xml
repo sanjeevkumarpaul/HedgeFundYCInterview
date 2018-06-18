@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" ?> 
 
 <!-- Based on API(s) from : https://www.alphavantage.co/documentation/  Registered here with s...software@gmail.com-->
+<!-- Conditions is only possible with Dependency Processing and in a right order --> 
+
   
 <APIProspects>
   <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" TokenMaster="TokenReceiver" />
@@ -16,12 +18,12 @@
   </APIProspect>
   
   
-  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey"  KeyPlacement="QUERY" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="4" Cache="False">
+  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey"  KeyPlacement="QUERY" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="1" Cache="False">
     
     <Parameters QueryString="True">
       <Parameter Key="function" Value="CURRENCY_EXCHANGE_RATE"/>
       <Parameter Key="from_currency"  Value="{ExchangeCurrency.FromCurrency}"/>
-      <Parameter Key="to_currency"  Value="{ExchangeCurrency.ToCurrency}"/>      
+      <Parameter Key="to_currency"  Value="{ExchangeCurrency.ToCurrency}"/>      	  
     </Parameters>
 	
 	<Parameters>
@@ -36,9 +38,16 @@
     <Parameters QueryString="True">
       <Parameter Key="function" Value="BATCH_STOCK_QUOTES"/>
       <Parameter Key="symbols"  Value="{StockQuoteSymbols.Symbols}"/>      
+	  <Parameter Key="currency" Value="{RealtimeCurrencyExchangeRate.ExchangeRate}" />
     </Parameters>
   
     <ContentTypes Values="application/json" />
+	
+	<Conditions>	
+		<!-- Condition for the parameter whose key is currency -->	
+		<!-- usage: {Type.Property};Operator;value -->
+		<Where ParameterKey = "currency" Condition = "{RealtimeCurrencyExchangeRate.ToCurrencyCode};!=;BDT" />
+	</Conditions>
   </APIProspect>
   
 </APIProspects>

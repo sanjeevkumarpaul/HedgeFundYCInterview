@@ -64,10 +64,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bases\APIProspectOptionBase.cs" />
+    <Compile Include="Configurations\APICondition.cs" />
     <Compile Include="Configurations\APIConfigurationOptions.cs" />
     <Compile Include="Configurations\APIObjectParameter.cs" />
     <Compile Include="Configurations\APIConfiguration.cs" />
     <Compile Include="Configurations\APIXmlNode.cs" />
+    <Compile Include="Dependents\APIExpression.cs" />
     <Compile Include="Dependents\APINamedParedMedia.cs" />
     <Compile Include="Dependents\APIParameter.cs" />
     <Compile Include="Enum\APIAuthenticationType.cs" />

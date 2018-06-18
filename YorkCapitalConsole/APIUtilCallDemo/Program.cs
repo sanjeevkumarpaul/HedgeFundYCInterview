@@ -83,7 +83,8 @@ namespace APIUtilCallDemo
 
                     if (_exchangeCountry < _currencies.Length)
                         config?.UpdateObjectParams(new ExchangeCurrency { ToCurrency = _currencies[_exchangeCountry++] }, 
-                                                  new StockQuoteSymbols { Symbols = "DIS,AXP" });                    
+                                                  new StockQuoteSymbols { Symbols = "DIS,AXP" });
+                    config?.InsertObjectParam(res);
                 }
             }
 
@@ -118,28 +119,28 @@ namespace APIUtilCallDemo
         static void Main(string[] args)
         {
             //VIA XML
-            //var options1 = new APIConfigurationOptions
-            //{
-            //    PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml",
-            //    ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
-            //    Subscriber = new ExchangeCallResults("INR", "PKR", "BDT", "LKR", "MYR", "MVR", "EUR"),
-            //    Progessor = new ExchangeProgress()
-            //};
-
-            //VIA JSON
             var options1 = new APIConfigurationOptions
             {
-                PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
+                PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.xml",
                 ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
-                Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
                 Subscriber = new ExchangeCallResults("INR", "PKR", "BDT", "LKR", "MYR", "MVR", "EUR"),
-                //NoRepeat = true,
                 Progessor = new ExchangeProgress()
             };
 
+            //VIA JSON
+            //var options1 = new APIConfigurationOptions
+            //{
+            //    PathOrContent = @"D:\VisualStudio 2017 Projects\GITHUB\HedgeFundYCInterview\YorkCapitalConsole\APICalls\APIProspectConfiguration.json",
+            //    ObjectParams = new object[] { new ExchangeCurrency(), new StockQuoteSymbols() },
+            //    Type = "JSON", //--> Very Important as otherwise it would try to check for XML instead of json since Default is XML
+            //    Subscriber = new ExchangeCallResults("INR", "PKR", "BDT", "LKR", "MYR", "MVR", "EUR"),
+            //    //NoRepeat = true,
+            //    Progessor = new ExchangeProgress()
+            //};
+
             //Observable
-            //var config = new APIConfiguration(options1);
-            //config.ExecuteApisObservable();
+            var config = new APIConfiguration(options1);
+            config.ExecuteApisObservable();
             //System.Threading.Thread.Sleep(5000);  //Sleep is required for caching concept to see through, otherwise all overservable will fire at once in async mode.
             //config.ExecuteApisObservable(true); //This is here to see if caching is working.
 
@@ -164,11 +165,13 @@ namespace APIUtilCallDemo
             //new ParallelismTry().DownloadWebSites();
 
             /*
+            //Calling a single API Without Configuration.
+
             var api = new APICalls.APIUtil<Tokens>(new APIProspect<Tokens>
             {
                 BaseUrl = "https://nycsca.proest.com/external_api/v1",
                 APIUri = "login",
-                Method= APICalls.Enum.APIMethod.POST,
+                Method = APICalls.Enum.APIMethod.POST,
                 ParameterBody = new Dictionary<string, string>
                 {
                     { "partner_key", "UtZ5UUsaj3eW-HWyxV6N" },
