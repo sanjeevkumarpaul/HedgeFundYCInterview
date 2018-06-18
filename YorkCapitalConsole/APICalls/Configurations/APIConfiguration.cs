@@ -814,29 +814,30 @@ namespace APICalls.Configurations
 
             var val =_object?.GetVal(propertyName);
 
-            val = ConditionalValue(node, objectParameters, paramKey, val);
+            if (!ConditionalValue(node, objectParameters, paramKey, val)) val = "";
 
             return placeholderStr.Replace(pattern, val);
         }
 
-        private string ConditionalValue(APIXmlNode node, List<object> objectParameters, string paramKey, string value)
+        private bool ConditionalValue(APIXmlNode node, List<object> objectParameters, string paramKey, string value)
         {
+            bool flag = true;
+
             //Check if conditions are not empty
             IEnumerable<APICondition> conditions = null;
             if (!paramKey.Empty() && (conditions = node.Conditions.Where(c => c.ParamterKey.Equals(paramKey, StringComparison.CurrentCultureIgnoreCase))) != null)
             {
-                //objectParameters.AddRange(Apis.Where(a => a.Result != null).Select(a => a.Result));
-
+                //objectParameters.AddRange(Apis.Where(a => a.Result != null).Select(a => a.Result));                
                 foreach (var condition in conditions)
                 {
                     var operands = condition.Condition.SplitEx(";");
                     if (operands.Length != 3) continue; //Meaning not a valid type.
                     var val = new APIExpression(objectParameters, operands[0], operands[1], operands[2]).GetVal();
-                    if (val == null) continue;
+                    if (!val.ToString().ToBool()) { flag = false; break; }
                 }
             }
 
-            return value;
+            return flag;
         }
 
         /// <summary>
