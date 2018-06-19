@@ -833,16 +833,23 @@ namespace APICalls.Configurations
             bool flag = true;
 
             //Check if conditions are not empty
-            IEnumerable<APIFilter> filters = null;
-            if (!paramKey.Empty() && (filters = node.Filters.Where(c => c.ParamterKey.Equals(paramKey, StringComparison.CurrentCultureIgnoreCase))) != null)
+            APIFilter filter = null;
+            if (!paramKey.Empty() && (filter = node.Filters.FirstOrDefault(c => c.ParamterKey.Equals(paramKey, StringComparison.CurrentCultureIgnoreCase))) != null)
             {
                 //objectParameters.AddRange(Apis.Where(a => a.Result != null).Select(a => a.Result));                
-                foreach (var filter in filters)
-                {
-                    var operands = filter.Condition.SplitEx(";");
-                    if (operands.Length != 3) continue; //Meaning not a valid type.
-                    var val = new APIExpression(objectParameters, operands[0], operands[1], operands[2]).GetVal();
+                foreach (var whr in filter.Where.AndConditions)
+                {                    
+                    var val = new APIExpression(objectParameters, whr.Operand, whr.Operator.Value, whr.Value).GetVal();
                     if (!val.ToString().ToBool()) { flag = false; break; }
+                }
+
+                if (flag) //only if AND conditions comes to true.
+                {
+                    foreach (var whr in filter.Where.OrConditions)
+                    {
+                        var val = new APIExpression(objectParameters, whr.Operand, whr.Operator.Value, whr.Value).GetVal();
+                        if (!val.ToString().ToBool()) { flag = false; }
+                    }
                 }
             }
 
