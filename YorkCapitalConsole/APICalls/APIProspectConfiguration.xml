@@ -7,7 +7,7 @@
 <APIProspects>
   <Base BaseUrl="https://www.alphavantage.co/query"  Key="LBMNIZVTOTUQRGRT" TokenMaster="TokenReceiver" />
 
-  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" GenericType="APICalls.Example.Tokens" Cache="False" ParameterContentType="application/json">
+  <APIProspect Name="TokenReceiver" BaseUrl="https://nycsca.proest.com/external_api/v1" Uri="login" Method="POST" ResultType="APICalls.Example.Tokens" Cache="False" ParameterContentType="application/json">
     
     <Parameters>
       <Parameter Key="partner_key" Value="UtZ5UUsaj3eW-HWyxV6N"/>
@@ -18,7 +18,7 @@
   </APIProspect>
   
   
-  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey"  KeyPlacement="QUERY" GenericType="APICalls.Example.RealtimeCurrencyExchange" Repeat="1" Cache="False">
+  <APIProspect Name="CurrencyExchangeRate" BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey"  KeyPlacement="QUERY" ResultType="APICalls.Example.RealtimeCurrencyExchange" Repeat="1" Cache="False">
     
     <Parameters QueryString="True">
       <Parameter Key="function" Value="CURRENCY_EXCHANGE_RATE"/>
@@ -33,7 +33,7 @@
     <ContentTypes Values="application/json" />
   </APIProspect>
   
-  <APIProspect BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" GenericType="APICalls.Example.StockQuoteMaster" Cache="False">
+  <APIProspect BaseUrl="" Uri="" Method="GET" IncludeKeyFromBase="apikey" ResultType="APICalls.Example.StockQuoteMaster" Cache="False">
     
     <Parameters QueryString="True">
       <Parameter Key="function" Value="BATCH_STOCK_QUOTES"/>
@@ -43,11 +43,17 @@
   
     <ContentTypes Values="application/json" />
 	
-	<Conditions>	
+	<Filters>	
 		<!-- Condition for the parameter whose key is currency -->	
 		<!-- usage: {Type.Property};Operator;value -->
-		<Where ParameterKey = "currency" Condition = "{RealtimeCurrencyExchangeRate.ToCurrencyCode};!=;BDT" />
-	</Conditions>
+		<!-- <Where ParameterKey = "currency" Condition = "{RealtimeCurrencyExchangeRate.ToCurrencyCode};!=;BDT" /> -->
+		<Where ParameterKey = "currency">
+			<And>
+				<Condition Operand="{RealtimeCurrencyExchangeRate.ToCurrencyCode}" Operator = "ne" Value="BDT" />
+				<Condition Operand="{RealtimeCurrencyExchangeRate.ToCurrencyCode}" Operator = "eq" Value="IND" />
+			</And>
+		</Where>
+	</Filters>
   </APIProspect>
   
 </APIProspects>

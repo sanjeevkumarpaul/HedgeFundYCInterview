@@ -7,7 +7,7 @@
                                           "BaseUrl" : "https://nycsca.proest.com/external_api/v1",
                                           "Uri"     : "login",
                                           "Method"  : "POST",										  
-										  "GenericType" : "APICalls.Example.Tokens",
+										  "ResultType" : "APICalls.Example.Tokens",
 										  "ParameterContentType" : "application/json",
 										  
                                         										  
@@ -33,7 +33,7 @@
                                           "Method"  : "GET",
 										  "IncludeKeyFromBase" : "apikey",
 										  "KeyPlacement":"QUERY",
-										  "GenericType" : "APICalls.Example.RealtimeCurrencyExchange",
+										  "ResultType" : "APICalls.Example.RealtimeCurrencyExchange",
 										  "ParameterContentType" : "application/json",
 										                                          										  
                                           "Parameters" : 
@@ -69,7 +69,7 @@
                                           "Method"  : "GET",										  
 										  "IncludeKeyFromBase" : "apikey",
 										  "KeyPlacement":"QUERY",
-										  "GenericType" : "APICalls.Example.StockQuoteMaster",
+										  "ResultType" : "APICalls.Example.StockQuoteMaster",
 										  "ParameterContentType" : "application/json",
                                                                                     										  
                                           "Parameters" : 

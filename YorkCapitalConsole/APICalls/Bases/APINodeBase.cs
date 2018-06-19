@@ -1,4 +1,5 @@
 ﻿using APICalls.Configurations;
+using APICalls.Configurations.Filters;
 using APICalls.Dependents;
 using APICalls.Entities;
 using APICalls.Enum;
@@ -13,7 +14,7 @@ namespace APICalls.Bases
     internal class APINodeBase
     {
         internal string Name { get; set; }
-        internal string GenericType { get; set; }
+        internal string ResultType { get; set; }
         internal string BaseUrl { get; set; }
         internal string ApiUri { get; set; }
         internal string ApiKey { get; set; }
@@ -37,7 +38,9 @@ namespace APICalls.Bases
         internal string ContentTypes { get; set; }                
         internal APIMethod Method { get; set; }
         internal bool Cache { get; set; } = false;
-
-        internal List<APICondition> Conditions { get; set; } = new List<APICondition>();
+        /// <summary>
+        /// Conditions for any parameter to be checked while assigning to it.
+        /// </summary>
+        internal List<APIFilter> Filters { get; set; } = new List<APIFilter>();
     }
 }

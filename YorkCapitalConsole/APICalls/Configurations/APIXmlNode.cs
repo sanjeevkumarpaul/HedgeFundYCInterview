@@ -10,6 +10,7 @@ using APICalls.Entities.Interfaces;
 using APICalls.Bases;
 using APICalls.Enum;
 using APICalls.Dependents;
+using APICalls.Configurations.Filters;
 
 namespace APICalls.Configurations
 {
@@ -21,7 +22,7 @@ namespace APICalls.Configurations
         {
             //<!-- Name & Type -->
             if (element.Attribute("Name") != null) Name = $"__API__{element.Attribute("Name").Value}__.__";
-            if (element.Attribute("GenericType") != null) GenericType = element.Attribute("GenericType").Value;
+            if (element.Attribute("ResultType") != null) ResultType = element.Attribute("ResultType").Value;
 
             //<!-- Urls & Methods -->
             if (element.Attribute("BaseUrl") != null) BaseUrl = element.Attribute("BaseUrl").Value;
@@ -116,20 +117,47 @@ namespace APICalls.Configurations
             return _parameters;
         }
 
-        private List<APICondition> GetConditions(XElement element)
+        /// <summary>
+        /// Extract filters from the Prospect Element of XML
+        /// </summary>
+        /// <param name="element">XElement with Filters tag</param>
+        /// <returns>List of APIFilter</returns>
+        private List<APIFilter> GetConditions(XElement element)
         {
             if (element != null)
             {
                 var wheres = element.Elements("Where");
                 if (wheres != null)
                 {
-                    foreach (var where in wheres)
-                        Conditions.Add(new APICondition { ParamterKey = where.Attribute("ParameterKey")?.Value, Condition = where.Attribute("Condition")?.Value });
+                    foreach (var whr in wheres)
+                        Filters.Add(new APIFilter
+                                    {
+                                        ParamterKey = whr.Attribute("ParameterKey")?.Value,
+                                        Condition = whr.Attribute("Condition")?.Value,
+                                        Where = new APIWhere
+                                        {
+                                            AndConditions = BuiltCondition(whr),
+                                            OrConditions = BuiltCondition(whr, true)
+                                        }
+                                    });
                 }
-                Conditions.RemoveAll(c => c.ParamterKey.Empty() || c.Condition.Empty()); //Remove all conditions if found to be empty either Key or Condition.
+                Filters.RemoveAll(c => c.ParamterKey.Empty() || !c.Where.Exists ); //Remove all Filters if found to be empty either Key or Condition.
             }
 
-            return Conditions;
+            //Example of Local function perfectly required at this point to extract condition logic
+            List<APICondition> BuiltCondition(XElement whereCond, bool orConditions = false)
+            {
+                return (from ands in whereCond.Elements(orConditions ? "Or" : "And")
+                        select new APICondition
+                        {
+                            Operand = ands.Attribute("Operand")?.Value,
+                            Operator = ands.Attribute("Operator")?.Value.ToEnum(APIOperator.EQ),
+                            Value = ands.Attribute("Value")?.Value
+
+                        }).ToList();
+            }
+
+            return Filters;
         }
 
         private void ValidityChecks(string baseUrl)

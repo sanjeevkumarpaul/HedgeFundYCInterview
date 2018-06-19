@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APICalls.Configurations
+namespace APICalls.Configurations.Filters
 {
-    public class APICondition
+    internal class APIFilter
     {
         internal string ParamterKey { get; set; }
         internal string Condition { get; set; }
-    }
+        internal APIWhere Where { get; set; }
+    }        
 }

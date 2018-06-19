@@ -19,6 +19,7 @@ using System.Threading;
 using APICalls.Entities.Contracts;
 using APICalls.Dependents;
 using APICalls.Bases;
+using APICalls.Configurations.Filters;
 #endregion ~Custom Namespaces
 
 namespace APICalls.Configurations
@@ -343,7 +344,7 @@ namespace APICalls.Configurations
             #region ^Xml Formats
             string xml = $"<?xml version=\"1.0\" ?>{_nl}<APIProspects>{_nl}";
             string _baseXml = $"<Base Name=\"{{0}}\" BaseUrl=\"{{1}}\"  Key=\"{{2}}\" TokenMaster=\"{{3}}\" />{_nl}";
-            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" GenericType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\" Order=\"{{9}}\" Cache=\"{{10}}\" KeyPlacement=\"{{11}}\" ParameterContentType=\"{{12}}\">{_nl}";
+            string _prospectXml = $"<APIProspect Name=\"{{0}}\" BaseUrl=\"{{1}}\" Uri=\"{{2}}\" Method=\"{{3}}\" IncludeKeyFromBase=\"{{4}}\" ResultType=\"{{5}}\" Token=\"{{6}}\" ContentTypes=\"{{7}}\" Repeat=\"{{8}}\" Order=\"{{9}}\" Cache=\"{{10}}\" KeyPlacement=\"{{11}}\" ParameterContentType=\"{{12}}\">{_nl}";
             string _authXml = $"<Authorization Type=\"{{0}}\" Token=\"{{1}}\" TokenAsHeader=\"{{2}}\" />{_nl}";
             string _headerXml = $"<Header Key=\"{{0}}\" Value=\"{{1}}\" />{_nl}";
             string _paramHeaderXml = $"<Parameters QueryString=\"{{0}}\">{_nl}";
@@ -373,7 +374,7 @@ namespace APICalls.Configurations
                                                        _prospect["Uri"]?.ToString(),
                                                        _prospect["Method"]?.ToString(),
                                                        _prospect["IncludeKeyFromBase"]?.ToString(),
-                                                       _prospect["GenericType"]?.ToString(),
+                                                       _prospect["ResultType"]?.ToString(),
                                                        _prospect["Token"]?.ToString(),
                                                        _prospect["ContentTypes"]?.ToString(),
                                                        _prospect["Repeat"]?.ToString(),
@@ -642,7 +643,7 @@ namespace APICalls.Configurations
         /// <returns>APIProspect<IAPIProspect></returns>
         private object CreateAndInstantiateProspectNode(APIXmlNode node, object[] otherParams = null)
         {
-            var prospect = CreateInstance(node.GenericType, typeof(APIProspect<>));
+            var prospect = CreateInstance(node.ResultType, typeof(APIProspect<>));
             var objects = GetParamObjects(otherParams);
 
             using (var prosBase = (APIProspectOptionBase)prospect)
@@ -667,8 +668,8 @@ namespace APICalls.Configurations
         /// <returns>Returns 'CALL' method refernce for APIUtil<IAPIProspect></returns>
         private System.Reflection.MethodInfo GetApiCallMethod(APIXmlNode node, object prospect, ref object apiUtil)
         {
-            var constructedType = CreateGenericType(node.GenericType, typeof(APIUtil<>));
-            apiUtil = CreateInstance(node.GenericType, typeof(APIUtil<>), prospect);
+            var constructedType = CreateGenericType(node.ResultType, typeof(APIUtil<>));
+            apiUtil = CreateInstance(node.ResultType, typeof(APIUtil<>), prospect);
 
             var method = constructedType.GetMethod("Call");
 
@@ -819,18 +820,26 @@ namespace APICalls.Configurations
             return placeholderStr.Replace(pattern, val);
         }
 
+        /// <summary>
+        /// Checks if there are any Filters/Conditions against a specific Paramters within API
+        /// </summary>
+        /// <param name="node">APIXmlNode</param>
+        /// <param name="objectParameters">objects required for Paramters place holders</param>
+        /// <param name="paramKey">Paramter name to which filters are applied for.</param>
+        /// <param name="value">Value of original Property value of the Paramter Key (value for {Type.Property}, within Paramter element)</param>
+        /// <returns>Boolean, to see if has any valid conditions</returns>
         private bool ConditionalValue(APIXmlNode node, List<object> objectParameters, string paramKey, string value)
         {
             bool flag = true;
 
             //Check if conditions are not empty
-            IEnumerable<APICondition> conditions = null;
-            if (!paramKey.Empty() && (conditions = node.Conditions.Where(c => c.ParamterKey.Equals(paramKey, StringComparison.CurrentCultureIgnoreCase))) != null)
+            IEnumerable<APIFilter> filters = null;
+            if (!paramKey.Empty() && (filters = node.Filters.Where(c => c.ParamterKey.Equals(paramKey, StringComparison.CurrentCultureIgnoreCase))) != null)
             {
                 //objectParameters.AddRange(Apis.Where(a => a.Result != null).Select(a => a.Result));                
-                foreach (var condition in conditions)
+                foreach (var filter in filters)
                 {
-                    var operands = condition.Condition.SplitEx(";");
+                    var operands = filter.Condition.SplitEx(";");
                     if (operands.Length != 3) continue; //Meaning not a valid type.
                     var val = new APIExpression(objectParameters, operands[0], operands[1], operands[2]).GetVal();
                     if (!val.ToString().ToBool()) { flag = false; break; }
@@ -869,7 +878,7 @@ namespace APICalls.Configurations
         /// Create Generic Type from fully qualified Namespace.Type sent. Either APProspect<IAPIProspect> or APIUtil<IAPIProspect>
         /// </summary>
         /// <param name="prospectType">fuly qualified Namespace.Type</param>
-        /// <param name="genericType">Typeof GenericType to be qualifeid against </param>
+        /// <param name="genericType">Typeof ResultType to be qualifeid against </param>
         /// <returns>Type of Generics constructed</returns>
         private Type CreateGenericType(string prospectType, Type genericType)
         {
@@ -882,7 +891,7 @@ namespace APICalls.Configurations
         /// Creates Generic Type and Actual instance of the same type by calling parameterised constructors.
         /// </summary>
         /// <param name="prospectType">Either APProspect<IAPIProspect> or APIUtil<IAPIProspect></param>
-        /// <param name="genericType">Typeof GenericType to be qualifeid against</param>
+        /// <param name="genericType">Typeof ResultType to be qualifeid against</param>
         /// <param name="parameters"></param>
         /// <returns>Object Generics constructed</returns>
         private object CreateInstance(string prospectType, Type genericType, params object[] parameters)
