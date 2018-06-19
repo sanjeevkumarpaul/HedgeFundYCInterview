@@ -15,7 +15,7 @@ namespace APICalls.Configurations.Filters
         {
             get
             {
-                return AndConditions.Any(a => a != null) || OrConditions.Any(a => a != null);
+                return AndConditions.Exists(a => a != null) || OrConditions.Exists(a => a != null);
             }
         }
 

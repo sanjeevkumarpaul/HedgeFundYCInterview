@@ -71,6 +71,7 @@
     <Compile Include="Configurations\APIXmlNode.cs" />
     <Compile Include="Configurations\Filters\APIFilters.cs" />
     <Compile Include="Configurations\Filters\APIWhere.cs" />
+    <Compile Include="Constants\APIConstants.cs" />
     <Compile Include="Dependents\APIExpression.cs" />
     <Compile Include="Dependents\APINamedParedMedia.cs" />
     <Compile Include="Dependents\APIParameter.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="APIUtil.cs" />
     <Compile Include="Entities\Interfaces\IAPIResult.cs" />
     <Compile Include="Enum\APIKeyPlacement.cs" />
-    <Compile Include="Enum\APIOperator.cs" />
+    <Compile Include="Enum\APIConditionOperator.cs" />
     <Compile Include="Example\BastchStockQuotes.cs" />
     <Compile Include="Example\ExchangeParameters.cs" />
     <Compile Include="Example\RealtimeCurrencyExchangeRate.cs" />

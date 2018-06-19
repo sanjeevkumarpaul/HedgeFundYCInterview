@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using APICalls.Constants;
 using APICalls.Enum;
 using Extensions;
  
@@ -14,14 +15,14 @@ namespace APICalls.Dependents
     internal class APIExpression
     {
         private string Operand;
-        private APIOperator Operator;
+        private APIConditionOperator Operator;
         private string Comparer;
         private List<object> Objects;
 
         private string Left;
         private string Right;
         
-        internal APIExpression(List<object> objects, string operand, APIOperator oper, string comparer)
+        internal APIExpression(List<object> objects, string operand, APIConditionOperator oper, string comparer)
         {
             Objects = objects;
             Operand = operand;
@@ -42,32 +43,38 @@ namespace APICalls.Dependents
         }
 
         private void SearchOperands(string operand, bool isleft = true)
-        {
-            string res = string.Empty;
-            var oper = new Operand(operand);
-            if (!oper.Type.Empty())
+        {            
+            foreach (var oper in GenerateEquation(operand))
             {
-                var obj = Objects.Find(o => o.GetType().Name.Equals(oper.Type, StringComparison.CurrentCultureIgnoreCase));
-                res = obj?.GetVal(oper.Property);
+                if (!oper.Object.Empty() && oper.Properties.Exists(p => !p.Empty()))
+                {
+                    var obj = Objects.Find(o => o.GetType().Name.Equals(oper.Object, StringComparison.CurrentCultureIgnoreCase));
+                    foreach (var prop in oper.Properties)
+                    {
+                        var itenary = $"{{{oper.Object}.{prop}}}";
+                        var res = obj?.GetVal(prop);
+
+                        operand = operand.Replace(itenary, res);
+                    }
+                }                
             }
-            else res = oper.Constant;
-            if (isleft) Left = res; else Right = res;
-            
+
+            //if (isleft) Left = res; else Right = res;
         }
 
 
-        private bool Operation(APIOperator oper)
+        private bool Operation(APIConditionOperator oper)
         {
             Expression<Func<string, string, bool>> expression = (left, right) => left.Equals(right);
             
             switch (oper)
             {
-                case APIOperator.EQ : expression = (left, right) => left.Equals(right); break;
-                case APIOperator.NE: expression = (left, right) => !left.Equals(right); break;
-                case APIOperator.GT: expression = (left, right) => left.ToDouble() > right.ToDouble(); break;
-                case APIOperator.LT: expression = (left, right) => left.ToDouble() < right.ToDouble(); break;
-                case APIOperator.GE: expression = (left, right) => left.ToDouble() >= right.ToDouble(); break;
-                case APIOperator.LE: expression = (left, right) => left.ToDouble() <= right.ToDouble(); break;
+                case APIConditionOperator.EQ : expression = (left, right) => left.Equals(right); break;
+                case APIConditionOperator.NE: expression = (left, right) => !left.Equals(right); break;
+                case APIConditionOperator.GT: expression = (left, right) => left.ToDouble() > right.ToDouble(); break;
+                case APIConditionOperator.LT: expression = (left, right) => left.ToDouble() < right.ToDouble(); break;
+                case APIConditionOperator.GE: expression = (left, right) => left.ToDouble() >= right.ToDouble(); break;
+                case APIConditionOperator.LE: expression = (left, right) => left.ToDouble() <= right.ToDouble(); break;
             }
 
             var delegateOperation = expression.Compile();
@@ -76,32 +83,67 @@ namespace APICalls.Dependents
             return res;
         }
 
+        private IEnumerable<OperandObject> GenerateEquation(string operand)
+        {
+            List<OperandObject> operands = new List<OperandObject>();
 
+            Regex.Matches(operand, "[*+-/]").Cast<Match>().All(m =>
+            {
+                Console.WriteLine(m.ToString());
+
+                return true;
+            });
+
+            if (Regex.IsMatch(operand, APIConstants.ParamterPatter))
+            {
+                Regex.Matches(operand, APIConstants.ParamterPatter).Cast<Match>().All(m =>
+                {
+                    var _type = m.Groups[1].Value.SplitEx('.');
+                    if (!OperandObject.FindAndReplace(operands, _type[0], _type[1]))
+                    {
+                        operands.Add(new OperandObject
+                        {
+                            Object = _type[0],
+                            Properties = new List<string> { _type[1] }
+                        });
+                    }
+                    return true;
+                });
+            }
+            else operands.Add( new OperandObject { Constant = operand });
+
+            return operands;
+        }
 
         private bool IsOk()
         {            
-            var _typeMatch = Regex.Match(Operand, "{(.*)}");
+            var _typeMatch = Regex.Match(Operand, APIConstants.ParamterPatter);
             if (_typeMatch == null) return false; //Invalid condition declaration;
             
             return true;
         }
     }
 
-    internal class Operand
+    internal class OperandObject
     {
-        internal string Type { get; set; }
-        internal string Property { get; set; }
+        internal string Object { get; set; }
+        internal List<string> Properties { get; set; } = new List<string>();
         internal string Constant { get; set; }
 
-        internal Operand(string operand)
+        //internal static Expression Equation = Expression
+
+        internal static bool FindAndReplace(List<OperandObject> objects, string obj, string prop)
         {
-            if (Regex.IsMatch(operand, "{(.*)}"))
+            var _item = objects.FirstOrDefault(o => o.Object == obj);
+            if (_item != null)
             {
-                var _type = operand.TrimEx("{").TrimEx("}").SplitEx(".");
-                Type = _type[0];
-                Property = _type[1];
+                if (!_item.Properties.Any(p => p.Equals(prop))) //Check if property also exists.
+                {
+                    _item.Properties.Add(prop);
+                    return true;
+                }
             }
-            else Constant = operand;
+            return false;
         }
     }
 }

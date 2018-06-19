@@ -20,6 +20,7 @@ using APICalls.Entities.Contracts;
 using APICalls.Dependents;
 using APICalls.Bases;
 using APICalls.Configurations.Filters;
+using APICalls.Constants;
 #endregion ~Custom Namespaces
 
 namespace APICalls.Configurations
@@ -785,7 +786,7 @@ namespace APICalls.Configurations
         private string LocateDynamicParamValue(APIXmlNode node, string placeholderStr, List<object> objectParameters, string paramKey = "", bool locateFromObjectParams = true)
         {
             //Find all matches with {...}
-            Regex.Matches(placeholderStr, "{(.*)}").Cast<Match>().All(m =>
+            Regex.Matches(placeholderStr, APIConstants.ParamterPatter).Cast<Match>().All(m =>
             {
                 var item = m.Groups[1].Value.SplitEx('.'); //Groups[1] stores the group value like (.*). If there are more, more groups are created.
 

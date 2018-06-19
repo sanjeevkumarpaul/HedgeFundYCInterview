@@ -49,8 +49,8 @@
 		<!-- <Where ParameterKey = "currency" Condition = "{RealtimeCurrencyExchangeRate.ToCurrencyCode};!=;BDT" /> -->
 		<Where ParameterKey = "currency" Default="TTR">
 			<And>
+				<Condition Operand="{RealtimeCurrencyExchangeRate.ExchangeRate}+2.0"   Operator = "gt" Value="30.00" />
 				<Condition Operand="{RealtimeCurrencyExchangeRate.ToCurrencyCode}" Operator = "ne" Value="BDT" />
-				<Condition Operand="{RealtimeCurrencyExchangeRate.ToCurrencyCode}" Operator = "eq" Value="IND" />
 			</And>
 		</Where>
 	</Filters>

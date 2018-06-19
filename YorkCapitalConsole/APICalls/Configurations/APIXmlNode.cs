@@ -63,7 +63,7 @@ namespace APICalls.Configurations
             if (contents != null && contents.Attribute("Values") != null) ContentTypes = contents.Attribute("Values").Value;
 
             //<!-- Parameter Conditions -->
-            var conditions = GetConditions(element.Element("Conditions"));
+            var conditions = GetConditions(element.Element("Filters"));
 
 
             //At the end Perform Validity Check and include Default Values.
@@ -150,14 +150,19 @@ namespace APICalls.Configurations
             //Example of Local function perfectly required at this point to extract condition logic
             List<APICondition> BuiltCondition(XElement whereCond, bool orConditions = false)
             {
-                return (from ands in whereCond.Elements(orConditions ? "Or" : "And")
-                        select new APICondition
-                        {
-                            Operand = ands.Attribute("Operand")?.Value,
-                            Operator = ands.Attribute("Operator")?.Value.ToEnum(APIOperator.EQ),
-                            Value = ands.Attribute("Value")?.Value
+                var condElements = whereCond.Element(orConditions ? "Or" : "And")?.Elements("Condition");
 
-                        }).ToList();
+                if (condElements != null)
+                    return (from ands in whereCond.Element(orConditions ? "Or" : "And")?.Elements("Condition")
+                            select new APICondition
+                            {
+                                Operand = ands.Attribute("Operand")?.Value,
+                                Operator = ands.Attribute("Operator")?.Value.ToEnum(APIConditionOperator.EQ),
+                                Value = ands.Attribute("Value")?.Value
+
+                            }).ToList();
+                else
+                    return new List<APICondition>();
             }
 
             return Filters;

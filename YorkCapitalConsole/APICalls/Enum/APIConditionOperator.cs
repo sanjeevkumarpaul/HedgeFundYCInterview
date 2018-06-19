@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace APICalls.Enum
 {
-    internal enum APIOperator
+    internal enum APIConditionOperator
     {
         EQ, //Equal
         NE, //Not Equal
