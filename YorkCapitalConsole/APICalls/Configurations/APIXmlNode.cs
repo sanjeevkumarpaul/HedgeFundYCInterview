@@ -15,13 +15,16 @@ using APICalls.Configurations.Filters;
 namespace APICalls.Configurations
 {
     internal class APIXmlNode : APINodeBase
-    {       
+    {
+        private const string Prefix = "__.API.__";
+        private const string Postfix = "__.__";
+
         internal IAPIProspect Result { get; set; }
 
         internal APIXmlNode(XElement element, APIXmlNode Base)
         {
             //<!-- Name & Type -->
-            if (element.Attribute("Name") != null) Name = $"__API__{element.Attribute("Name").Value}__.__";
+            if (element.Attribute("Name") != null) Name = $"{element.Attribute("Name").Value}";
             if (element.Attribute("ResultType") != null) ResultType = element.Attribute("ResultType").Value;
 
             //<!-- Urls & Methods -->
@@ -164,7 +167,7 @@ namespace APICalls.Configurations
         {
             if (BaseUrl.Empty()) BaseUrl = baseUrl;
             if (!Token.Empty()) RequiredAuthorization = true;
-            if (Name.Empty()) { Name = $"__API__{Guid.NewGuid()}__.__"; Cache = false; } //Caching is not possible without a name
+            if (Name.Empty()) { Name = $"{Prefix}{Guid.NewGuid()}{Postfix}"; Cache = false; } //Caching is not possible without a name
 
             if (IncludeKeyFromBase.Empty()) IncludeKeyFromBase = null;
             if (!RequiredAuthorization)

@@ -848,7 +848,7 @@ namespace APICalls.Configurations
                     foreach (var whr in filter.Where.OrConditions)
                     {
                         var val = new APIExpression(objectParameters, whr.Operand, whr.Operator.Value, whr.Value).GetVal();
-                        if (!val.ToString().ToBool()) { flag = false; }
+                        if (val.ToString().ToBool()) { flag = true; break; } //Only 1 True is enough within OR Conditions.
                     }
                 }
             }

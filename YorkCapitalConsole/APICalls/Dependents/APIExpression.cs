@@ -32,30 +32,29 @@ namespace APICalls.Dependents
         internal object GetVal()
         {
             if (IsOk())
-            {                
-                Search(Operand, true);
-                Constant(Comparer);
+            {
+                SearchOperands(Operand, true);
+                SearchOperands(Operand, false);
                 return Operation(Operator);
             }
 
             return "";
         }
 
-        private void Search(string operand, bool create = false)
+        private void SearchOperands(string operand, bool isleft = true)
         {
+            string res = string.Empty;
             var oper = new Operand(operand);
-            var obj = Objects.Find(o => o.GetType().Name.Equals( oper.Type, StringComparison.CurrentCultureIgnoreCase));
-
-            if (obj != null)                
+            if (!oper.Type.Empty())
             {
-                Left = obj.GetVal(oper.Property);                               
+                var obj = Objects.Find(o => o.GetType().Name.Equals(oper.Type, StringComparison.CurrentCultureIgnoreCase));
+                res = obj?.GetVal(oper.Property);
             }
+            else res = oper.Constant;
+            if (isleft) Left = res; else Right = res;
+            
         }
 
-        private void Constant(string value)
-        {
-            Right = value;
-        }
 
         private bool Operation(APIOperator oper)
         {
@@ -92,12 +91,17 @@ namespace APICalls.Dependents
     {
         internal string Type { get; set; }
         internal string Property { get; set; }
+        internal string Constant { get; set; }
 
         internal Operand(string operand)
         {
-            var _type = operand.TrimEx("{").TrimEx("}").SplitEx(".");
-            Type = _type[0];
-            Property = _type[1];
+            if (Regex.IsMatch(operand, "{(.*)}"))
+            {
+                var _type = operand.TrimEx("{").TrimEx("}").SplitEx(".");
+                Type = _type[0];
+                Property = _type[1];
+            }
+            else Constant = operand;
         }
     }
 }
