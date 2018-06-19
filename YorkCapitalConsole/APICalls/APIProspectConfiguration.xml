@@ -47,7 +47,7 @@
 		<!-- Condition for the parameter whose key is currency -->	
 		<!-- usage: {Type.Property};Operator;value -->
 		<!-- <Where ParameterKey = "currency" Condition = "{RealtimeCurrencyExchangeRate.ToCurrencyCode};!=;BDT" /> -->
-		<Where ParameterKey = "currency">
+		<Where ParameterKey = "currency" Default="TTR">
 			<And>
 				<Condition Operand="{RealtimeCurrencyExchangeRate.ToCurrencyCode}" Operator = "ne" Value="BDT" />
 				<Condition Operand="{RealtimeCurrencyExchangeRate.ToCurrencyCode}" Operator = "eq" Value="IND" />

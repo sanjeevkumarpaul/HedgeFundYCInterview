@@ -9,7 +9,7 @@ namespace APICalls.Configurations.Filters
     internal class APIFilter
     {
         internal string ParamterKey { get; set; }
-        internal string Condition { get; set; }
+        internal string Default { get; set; } = string.Empty;
         internal APIWhere Where { get; set; }
     }        
 }

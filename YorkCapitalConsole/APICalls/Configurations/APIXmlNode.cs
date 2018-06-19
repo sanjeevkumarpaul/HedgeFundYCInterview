@@ -136,7 +136,7 @@ namespace APICalls.Configurations
                         Filters.Add(new APIFilter
                                     {
                                         ParamterKey = whr.Attribute("ParameterKey")?.Value,
-                                        Condition = whr.Attribute("Condition")?.Value,
+                                        Default = whr.Attribute("Default")?.Value,
                                         Where = new APIWhere
                                         {
                                             AndConditions = BuiltCondition(whr),

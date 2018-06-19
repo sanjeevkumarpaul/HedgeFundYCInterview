@@ -814,8 +814,7 @@ namespace APICalls.Configurations
                        Apis.Where(n => n.Name.Equals(typeName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault()?.Result);
 
             var val =_object?.GetVal(propertyName);
-
-            if (!ConditionalValue(node, objectParameters, paramKey, val)) val = "";
+            val = ConditionalValue(node, objectParameters, paramKey, val);
 
             return placeholderStr.Replace(pattern, val);
         }
@@ -828,15 +827,14 @@ namespace APICalls.Configurations
         /// <param name="paramKey">Paramter name to which filters are applied for.</param>
         /// <param name="value">Value of original Property value of the Paramter Key (value for {Type.Property}, within Paramter element)</param>
         /// <returns>Boolean, to see if has any valid conditions</returns>
-        private bool ConditionalValue(APIXmlNode node, List<object> objectParameters, string paramKey, string value)
+        private string ConditionalValue(APIXmlNode node, List<object> objectParameters, string paramKey, string value)
         {
             bool flag = true;
 
             //Check if conditions are not empty
             APIFilter filter = null;
             if (!paramKey.Empty() && (filter = node.Filters.FirstOrDefault(c => c.ParamterKey.Equals(paramKey, StringComparison.CurrentCultureIgnoreCase))) != null)
-            {
-                //objectParameters.AddRange(Apis.Where(a => a.Result != null).Select(a => a.Result));                
+            {                
                 foreach (var whr in filter.Where.AndConditions)
                 {                    
                     var val = new APIExpression(objectParameters, whr.Operand, whr.Operator.Value, whr.Value).GetVal();
@@ -851,9 +849,11 @@ namespace APICalls.Configurations
                         if (val.ToString().ToBool()) { flag = true; break; } //Only 1 True is enough within OR Conditions.
                     }
                 }
+
+                if (!flag) value = filter.Default;
             }
 
-            return flag;
+            return value;
         }
 
         /// <summary>
