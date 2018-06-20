@@ -35,7 +35,7 @@ namespace APICalls.Dependents
             if (IsOk())
             {
                 SearchOperands(Operand, true);
-                SearchOperands(Operand, false);
+                SearchOperands(Comparer, false);
                 return Operation(Operator);
             }
 
@@ -43,7 +43,9 @@ namespace APICalls.Dependents
         }
 
         private void SearchOperands(string operand, bool isleft = true)
-        {            
+        {
+            operand = operand.Replace(" ", "").Replace("(-)", "~MINUS~");
+
             foreach (var oper in GenerateEquation(operand))
             {
                 if (!oper.Object.Empty() && oper.Properties.Exists(p => !p.Empty()))
@@ -54,12 +56,62 @@ namespace APICalls.Dependents
                         var itenary = $"{{{oper.Object}.{prop}}}";
                         var res = obj?.GetVal(prop);
 
-                        operand = operand.Replace(itenary, res);
+                        operand = operand.Replace(itenary, $"{res}");
                     }
                 }                
             }
 
-            //if (isleft) Left = res; else Right = res;
+            var exprEquation = GetResultExpression ( GetMathematicExpression(operand) );
+                        
+            if (isleft) Left = exprEquation.ToString(); else Right = exprEquation.ToString();
+        }
+
+        private double GetResultExpression(Expression mathematicEquation)
+        {
+            ParameterExpression paramRes = Expression.Parameter(typeof(double), "result");
+            BlockExpression block = Expression.Block
+            (
+                new[] { paramRes }, //crating local var.
+                Expression.Assign(paramRes, mathematicEquation)
+            );
+            double exprResult = Expression.Lambda<Func<double>>(block).Compile()();
+
+            return exprResult;
+        }
+
+        private Expression GetMathematicExpression(string operand)
+        {
+            var equation = operand;
+            var _operator = "";
+            Expression exprEquation = null;
+            Regex.Matches(operand, "[*+/-]").Cast<Match>().All(m =>
+            {
+                _operator = m.Groups[0].Value;
+                var _left = equation.Substring(0, equation.IndexOf(_operator));
+                equation = equation.Substring(_left.Length + 1); //+1 is to avoid the operator just received.
+                exprEquation = AddOperationExpression(_operator, exprEquation, _left.ToDouble());
+
+                return true;
+            });
+
+            exprEquation = AddOperationExpression(_operator, exprEquation, equation.ToDouble());
+
+            return exprEquation;
+        }
+
+        private Expression AddOperationExpression(string operation, Expression equation, double value)
+        {
+            if (equation == null) return Expression.Constant(value, typeof(double));
+
+            switch (operation)
+            {
+                case "+": return Expression.Add(equation, Expression.Constant(value, typeof(double))); 
+                case "-": return Expression.Subtract(equation, Expression.Constant(value, typeof(double))); 
+                case "*": return Expression.Multiply(equation, Expression.Constant(value, typeof(double))); 
+                case "/": return Expression.Divide(equation, Expression.Constant(value, typeof(double))); 
+            }
+
+            return equation;
         }
 
 
@@ -86,14 +138,7 @@ namespace APICalls.Dependents
         private IEnumerable<OperandObject> GenerateEquation(string operand)
         {
             List<OperandObject> operands = new List<OperandObject>();
-
-            Regex.Matches(operand, "[*+-/]").Cast<Match>().All(m =>
-            {
-                Console.WriteLine(m.ToString());
-
-                return true;
-            });
-
+                       
             if (Regex.IsMatch(operand, APIConstants.ParamterPatter))
             {
                 Regex.Matches(operand, APIConstants.ParamterPatter).Cast<Match>().All(m =>

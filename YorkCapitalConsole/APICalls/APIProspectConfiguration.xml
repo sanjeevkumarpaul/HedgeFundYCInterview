@@ -45,11 +45,13 @@
 	
 	<Filters>	
 		<!-- Condition for the parameter whose key is currency -->	
-		<!-- usage: {Type.Property};Operator;value -->
-		<!-- <Where ParameterKey = "currency" Condition = "{RealtimeCurrencyExchangeRate.ToCurrencyCode};!=;BDT" /> -->
+		<!-- Both <And>/<Or> tags can be used once in each <Where> element -->
+		<!-- if you want to specify a (-) minus symbol use (-) notation in front of operand, 
+		          i.e., (-){Type.Property} , if type.property is numeric (as 68) will be treated as -68.00 if string (-) will be ignored -->
+		
 		<Where ParameterKey = "currency" Default="TTR">
 			<And>
-				<Condition Operand="{RealtimeCurrencyExchangeRate.ExchangeRate}+2.0"   Operator = "gt" Value="30.00" />
+				<Condition Operand="{RealtimeCurrencyExchangeRate.ExchangeRate} + 2.0"   Operator = "gt" Value="30.00" />
 				<Condition Operand="{RealtimeCurrencyExchangeRate.ToCurrencyCode}" Operator = "ne" Value="BDT" />
 			</And>
 		</Where>

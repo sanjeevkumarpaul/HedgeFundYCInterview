@@ -138,17 +138,23 @@ namespace APIUtilCallDemo
             //    Progessor = new ExchangeProgress()
             //};
 
+            #region - Observable
             //Observable
             var config = new APIConfiguration(options1);
             config.ExecuteApisObservable();
+
             //System.Threading.Thread.Sleep(5000);  //Sleep is required for caching concept to see through, otherwise all overservable will fire at once in async mode.
             //config.ExecuteApisObservable(true); //This is here to see if caching is working.
+            #endregion - Observable
 
+            #region - Parallel Processing
             //Parallel Processing 
             //Remember Repeats will not work, and also prameter will only be taken from initial ObjectParams of APICOnfigurationOptions.
             //Task.Run( () => new APIConfiguration(options1).ExecuteApisParallel());
+            #endregion - Parallel Processing
 
-            //Synchronouse.
+            #region - Sequential
+            //Synchronous/Sequential
             //var config = new APIConfiguration(options1);
             //foreach (var res in config.ExecuteApis()) ;
             //foreach (var res in config.ExecuteApis(true)) ;
@@ -163,7 +169,9 @@ namespace APIUtilCallDemo
 
             //Task.Run( ()=> new ParallelismTry().DownloadWebSites());
             //new ParallelismTry().DownloadWebSites();
+            #endregion - Sequential
 
+            #region - Calling a single API Without Configuration
             /*
             //Calling a single API Without Configuration.
 
@@ -184,6 +192,20 @@ namespace APIUtilCallDemo
             var result = api.Call();
             Console.WriteLine($"Is Result = {result.GetType()}");
             */
+            #endregion - Calling a single API Without Configuration
+
+            #region - Regex experiment
+            int rcnt = 0;
+            var operand = "-1 * {RealtimeCurrencyExchangeRate.ExchangeRate} + 2.0/100".Replace(" ", "");
+            System.Text.RegularExpressions.Regex.Matches(operand, "[*+/-]").Cast<System.Text.RegularExpressions.Match>().All(m =>
+            {
+                Console.WriteLine($"{++rcnt} --- {m.ToString()}");
+
+                return true;
+            });
+            //Evalutator
+            #endregion - Regex experiment
+
             Console.ReadKey();
         }
     }
