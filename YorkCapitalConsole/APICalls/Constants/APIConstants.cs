@@ -9,5 +9,7 @@ namespace APICalls.Constants
     internal static class APIConstants
     {
         internal const string ParamterPatter = "{(.*)}";
+        internal const string ConditionMinusSymbol = "~MINUS~";
+        internal const string ConditionMinusUserSymbol = "(-)";
     }
 }

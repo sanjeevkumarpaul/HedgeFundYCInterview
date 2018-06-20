@@ -36,32 +36,37 @@ namespace APICalls.Dependents
             {
                 SearchOperands(Operand, true);
                 SearchOperands(Comparer, false);
-                return Operation(Operator);
+                return CalculateExpression(Operator);
             }
 
             return "";
         }
 
-        private void SearchOperands(string operand, bool isleft = true)
+        private bool CalculateExpression(APIConditionOperator oper)
         {
-            operand = operand.Replace(" ", "").Replace("(-)", "~MINUS~");
+            Expression<Func<string, string, bool>> expression = (left, right) => left.Equals(right);
 
-            foreach (var oper in GenerateEquation(operand))
+            switch (oper)
             {
-                if (!oper.Object.Empty() && oper.Properties.Exists(p => !p.Empty()))
-                {
-                    var obj = Objects.Find(o => o.GetType().Name.Equals(oper.Object, StringComparison.CurrentCultureIgnoreCase));
-                    foreach (var prop in oper.Properties)
-                    {
-                        var itenary = $"{{{oper.Object}.{prop}}}";
-                        var res = obj?.GetVal(prop);
-
-                        operand = operand.Replace(itenary, $"{res}");
-                    }
-                }                
+                case APIConditionOperator.EQ: expression = (left, right) => left.Equals(right); break;
+                case APIConditionOperator.NE: expression = (left, right) => !left.Equals(right); break;
+                case APIConditionOperator.GT: expression = (left, right) => left.ToDouble() > right.ToDouble(); break;
+                case APIConditionOperator.LT: expression = (left, right) => left.ToDouble() < right.ToDouble(); break;
+                case APIConditionOperator.GE: expression = (left, right) => left.ToDouble() >= right.ToDouble(); break;
+                case APIConditionOperator.LE: expression = (left, right) => left.ToDouble() <= right.ToDouble(); break;
             }
 
-            var exprEquation = GetResultExpression ( GetMathematicExpression(operand) );
+            var delegateOperation = expression.Compile();
+            var res = delegateOperation(Left, Right);
+
+            return res;
+        }
+
+        private void SearchOperands(string operand, bool isleft = true)
+        {
+            operand = GetMathematicalEquation(operand.Replace(" ", "").Replace(APIConstants.ConditionMinusUserSymbol, APIConstants.ConditionMinusSymbol));
+
+            var exprEquation = GetResultExpression ( GetMathematicalExpression(operand) );
                         
             if (isleft) Left = exprEquation.ToString(); else Right = exprEquation.ToString();
         }
@@ -79,7 +84,7 @@ namespace APICalls.Dependents
             return exprResult;
         }
 
-        private Expression GetMathematicExpression(string operand)
+        private Expression GetMathematicalExpression(string operand)
         {
             var equation = operand;
             var _operator = "";
@@ -89,14 +94,22 @@ namespace APICalls.Dependents
                 _operator = m.Groups[0].Value;
                 var _left = equation.Substring(0, equation.IndexOf(_operator));
                 equation = equation.Substring(_left.Length + 1); //+1 is to avoid the operator just received.
-                exprEquation = AddOperationExpression(_operator, exprEquation, _left.ToDouble());
+                exprEquation = AddOperationExpression(_operator, exprEquation, ParseDoubleForEquation(_left));
 
                 return true;
             });
 
-            exprEquation = AddOperationExpression(_operator, exprEquation, equation.ToDouble());
+            exprEquation = AddOperationExpression(_operator, exprEquation, ParseDoubleForEquation(equation));
 
             return exprEquation;
+        }
+
+        private double ParseDoubleForEquation(string value)
+        {
+            var minusflag = value.StartsWith(APIConstants.ConditionMinusSymbol);
+            if (minusflag) value = value.Replace(APIConstants.ConditionMinusSymbol, "");
+
+            return (value.ToDouble()) * ( minusflag ? -1 : 1 );
         }
 
         private Expression AddOperationExpression(string operation, Expression equation, double value)
@@ -114,27 +127,26 @@ namespace APICalls.Dependents
             return equation;
         }
 
-
-        private bool Operation(APIConditionOperator oper)
+        private string GetMathematicalEquation(string operand)
         {
-            Expression<Func<string, string, bool>> expression = (left, right) => left.Equals(right);
-            
-            switch (oper)
+            foreach (var oper in GenerateEquation(operand))
             {
-                case APIConditionOperator.EQ : expression = (left, right) => left.Equals(right); break;
-                case APIConditionOperator.NE: expression = (left, right) => !left.Equals(right); break;
-                case APIConditionOperator.GT: expression = (left, right) => left.ToDouble() > right.ToDouble(); break;
-                case APIConditionOperator.LT: expression = (left, right) => left.ToDouble() < right.ToDouble(); break;
-                case APIConditionOperator.GE: expression = (left, right) => left.ToDouble() >= right.ToDouble(); break;
-                case APIConditionOperator.LE: expression = (left, right) => left.ToDouble() <= right.ToDouble(); break;
+                if (!oper.Object.Empty() && oper.Properties.Exists(p => !p.Empty()))
+                {
+                    var obj = Objects.Find(o => o.GetType().Name.Equals(oper.Object, StringComparison.CurrentCultureIgnoreCase));
+                    foreach (var prop in oper.Properties)
+                    {
+                        var itenary = $"{{{oper.Object}.{prop}}}";
+                        var res = obj?.GetVal(prop);
+
+                        operand = operand.Replace(itenary, $"{res}");
+                    }
+                }
             }
 
-            var delegateOperation = expression.Compile();
-            var res = delegateOperation(Left, Right);
-
-            return res;
+            return operand;
         }
-
+        
         private IEnumerable<OperandObject> GenerateEquation(string operand)
         {
             List<OperandObject> operands = new List<OperandObject>();
@@ -174,9 +186,7 @@ namespace APICalls.Dependents
         internal string Object { get; set; }
         internal List<string> Properties { get; set; } = new List<string>();
         internal string Constant { get; set; }
-
-        //internal static Expression Equation = Expression
-
+        
         internal static bool FindAndReplace(List<OperandObject> objects, string obj, string prop)
         {
             var _item = objects.FirstOrDefault(o => o.Object == obj);
