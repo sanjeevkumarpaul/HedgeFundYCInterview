@@ -69,6 +69,7 @@
     <Compile Include="Configurations\APIObjectParameter.cs" />
     <Compile Include="Configurations\APIConfiguration.cs" />
     <Compile Include="Configurations\APIXmlNode.cs" />
+    <Compile Include="Configurations\Filters\APIFilterOperand.cs" />
     <Compile Include="Configurations\Filters\APIFilters.cs" />
     <Compile Include="Configurations\Filters\APIWhere.cs" />
     <Compile Include="Constants\APIConstants.cs" />

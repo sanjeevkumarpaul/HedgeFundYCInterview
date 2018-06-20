@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using APICalls.Configurations.Filters;
 using APICalls.Constants;
 using APICalls.Enum;
 using Extensions;
@@ -147,18 +148,18 @@ namespace APICalls.Dependents
             return operand;
         }
         
-        private IEnumerable<OperandObject> GenerateEquation(string operand)
+        private IEnumerable<APIFilterOperand> GenerateEquation(string operand)
         {
-            List<OperandObject> operands = new List<OperandObject>();
+            List<APIFilterOperand> operands = new List<APIFilterOperand>();
                        
             if (Regex.IsMatch(operand, APIConstants.ParamterPatter))
             {
                 Regex.Matches(operand, APIConstants.ParamterPatter).Cast<Match>().All(m =>
                 {
                     var _type = m.Groups[1].Value.SplitEx('.');
-                    if (!OperandObject.FindAndReplace(operands, _type[0], _type[1]))
+                    if (!APIFilterOperand.FindAndReplace(operands, _type[0], _type[1]))
                     {
-                        operands.Add(new OperandObject
+                        operands.Add(new APIFilterOperand
                         {
                             Object = _type[0],
                             Properties = new List<string> { _type[1] }
@@ -167,7 +168,7 @@ namespace APICalls.Dependents
                     return true;
                 });
             }
-            else operands.Add( new OperandObject { Constant = operand });
+            else operands.Add( new APIFilterOperand { Constant = operand });
 
             return operands;
         }
@@ -181,24 +182,5 @@ namespace APICalls.Dependents
         }
     }
 
-    internal class OperandObject
-    {
-        internal string Object { get; set; }
-        internal List<string> Properties { get; set; } = new List<string>();
-        internal string Constant { get; set; }
-        
-        internal static bool FindAndReplace(List<OperandObject> objects, string obj, string prop)
-        {
-            var _item = objects.FirstOrDefault(o => o.Object == obj);
-            if (_item != null)
-            {
-                if (!_item.Properties.Any(p => p.Equals(prop))) //Check if property also exists.
-                {
-                    _item.Properties.Add(prop);
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
+    
 }
