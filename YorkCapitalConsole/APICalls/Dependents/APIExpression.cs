@@ -91,23 +91,44 @@ namespace APICalls.Dependents
 
         private Expression GetMathematicalExpression(string operand)
         {
-            var equation = operand;
-            var _operator = "";
-            var _prevOperator = "";
+            var equation = operand;          
             Expression exprEquation = null;
-            Regex.Matches(operand, APIConstants.OperandPrameterPattern).Cast<Match>().All(m =>
-            {
-                _operator = m.Groups[0].Value;
-                var _left = equation.Substring(0, equation.IndexOf(_operator));
-                equation = equation.Substring(_left.Length + 1); //+1 is to avoid the operator just received.
-                exprEquation = AddOperationExpression(_prevOperator, exprEquation, ParseDoubleForEquation(_left));
-                _prevOperator = _operator;
 
+            //Get the group of equation(s) under Brackets. Nested Brackets are yet not supported.
+            Regex.Matches(operand, APIConstants.OperandParamterBrackets).Cast<Match>().Distinct().All(m =>
+            {
+                var bracketEquation = m.Groups[0].Value;
+                var bracketExpresssion = GenerateGroupEvalutionExpression(bracketEquation);
+                var bracketRes = GetResultExpression(bracketExpresssion).ToString();
+
+                equation = equation.Replace($"({bracketEquation})", bracketRes);
 
                 return true;
             });
+            exprEquation = GenerateGroupEvalutionExpression(equation);
 
-            exprEquation = AddOperationExpression(_operator, exprEquation, ParseDoubleForEquation(equation));
+            //Local function once again to calcualte the values of each group.
+            Expression GenerateGroupEvalutionExpression(string groupOperand)
+            {
+                var _equation = groupOperand;
+                var _operator = "";
+                var _prevOperator = "";
+                Expression _exprEquation = null;
+
+                Regex.Matches(groupOperand, APIConstants.OperandPrameterPattern).Cast<Match>().All(m =>
+                {
+                    _operator = m.Groups[0].Value;
+                    var _left = _equation.Substring(0, _equation.IndexOf(_operator));
+                    _equation = _equation.Substring(_left.Length + 1); //+1 is to avoid the operator just received.
+                    _exprEquation = AddOperationExpression(_prevOperator, _exprEquation, ParseDoubleForEquation(_left));
+                    _prevOperator = _operator;
+                    
+                    return true;
+                });
+
+                _exprEquation = AddOperationExpression(_operator, _exprEquation, ParseDoubleForEquation(_equation));
+                return _exprEquation;
+            }
 
             return exprEquation;
         }

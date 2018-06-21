@@ -196,8 +196,17 @@ namespace APIUtilCallDemo
 
             #region - Regex experiment
             //int rcnt = 0;
-            //var operand = "(-1 * {RealtimeCurrencyExchangeRate.ExchangeRate}^3) + 2.0/100".Replace(" ", "");
+            //var operand = "(-1 * {RealtimeCurrencyExchangeRate.ExchangeRate}^3) + (2.0/100)".Replace(" ", "");
+            //var pattern1 = $"(?<=\\()[^\\)]*(?=\\))";
             //var pattern = $"[*+/-]|{System.Text.RegularExpressions.Regex.Escape("^")}";
+
+            //System.Text.RegularExpressions.Regex.Matches(operand, pattern1).Cast<System.Text.RegularExpressions.Match>().All(m =>
+            //{
+            //    Console.WriteLine($"{++rcnt} --- {m.ToString()} -- {m.Groups[0].Value}");
+
+            //    return true;
+            //});
+
             //System.Text.RegularExpressions.Regex.Matches(operand, pattern).Cast<System.Text.RegularExpressions.Match>().All(m =>
             //{
             //    Console.WriteLine($"{++rcnt} --- {m.ToString()}");

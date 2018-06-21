@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace APICalls.Constants
 {
@@ -15,6 +11,7 @@ namespace APICalls.Constants
         /// <summary>
         /// Readonly string since it is calculated with some ticks.
         /// </summary>
-        internal static readonly string OperandPrameterPattern = $"[*+/-]|{System.Text.RegularExpressions.Regex.Escape("^")}";
+        internal static readonly string OperandPrameterPattern = $"[*+/-]|{Regex.Escape("^")}";
+        internal static readonly string OperandParamterBrackets = $"(?<={Regex.Escape("(")})[^{Regex.Escape(")")}]*(?={Regex.Escape(")")})";
     }
 }
