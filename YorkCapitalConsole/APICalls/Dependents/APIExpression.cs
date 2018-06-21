@@ -45,7 +45,7 @@ namespace APICalls.Dependents
 
         private bool CalculateExpression(APIConditionOperator oper)
         {
-            Expression<Func<string, string, bool>> expression = (left, right) => left.Equals(right);
+            Expression<Func<string, string, bool>> expression = null;
 
             switch (oper)
             {
@@ -57,10 +57,14 @@ namespace APICalls.Dependents
                 case APIConditionOperator.LE: expression = (left, right) => left.ToDouble() <= right.ToDouble(); break;
             }
 
-            var delegateOperation = expression.Compile();
-            var res = delegateOperation(Left, Right);
+            if (expression != null)
+            {
+                var delegateOperation = expression.Compile();
+                var res = delegateOperation(Left, Right);
 
-            return res;
+                return res;
+            }
+            else return false;
         }
 
         private void SearchOperands(string operand, bool isleft = true)
@@ -89,13 +93,16 @@ namespace APICalls.Dependents
         {
             var equation = operand;
             var _operator = "";
+            var _prevOperator = "";
             Expression exprEquation = null;
-            Regex.Matches(operand, "[*+/-]").Cast<Match>().All(m =>
+            Regex.Matches(operand, APIConstants.OperandPrameterPattern).Cast<Match>().All(m =>
             {
                 _operator = m.Groups[0].Value;
                 var _left = equation.Substring(0, equation.IndexOf(_operator));
                 equation = equation.Substring(_left.Length + 1); //+1 is to avoid the operator just received.
-                exprEquation = AddOperationExpression(_operator, exprEquation, ParseDoubleForEquation(_left));
+                exprEquation = AddOperationExpression(_prevOperator, exprEquation, ParseDoubleForEquation(_left));
+                _prevOperator = _operator;
+
 
                 return true;
             });
@@ -122,7 +129,8 @@ namespace APICalls.Dependents
                 case "+": return Expression.Add(equation, Expression.Constant(value, typeof(double))); 
                 case "-": return Expression.Subtract(equation, Expression.Constant(value, typeof(double))); 
                 case "*": return Expression.Multiply(equation, Expression.Constant(value, typeof(double))); 
-                case "/": return Expression.Divide(equation, Expression.Constant(value, typeof(double))); 
+                case "/": return Expression.Divide(equation, Expression.Constant(value, typeof(double)));
+                case "^": return Expression.Power(equation, Expression.Constant(value, typeof(double)));
             }
 
             return equation;

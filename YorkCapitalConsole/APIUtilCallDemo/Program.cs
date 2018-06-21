@@ -195,15 +195,15 @@ namespace APIUtilCallDemo
             #endregion - Calling a single API Without Configuration
 
             #region - Regex experiment
-            int rcnt = 0;
-            var operand = "-1 * {RealtimeCurrencyExchangeRate.ExchangeRate} + 2.0/100".Replace(" ", "");
-            System.Text.RegularExpressions.Regex.Matches(operand, "[*+/-]").Cast<System.Text.RegularExpressions.Match>().All(m =>
-            {
-                Console.WriteLine($"{++rcnt} --- {m.ToString()}");
+            //int rcnt = 0;
+            //var operand = "(-1 * {RealtimeCurrencyExchangeRate.ExchangeRate}^3) + 2.0/100".Replace(" ", "");
+            //var pattern = $"[*+/-]|{System.Text.RegularExpressions.Regex.Escape("^")}";
+            //System.Text.RegularExpressions.Regex.Matches(operand, pattern).Cast<System.Text.RegularExpressions.Match>().All(m =>
+            //{
+            //    Console.WriteLine($"{++rcnt} --- {m.ToString()}");
 
-                return true;
-            });
-            //Evalutator
+            //    return true;
+            //});
             #endregion - Regex experiment
 
             Console.ReadKey();
