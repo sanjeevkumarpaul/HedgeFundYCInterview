@@ -12,6 +12,7 @@ namespace APICalls.Constants
         /// Readonly string since it is calculated with some ticks.
         /// </summary>
         internal static readonly string OperandPrameterPattern = $"[*+/-]|{Regex.Escape("^")}";
-        internal static readonly string OperandParamterBrackets = $"(?<={Regex.Escape("(")})[^{Regex.Escape(")")}]*(?={Regex.Escape(")")})";
+        //internal static readonly string OperandParamterBrackets = $"(?<={Regex.Escape("(")})[^{Regex.Escape(")")}]*(?={Regex.Escape(")")})";
+        internal static readonly string OperandParameterNestedBrackests = $@"({Regex.Escape("(")}(.*?){Regex.Escape(")")})";
     }
 }

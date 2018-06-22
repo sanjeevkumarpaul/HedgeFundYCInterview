@@ -89,26 +89,35 @@ namespace APICalls.Dependents
             return exprResult;
         }
 
-        private Expression GetMathematicalExpression(string operand)
+        private Expression GetMathematicalExpression(string equation)
         {
-            var equation = operand;          
-            Expression exprEquation = null;
+            return GenerateEvalutionExpression(SearchAndCalcualteBracketGroupEquations(equation));
 
-            //Get the group of equation(s) under Brackets. Nested Brackets are yet not supported.
-            Regex.Matches(operand, APIConstants.OperandParamterBrackets).Cast<Match>().Distinct().All(m =>
+            //Local function to recurssively get the Brackets done.
+            string SearchAndCalcualteBracketGroupEquations(string bracketOperand)
             {
-                var bracketEquation = m.Groups[0].Value;
-                var bracketExpresssion = GenerateGroupEvalutionExpression(bracketEquation);
-                var bracketRes = GetResultExpression(bracketExpresssion).ToString();
+                var matches = Regex.Matches(bracketOperand, APIConstants.OperandParameterNestedBrackests).Cast<Match>();
+                matches.All(m =>
+                {
+                    var _val = m.Groups[0].Value.Substring(1);
+                    bracketOperand = bracketOperand.Replace($"({_val}", SearchAndCalcualteBracketGroupEquations(_val)); //Recursive Call
 
-                equation = equation.Replace($"({bracketEquation})", bracketRes);
+                    return true;
+                });
+                return CalculateEquation(bracketOperand); //Returning Calculated values for the outer bracket equation.
+            }
 
-                return true;
-            });
-            exprEquation = GenerateGroupEvalutionExpression(equation);
+            //Local function.
+            string CalculateEquation(string operandEquation)
+            {
+                if (operandEquation.EndsWith(")")) operandEquation = operandEquation.Remove(operandEquation.Length - 1);
+                var expression = GenerateEvalutionExpression(operandEquation);
+                var result = GetResultExpression(expression).ToString();
+                return result;
+            }
 
             //Local function once again to calcualte the values of each group.
-            Expression GenerateGroupEvalutionExpression(string groupOperand)
+            Expression GenerateEvalutionExpression(string groupOperand)
             {
                 var _equation = groupOperand;
                 var _operator = "";
@@ -128,9 +137,7 @@ namespace APICalls.Dependents
 
                 _exprEquation = AddOperationExpression(_operator, _exprEquation, ParseDoubleForEquation(_equation));
                 return _exprEquation;
-            }
-
-            return exprEquation;
+            }                                   
         }
 
         private double ParseDoubleForEquation(string value)

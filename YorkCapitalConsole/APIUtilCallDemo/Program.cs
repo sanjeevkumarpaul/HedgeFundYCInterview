@@ -196,23 +196,32 @@ namespace APIUtilCallDemo
 
             #region - Regex experiment
             //int rcnt = 0;
-            //var operand = "(-1 * {RealtimeCurrencyExchangeRate.ExchangeRate}^3) + (2.0/100)".Replace(" ", "");
-            //var pattern1 = $"(?<=\\()[^\\)]*(?=\\))";
+            //var operand = "(-1 * 40^3 + (5*2)) + (2.0*(100/2))".Replace(" ", "");
+            ////var operand = "-1 * 40^3 + 5*2 + 2.0*100/2".Replace(" ", "");
+            //var pattern1 = @"(\((.*?)\))";  //$"(?<=\\()[^\\)]*(?=\\))";
             //var pattern = $"[*+/-]|{System.Text.RegularExpressions.Regex.Escape("^")}";
+            //Console.WriteLine( recurssive(operand).Replace(")",""));
 
-            //System.Text.RegularExpressions.Regex.Matches(operand, pattern1).Cast<System.Text.RegularExpressions.Match>().All(m =>
+            //string recurssive(string operand1)
             //{
-            //    Console.WriteLine($"{++rcnt} --- {m.ToString()} -- {m.Groups[0].Value}");
+            //    var matches = System.Text.RegularExpressions.Regex.Matches(operand1, pattern1).Cast<System.Text.RegularExpressions.Match>();
+            //    if (matches.Count() <= 0)
+            //    {
+            //        return operand1.Remove(operand1.Length - 1);
+            //    }
 
-            //    return true;
-            //});
+            //    matches.All(m =>
+            //    {
+            //        var _val = m.Groups[0].Value.Substring(1);
+            //        //Console.WriteLine($"{++rcnt} --- {m.ToString()} -- {_val}");
+            //        operand1 = operand1.Replace($"({_val}" , recurssive(_val));
 
-            //System.Text.RegularExpressions.Regex.Matches(operand, pattern).Cast<System.Text.RegularExpressions.Match>().All(m =>
-            //{
-            //    Console.WriteLine($"{++rcnt} --- {m.ToString()}");
+            //        return true;
+            //    });
 
-            //    return true;
-            //});
+            //    return operand1;
+            //}
+            
             #endregion - Regex experiment
 
             Console.ReadKey();
