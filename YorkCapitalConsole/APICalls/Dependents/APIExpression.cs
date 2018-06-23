@@ -49,7 +49,7 @@ namespace APICalls.Dependents
             {
                 SearchOperands(Operand, true);
                 SearchOperands(Comparer, false);
-                return CalculateExpression(Operator);
+                return CompareOperands(Operator);
             }
 
             return "";
@@ -60,9 +60,9 @@ namespace APICalls.Dependents
         /// </summary>
         /// <param name="oper">Comparison Operation (APIConditionOperator)</param>
         /// <returns></returns>
-        private bool CalculateExpression(APIConditionOperator oper)
+        private bool CompareOperands(APIConditionOperator oper)
         {
-            Expression<Func<string, string, bool>> expression = null;
+            Expression<Func<string, string, bool>> expression = null; 
 
             switch (oper)
             {
@@ -211,7 +211,7 @@ namespace APICalls.Dependents
                     case "-": return Expression.Subtract(_left, _right);
                     case "*": return Expression.Multiply(_left, _right);
                     case "/": return Expression.Divide(_left, _right);
-                    case "^": return Expression.Power(_left, _right);
+                    case "^": return Expression.Power(_left, _right); 
                 }
             }
             else equation = Expression.Constant(value, typeof(double));
