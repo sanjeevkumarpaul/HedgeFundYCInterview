@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using APICalls.Configurations.Filters;
 using APICalls.Constants;
 using APICalls.Enum;
+using EvaluateExpression;
 using Extensions;
  
 
@@ -18,7 +19,7 @@ namespace APICalls.Dependents
         private string Operand;
         private APIConditionOperator Operator;
         private string Comparer;
-        private List<object> Objects;
+        private List<object> Objects; 
 
         private string Left;
         private string Right;
@@ -62,7 +63,7 @@ namespace APICalls.Dependents
         /// <returns></returns>
         private bool CompareOperands(APIConditionOperator oper)
         {
-            Expression<Func<string, string, bool>> expression = null; 
+            Expression<Func<string, string, bool>> expression = null;  
 
             switch (oper)
             {
@@ -94,135 +95,11 @@ namespace APICalls.Dependents
         /// <param name="isleft">Boolean to set it for Left or Right Operand</param>
         private void SearchOperands(string operand, bool isleft = true)
         {
-            operand = GetMathematicalEquation(operand.Replace(" ", "").Replace(APIConstants.ConditionMinusUserSymbol, APIConstants.ConditionMinusSymbol));
+            operand = GetMathematicalEquation(operand);
 
-            var exprEquation = GetResultExpression ( GetMathematicalExpression(operand) );
+            var exprEquation = Evaluate.Math<double>(operand);
                         
             if (isleft) Left = exprEquation.ToString(); else Right = exprEquation.ToString();        
-        }
-
-        private double GetResultExpression(Expression mathematicEquation)
-        {
-            ParameterExpression paramRes = Expression.Parameter(typeof(double), "result");
-            BlockExpression block = Expression.Block
-            (
-                new[] { paramRes }, //crating local var.
-                Expression.Assign(paramRes, mathematicEquation)
-            );
-            double exprResult = Expression.Lambda<Func<double>>(block).Compile()();
-
-            return exprResult;
-        }
-
-        /// <summary>
-        /// As we pass on the Mathematical equation with all kinds of precendence from brackets,
-        /// this method will calcualte all values inside all nested bracket and form an single liner non-nested bracket equation and send it to caller.
-        /// </summary>
-        /// <param name="equation">strign with brackets or no brackets</param>
-        /// <returns>Expression with simplified mathematical equation.</returns>
-        private Expression GetMathematicalExpression(string equation)
-        {
-            return GenerateEvalutionExpression(SearchAndCalcualteBracketGroupEquations(equation));
-
-            //Local function to Recurssively get all equations from Brackets and process them to return single line equation.
-            string SearchAndCalcualteBracketGroupEquations(string bracketOperand)
-            {
-                var matches = Regex.Matches(bracketOperand, APIConstants.OperandParameterNestedBrackests).Cast<Match>();
-                matches.All(m =>
-                {
-                    var _val = m.Groups[0].Value.Substring(1);
-                    bracketOperand = bracketOperand.Replace($"({_val}", SearchAndCalcualteBracketGroupEquations(_val)); //Recursive Call
-
-                    return true;
-                });
-                return CalculateEquation(bracketOperand); //Returning Calculated values for the outer bracket equation.
-            }
-
-            //Local function to get Expression and calculation based on the parsed equation string passed on by caller.
-            string CalculateEquation(string operandEquation)
-            {
-                if (operandEquation.EndsWith(")")) operandEquation = operandEquation.Remove(operandEquation.Length - 1);
-                var expression = GenerateEvalutionExpression(operandEquation);
-                var result = GetResultExpression(expression).ToString();
-                return result;
-            }
-
-            //Local function once again to calcualte the values of each group.
-            Expression GenerateEvalutionExpression(string groupOperand)
-            {
-                var _equation = groupOperand;
-                var _operator = "";
-                var _prevOperator = "";
-                Expression _exprEquation = null;
-
-                //Matches all Operators(*,+,/,-,^) and Reverses them to take Right to Left advantage in mathematical calculation.
-                Regex.Matches(groupOperand, APIConstants.OperandPrameterPattern).Cast<Match>().Reverse().All(m =>
-                {
-                    _operator = m.Groups[0].Value;                   
-                    var _right = _equation.Substring(_equation.LastIndexOf(_operator)+1);
-                    _equation = _equation.Substring(0, _equation.IndexOf(_operator));
-                    _exprEquation = AddOperationExpression(_prevOperator, _exprEquation, ParseDoubleForEquation(_right));
-                    _prevOperator = _operator;
-
-                    return true;
-                });
-
-                _exprEquation = AddOperationExpression(_operator, _exprEquation, ParseDoubleForEquation(_equation)); //for the last one out of loop.
-                return _exprEquation;
-            }                                   
-        }
-
-        /// <summary>
-        /// Parses a string value passed from Template and tries to convert it into double.
-        /// From template there comes sometiems with a MINUS(-) notation, decodes it and if found to be all right multiples with -1
-        /// </summary>
-        /// <param name="value">String value represting a number from Template</param>
-        /// <returns>Double value</returns>
-        private double ParseDoubleForEquation(string value)
-        {
-            var minusflag = value.StartsWith(APIConstants.ConditionMinusSymbol);
-            if (minusflag) value = value.Replace(APIConstants.ConditionMinusSymbol, "");
-
-            return (value.ToDouble()) * ( minusflag ? -1 : 1 );
-        }
-
-        /// <summary>
-        /// Expression generation towards mathematical equation based on operation string passed.
-        /// Creates equation and appends to equation Expression passed
-        /// as it is mathematical, Value deals with numbers only.        
-        /// </summary>
-        /// <param name="operation">Mathematical operation passed as string</param>
-        /// <param name="equation">Expression which needs Generated Expression to be appened too</param>
-        /// <param name="value">double value represting number</param>
-        /// <param name="rightToLeft">As to mention, calcualtion to proceed from left to right or right to left (Precendence)</param>
-        /// <returns>Expression with Numbers</returns>
-        private Expression AddOperationExpression(string operation, Expression equation, double value, bool rightToLeft = true)
-        {
-            if (equation != null)
-            {
-                var secondExpression = Expression.Constant(value, typeof(double));
-
-                var _left = SwitchExpressions(equation, secondExpression);      //Gets the appropriate Left or Right
-                var _right = SwitchExpressions(secondExpression, equation);    //Here too.
-
-                switch (operation)
-                {
-                    case "+": return Expression.Add(_left, _right);
-                    case "-": return Expression.Subtract(_left, _right);
-                    case "*": return Expression.Multiply(_left, _right);
-                    case "/": return Expression.Divide(_left, _right);
-                    case "^": return Expression.Power(_left, _right); 
-                }
-            }
-            else equation = Expression.Constant(value, typeof(double));
-
-            return equation;
-
-            //Local function to check on hte switch.
-            Expression SwitchExpressions(Expression left, Expression right)
-            {
-                return rightToLeft ? right : left;
-            }
         }
 
         /// <summary>

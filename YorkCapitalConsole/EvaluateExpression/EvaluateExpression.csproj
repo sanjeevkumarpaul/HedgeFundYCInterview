@@ -40,8 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constant\EvalConstants.cs" />
     <Compile Include="Evaluate.cs" />
+    <Compile Include="Helpers\EvalMath.cs" />
+    <Compile Include="Helpers\EvalResults.cs" />
+    <Compile Include="Helpers\EvalStringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Extensions\Extensions.csproj">
+      <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

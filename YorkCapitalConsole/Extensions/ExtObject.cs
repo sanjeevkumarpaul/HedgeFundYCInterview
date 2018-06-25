@@ -69,6 +69,7 @@ namespace Extensions
                 case "INT32":
                 case "INT64":
                 case "SINGLE":
+                case "CURRENCY":
                     return DataTypes.NUMERIC;
                 case "DATE":
                 case "DATETIME":

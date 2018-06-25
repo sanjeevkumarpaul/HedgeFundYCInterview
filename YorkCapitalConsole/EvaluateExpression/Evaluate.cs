@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EvaluateExpression.Helpers;
 
 namespace EvaluateExpression
 {
-    public class Evaluate
+    public static class Evaluate
     {
+        public static T Math<T>(string equation)
+        {
+            return new EvalMath().Calculate<T>(equation);
+        }
     }
 }
