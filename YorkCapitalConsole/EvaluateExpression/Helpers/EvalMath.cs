@@ -14,7 +14,7 @@ namespace EvaluateExpression.Helpers
         /// <returns></returns>
         internal T Calculate<T>(string equation)
         {
-            equation = equation.Replace(" ", "").Replace(EvalConstants.ConditionMinusUserSymbol, EvalConstants.ConditionMinusSymbol);
+            equation = equation.Replace(" ", "");//.ReplaceMinus();
 
             return EvalResults.Evaluate<T>( GetMathematicalExpression<T>(equation) );
         }
@@ -50,7 +50,7 @@ namespace EvaluateExpression.Helpers
                 if (operandEquation.EndsWith(")")) operandEquation = operandEquation.Remove(operandEquation.Length - 1);
                 var expression = GenerateEvalutionExpression(operandEquation);
                 var result = EvalResults.Evaluate<T>(expression).ToString();
-                return result;
+                return result; //.ReplaceMinus();
             }
 
             //Local function once again to calcualte the values of each group.
@@ -61,12 +61,14 @@ namespace EvaluateExpression.Helpers
                 var _prevOperator = "";
                 Expression _exprEquation = null;
 
+                if (_equation.StartsWith("-")) _equation = $"0{_equation}";
+
                 //Matches all Operators(*,+,/,-,^) and Reverses them to take Right to Left advantage in mathematical calculation.
                 Regex.Matches(groupOperand, EvalConstants.OperandPrameterPattern).Cast<Match>().Reverse().All(m =>
                 {
                     _operator = m.Groups[0].Value;
                     var _right = _equation.Substring(_equation.LastIndexOf(_operator) + 1);
-                    _equation = _equation.Substring(0, _equation.IndexOf(_operator));
+                    _equation = _equation.Substring(0, _equation.LastIndexOf(_operator));
                     _exprEquation = AddOperationExpression(_prevOperator, _exprEquation, _right.ParseNumber<T>());
                     _prevOperator = _operator;
 
@@ -77,8 +79,7 @@ namespace EvaluateExpression.Helpers
                 return _exprEquation;
             }
         }
-
-
+        
         /// <summary>
         /// Expression generation towards mathematical equation based on operation string passed.
         /// Creates equation and appends to equation Expression passed

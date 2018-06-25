@@ -48,6 +48,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Enhancers\Wrappers.csproj">
+      <Project>{31ca682a-a9c6-47bf-a9cf-bed5d6296888}</Project>
+      <Name>Wrappers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Extensions\Extensions.csproj">
       <Project>{5abdb08f-4ef9-40ac-a15c-746272301959}</Project>
       <Name>Extensions</Name>

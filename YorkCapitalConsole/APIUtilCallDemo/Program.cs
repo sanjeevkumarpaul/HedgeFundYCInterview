@@ -140,8 +140,8 @@ namespace APIUtilCallDemo
 
             #region - Observable
             //Observable
-            var config = new APIConfiguration(options1);
-            config.ExecuteApisObservable();
+            //var config = new APIConfiguration(options1);
+            //config.ExecuteApisObservable();
 
             //System.Threading.Thread.Sleep(5000);  //Sleep is required for caching concept to see through, otherwise all overservable will fire at once in async mode.
             //config.ExecuteApisObservable(true); //This is here to see if caching is working.
@@ -196,31 +196,12 @@ namespace APIUtilCallDemo
 
             #region - Regex experiment
             //int rcnt = 0;
-            //var operand = "(-1 * 40^3 + (5*2)) + (2.0*(100/2))".Replace(" ", "");
+            //var operand = "(-Para^3) + (5*2) + (2.0*(100/Sentence))".Replace(" ", "");
+            //var operand = "-5+4-1";
             ////var operand = "-1 * 40^3 + 5*2 + 2.0*100/2".Replace(" ", "");
-            //var pattern1 = @"(\((.*?)\))";  //$"(?<=\\()[^\\)]*(?=\\))";
-            //var pattern = $"[*+/-]|{System.Text.RegularExpressions.Regex.Escape("^")}";
-            //Console.WriteLine( recurssive(operand).Replace(")",""));
 
-            //string recurssive(string operand1)
-            //{
-            //    var matches = System.Text.RegularExpressions.Regex.Matches(operand1, pattern1).Cast<System.Text.RegularExpressions.Match>();
-            //    if (matches.Count() <= 0)
-            //    {
-            //        return operand1.Remove(operand1.Length - 1);
-            //    }
-
-            //    matches.All(m =>
-            //    {
-            //        var _val = m.Groups[0].Value.Substring(1);
-            //        //Console.WriteLine($"{++rcnt} --- {m.ToString()} -- {_val}");
-            //        operand1 = operand1.Replace($"({_val}" , recurssive(_val));
-
-            //        return true;
-            //    });
-
-            //    return operand1;
-            //}
+            var res = EvaluateExpression.Evaluate.Math<double>(operand, new { Para = 40, Sentence = 90  });
+            Console.WriteLine($"Result = {res}");
             
             #endregion - Regex experiment
 

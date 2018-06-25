@@ -5,7 +5,7 @@ namespace EvaluateExpression.Constant
     internal static class EvalConstants
     {        
         internal const string ConditionMinusSymbol = "~MINUS~";
-        internal const string ConditionMinusUserSymbol = "(-)";
+        internal const string MinusPattern = @"[-]\d";
 
         /// <summary>
         /// Readonly string since it is calculated with some ticks.

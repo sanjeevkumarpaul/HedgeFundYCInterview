@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -116,7 +117,7 @@ namespace APICalls.Dependents
                     var obj = Objects.Find(o => o.GetType().Name.Equals(oper.Object, StringComparison.CurrentCultureIgnoreCase));
                     foreach (var prop in oper.Properties)
                     {
-                        var itenary = $"{{{oper.Object}.{prop}}}";
+                        var itenary = $"{{{oper.Object}.{prop}}}"; 
                         var res = obj?.GetVal(prop);
 
                         operand = operand.Replace(itenary, $"{res}");
