@@ -27,6 +27,10 @@ namespace EvaluateExpression.Helpers
             return (T)res;
         }
 
+        internal static string Regesc(this string value)
+        {
+            return Regex.Escape(value.ToString());
+        }
 
         private static double ParseDoubleForEquation(string value)
         {

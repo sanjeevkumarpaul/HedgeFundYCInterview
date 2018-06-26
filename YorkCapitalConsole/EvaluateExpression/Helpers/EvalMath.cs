@@ -15,7 +15,7 @@ namespace EvaluateExpression.Helpers
         /// <returns></returns>
         internal T Calculate<T>(string equation)
         {
-            equation = equation.Replace(" ", ""); //.ReplaceMinus();
+            equation = equation.Replace(" ", "");
 
             return EvalResults.Evaluate<T>( GetMathematicalExpression<T>(equation) );
         }
@@ -29,7 +29,10 @@ namespace EvaluateExpression.Helpers
         /// <returns>Expression with simplified mathematical equation.</returns>
         private Expression GetMathematicalExpression<T>(string equation)
         {
-            return GenerateEvalutionExpression(SearchAndCalcualteBracketGroupEquations(equation));
+            //return GenerateEvalutionExpression(SearchAndCalcualteBracketGroupEquations(equation));
+
+            while(equation.Contains("(")) equation = SearchAndCalcualteBracketGroupEquations(equation);
+            return GenerateEvalutionExpression(equation);
 
             //Local function to Recurssively get all equations from Brackets and process them to return single line equation.
             string SearchAndCalcualteBracketGroupEquations(string bracketOperand)
@@ -48,10 +51,12 @@ namespace EvaluateExpression.Helpers
             //Local function to get Expression and calculation based on the parsed equation string passed on by caller.
             string CalculateEquation(string operandEquation)
             {
+                if (operandEquation.Contains("(") && operandEquation.Contains(")")) return operandEquation;
+
                 if (operandEquation.EndsWith(")")) operandEquation = operandEquation.Remove(operandEquation.Length - 1);
                 var expression = GenerateEvalutionExpression(operandEquation);
                 var result = EvalResults.Evaluate<T>(expression).ToString();
-                return result; //.ReplaceMinus();
+                return result;
             }
 
             //Local function once again to calcualte the values of each group.

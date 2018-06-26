@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using EvaluateExpression.Helpers;
 
 namespace EvaluateExpression.Constant
 {
@@ -10,8 +11,11 @@ namespace EvaluateExpression.Constant
         /// <summary>
         /// Readonly string since it is calculated with some ticks.
         /// </summary>
-        internal static readonly string OperandPrameterPattern = $"[*+/-]|{Regex.Escape("^")}";
-        //internal static readonly string OperandParamterBrackets = $"(?<={Regex.Escape("(")})[^{Regex.Escape(")")}]*(?={Regex.Escape(")")})";
-        internal static readonly string OperandParameterNestedBrackests = $@"({Regex.Escape("(")}(.*?){Regex.Escape(")")})";
+        internal static readonly string OperandPrameterPattern = $"[*+/-]|{"^".Regesc()}";
+        //internal static readonly string OperandParamterBrackets = $"(?<={Regex.Escape("(")})[^{Regex.Escape(")")}]*(?={Regex.Escape(")")})";        
+        internal static readonly string OperandParameterNestedBrackests = $@"({"(".Regesc()}([^{"(".Regesc()}{")".Regesc()}]+){")".Regesc()})";   //$@"({Regex.Escape("(")}(.*?){Regex.Escape(")")})";          
+
     }
+
+    
 }
