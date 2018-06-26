@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using Extensions;
 
 namespace EvaluateExpression.Helpers
 {
@@ -14,7 +15,7 @@ namespace EvaluateExpression.Helpers
         /// <returns></returns>
         internal T Calculate<T>(string equation)
         {
-            equation = equation.Replace(" ", "");//.ReplaceMinus();
+            equation = equation.Replace(" ", ""); //.ReplaceMinus();
 
             return EvalResults.Evaluate<T>( GetMathematicalExpression<T>(equation) );
         }
@@ -61,13 +62,13 @@ namespace EvaluateExpression.Helpers
                 var _prevOperator = "";
                 Expression _exprEquation = null;
 
-                if (_equation.StartsWith("-")) _equation = $"0{_equation}";
-
                 //Matches all Operators(*,+,/,-,^) and Reverses them to take Right to Left advantage in mathematical calculation.
                 Regex.Matches(groupOperand, EvalConstants.OperandPrameterPattern).Cast<Match>().Reverse().All(m =>
                 {
+                    //if (Regex.IsMatch(equation, @"[-]\d+$"))                   
                     _operator = m.Groups[0].Value;
-                    var _right = _equation.Substring(_equation.LastIndexOf(_operator) + 1);
+                    var _right =  $"{(_operator == "-" ? "-" : "")}{_equation.Substring(_equation.LastIndexOf(_operator) + 1)}";
+                    
                     _equation = _equation.Substring(0, _equation.LastIndexOf(_operator));
                     _exprEquation = AddOperationExpression(_prevOperator, _exprEquation, _right.ParseNumber<T>());
                     _prevOperator = _operator;
@@ -75,7 +76,8 @@ namespace EvaluateExpression.Helpers
                     return true;
                 });
 
-                _exprEquation = AddOperationExpression(_operator, _exprEquation, _equation.ParseNumber<T>()); //for the last one out of loop.
+                if (!_equation.Empty())
+                    _exprEquation = AddOperationExpression(_operator, _exprEquation, _equation.ParseNumber<T>()); //for the last one out of loop.
                 return _exprEquation;
             }
         }
@@ -99,10 +101,11 @@ namespace EvaluateExpression.Helpers
                 var _left = SwitchExpressions(equation, secondExpression);      //Gets the appropriate Left or Right
                 var _right = SwitchExpressions(secondExpression, equation);    //Here too.
 
+
                 switch (operation)
                 {
                     case "+": return Expression.Add(_left, _right);
-                    case "-": return Expression.Subtract(_left, _right);
+                    case "-": return Subtraction(_left, _right);
                     case "*": return Expression.Multiply(_left, _right);
                     case "/": return Expression.Divide(_left, _right);
                     case "^": return Expression.Power(_left, _right);
@@ -116,6 +119,14 @@ namespace EvaluateExpression.Helpers
             Expression SwitchExpressions(Expression left, Expression right)
             {
                 return rightToLeft ? right : left;
+            }
+
+            Expression Subtraction(Expression left, Expression right)
+            {
+                var val1 = left.ToString();
+                var val2 = right.ToString().TrimEx("(");
+
+                return val2.StartsWith("-") ? Expression.Add(left, right) : Expression.Subtract(left, right);
             }
         }
     }
