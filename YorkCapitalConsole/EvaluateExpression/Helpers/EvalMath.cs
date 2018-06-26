@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Extensions;
+using System.Collections.Generic;
 
 namespace EvaluateExpression.Helpers
 {
@@ -15,11 +16,49 @@ namespace EvaluateExpression.Helpers
         /// <returns></returns>
         internal T Calculate<T>(string equation)
         {
-            equation = equation.Replace(" ", "");
+            equation = BracketMathematicEquations( equation );
 
             return EvalResults.Evaluate<T>( GetMathematicalExpression<T>(equation) );
         }
         
+        private string BracketMathematicEquations(string equation)
+        {
+            //making sure equation is properly lined up.
+            equation = equation.Replace(" ", "")
+                               .Replace(",", "")
+                               .Replace("++", "+")
+                               .Replace("--", "-")
+                               .Replace("+-", "+")
+                               .Replace("-+", "-");
+
+            (new List<char> { '^', '/', '*', /*'+', '-'*/ }).ForEach(c => BracketisePattern(SelectPattern(c)));
+            return equation;
+
+            void BracketisePattern(string strpattern)
+            {
+                Regex.Matches(equation, strpattern).Cast<Match>().All(m => {
+
+                    var _mval = m.ToString();
+                    equation = equation.Replace(_mval, $"({_mval})");
+
+                    return true;
+                });                
+            }
+
+            string SelectPattern(char oper)
+            {
+                switch(oper)
+                {
+                    case '^': return $@"(\d*([.]{{1}}\d*)?{"^".Regesc()}\d*([.]{{1}}\d*)?){{1}}({"^".Regesc()}\d*([.]{{1}}\d*)?)*"; //Exponential
+                    case '/': return $@"(\d*([.]{{1}}\d*)?[/]([-])?\d*([.]{{1}}\d*)?){{1}}([/]([-])?\d*([.]{{1}}\d*)?)*"; //division
+                    case '*': return $@"(\d*([.]{{1}}\d*)?[*]([-])?\d*([.]{{1}}\d*)?){{1}}([*]([-])?\d*([.]{{1}}\d*)?)*"; //multiplication
+                    case '+': return $@"(\d*([.]{{1}}\d*)?[+]\d*([.]{{1}}\d*)?){{1}}([+]\d*([.]{{1}}\d*)?)*"; //Addittion
+                    case '-': return $@"(\d*([.]{{1}}\d*)?[-]\d*([.]{{1}}\d*)?){{1}}([-]\d*([.]{{1}}\d*)?)*"; //subtraction
+                }
+                return "";
+            }
+        }
+
         
         /// <summary>
         /// As we pass on the Mathematical equation with all kinds of precendence from brackets,

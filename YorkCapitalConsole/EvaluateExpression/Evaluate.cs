@@ -41,6 +41,11 @@ namespace EvaluateExpression
             return Math<T>( instance.SetParmeterValues( equation, parameter ));
         }
         #endregion ~Mathematic Evaluations
+
+        #region ^Lambda Condition Evaluation
+
+        #endregion ~Lambda Condition Evaluation
+
     }
 
 
