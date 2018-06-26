@@ -24,27 +24,72 @@ namespace EvaluateExpression.Helpers
         private string BracketMathematicEquations(string equation)
         {
             //making sure equation is properly lined up.
-            equation = equation.Replace(" ", "")
+            var braceMatches = BuildEquationTemplate();
+            //With Operator Precedence build the equation in appropriate lineup 
+            (new List<char> { '^', '/', '*', '+', '-' }).ForEach(c => BracketisePattern(SelectPattern(c), c.ToString()));
+            return equation;
+
+            //Local functions
+            //1. Setting up the equation 
+            //   a. Without Spaces and Other Double Operators
+            //2. Parsing all brackets already present and if there are mulitple un-ncessary bracktes pull them out.
+            List<string> BuildEquationTemplate()
+            {
+                //Clearing
+                equation = equation.Replace(" ", "")
                                .Replace(",", "")
                                .Replace("++", "+")
                                .Replace("--", "-")
                                .Replace("+-", "+")
                                .Replace("-+", "-");
 
-            (new List<char> { '^', '/', '*', /*'+', '-'*/ }).ForEach(c => BracketisePattern(SelectPattern(c)));
-            return equation;
+                //All matches those are in between brackets.
+                var matches = Regex.Matches(equation, EvalConstants.OperandParameterNestedBrackests).Cast<Match>().Select(m => m.Groups[0].Value).ToList();
+                //Making sure duplicate bracktes are removed for single operand.
+                matches.ForEach(m =>
+                {
+                    var _brace = $"({m})";
+                    while (equation.Contains(_brace))
+                        equation = equation.Replace(_brace, m);
+                });
 
-            void BracketisePattern(string strpattern)
-            {
-                Regex.Matches(equation, strpattern).Cast<Match>().All(m => {
+                //returns bracket set operands.
+                return matches;
+            }
 
-                    var _mval = m.ToString();
-                    equation = equation.Replace(_mval, $"({_mval})");
-
+            //Now matching each Operator along with selected pattern and bind the non bracket operands into brackets with mathematic precednce wise.
+            void BracketisePattern(string strpattern, string oper)
+            {                
+                Regex.Matches(equation, strpattern).Cast<Match>().All(m => {                
+                    ReplacePrecedenceOperands(m.ToString(), oper);
                     return true;
                 });                
             }
 
+            //Replacing the actual non brackted operands into brackets
+            //1. Only when if matched value is just not the operator.
+            //2. Only when if mached value already co-exists with bracket found at the begining (BuildEquationTemplate())
+            void ReplacePrecedenceOperands(string matchedValue, string oper)
+            {
+                //Checking out 1 & 2
+                if (matchedValue != oper && !braceMatches.Contains($"({matchedValue})"))
+                {
+                    //Front Brackets needs to be considered when there is no Left Operand (like *5 or +1+2 etc.)
+                    if (matchedValue.StartsWith(oper)) 
+                    {
+                        //Finds out the last "(" and adjusts tthe results.
+                        var index = equation.IndexOf(matchedValue);
+                        var sub = equation.Substring(0, index);
+                        sub = sub.Substring(sub.LastIndexOf("("));
+                        sub = sub.Substring(0, sub.IndexOf(")") + 1);
+                        matchedValue = $"{sub}{matchedValue}";
+                    }
+
+                    equation = equation.Replace(matchedValue, $"({matchedValue})");
+                }
+            }
+
+            //Gives the correct Pattern for operator passed.
             string SelectPattern(char oper)
             {
                 switch(oper)
