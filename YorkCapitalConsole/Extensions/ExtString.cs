@@ -331,15 +331,30 @@ namespace Extensions
             return _final;
         }
 
-        public static IEnumerable<string> Permutate(this string str)
+        public static string[] PermuteNested(this string pattern)
         {
-            if (str.Length == 1) return new List<string> { str };
+            List<string> perms = new List<string>();
 
-                var permutations = from c in str
-                                   from p in Permutate(new String(str.Where(x => x != c).ToArray()))
-                                   select c + p;
+            var _initial = pattern.Permutate();
+            for (var ind = 1; ind < pattern.Length - 1; ind++)
+            {
+                var _next = _initial.GroupBy(p => p.Substring(0, ind)).SelectMany(p => p.Select(s => s.Substring(ind))).Distinct();
+                perms.AddRange(_next);
+            }
+            perms.InsertRange(0, _initial);
 
-                return permutations;            
+            return perms.ToArray();
+        }
+
+        private static IEnumerable<string> Permutate(this string source)
+        {
+            if (source.Length == 1) return new List<string> { source };
+
+            var permutations = from c in source
+                               from p in Permutate(new String(source.Where(x => x != c).ToArray()))
+                               select c + p;
+
+            return permutations;
         }
     }
 }
