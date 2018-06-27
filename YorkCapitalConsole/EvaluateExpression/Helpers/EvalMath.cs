@@ -30,18 +30,22 @@ namespace EvaluateExpression.Helpers
             return equation;
 
             //Local functions
-            //1. Setting up the equation 
+            ////1. Setting up the equation 
             //   a. Without Spaces and Other Double Operators
             //2. Parsing all brackets already present and if there are mulitple un-ncessary bracktes pull them out.
             List<string> BuildEquationTemplate()
             {
                 //Clearing
-                equation = equation.Replace(" ", "")
-                               .Replace(",", "")
-                               .Replace("++", "+")
-                               .Replace("--", "-")
-                               .Replace("+-", "+")
-                               .Replace("-+", "-");
+                RemoveDuplicate(" ", "");
+                RemoveDuplicate(",", "");
+                var dups = new List<string> { "++", "--", "+-", "-+", "**", "^^", "//", "*/", "/*" };
+                //while ( dups.Any(d => equation.Contains(d))) dups.ForEach(m => RemoveDuplicate(m, m.Substring(0,1)));
+                for(; ; )
+                {
+                    var match = dups.Find(d => equation.Contains(d));
+                    if (match == null) break;
+                    RemoveDuplicate(match, match.Substring(0, 1));
+                }
 
                 //All matches those are in between brackets.
                 var matches = Regex.Matches(equation, EvalConstants.OperandParameterNestedBrackests).Cast<Match>().Select(m => m.Groups[0].Value).ToList();
@@ -55,6 +59,11 @@ namespace EvaluateExpression.Helpers
 
                 //returns bracket set operands.
                 return matches;
+
+                void RemoveDuplicate(string search, string replace)
+                {
+                    while (equation.Contains(search)) equation = equation.Replace(search, replace);
+                }
             }
 
             //Now matching each Operator along with selected pattern and bind the non bracket operands into brackets with mathematic precednce wise.

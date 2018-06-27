@@ -330,5 +330,16 @@ namespace Extensions
                 _final +=  (char.IsLetterOrDigit(c) ? c : replaceableChar).ToString().Trim();
             return _final;
         }
+
+        public static IEnumerable<string> Permutate(this string str)
+        {
+            if (str.Length == 1) return new List<string> { str };
+
+                var permutations = from c in str
+                                   from p in Permutate(new String(str.Where(x => x != c).ToArray()))
+                                   select c + p;
+
+                return permutations;            
+        }
     }
 }
