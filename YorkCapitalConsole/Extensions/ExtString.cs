@@ -331,19 +331,28 @@ namespace Extensions
             return _final;
         }
 
-        public static string[] PermuteNested(this string pattern)
+        public static string[] PermuteNested(this string pattern, Action<string> action = null)
         {
             List<string> perms = new List<string>();
 
-            var _initial = pattern.Permutate();
+            var _initial = pattern.Permutate();            
             for (var ind = 1; ind < pattern.Length - 1; ind++)
             {
-                var _next = _initial.GroupBy(p => p.Substring(0, ind)).SelectMany(p => p.Select(s => s.Substring(ind))).Distinct();
+                var _next = _initial.GroupBy(p => p.Substring(0, ind))
+                                    .SelectMany(p => p.Select(s => s.Substring(ind)))
+                                    .Distinct();
                 perms.AddRange(_next);
             }
             perms.InsertRange(0, _initial);
+            if (action != null) perms.ForEach(per => InvokeAction(per));
 
             return perms.ToArray();
+
+            //Local function to invoke Action
+            void InvokeAction(string perm)
+            {
+                action.Invoke(perm);
+            }
         }
 
         private static IEnumerable<string> Permutate(this string source)

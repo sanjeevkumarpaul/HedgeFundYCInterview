@@ -26,7 +26,7 @@ namespace EvaluateExpression.Helpers
             //making sure equation is properly lined up.
             var braceMatches = BuildEquationTemplate();
             //With Operator Precedence build the equation in appropriate lineup 
-            (new List<char> { '^', '/', '*', '+', '-' }).ForEach(c => BracketisePattern(SelectPattern(c), c.ToString()));
+            foreach (var c in EvalConstants.AirthmaticOperators.ToArray()) BracketisePattern(SelectPattern(c), c.ToString());
             return equation;
 
             //Local functions
@@ -38,14 +38,7 @@ namespace EvaluateExpression.Helpers
                 //Clearing
                 RemoveDuplicate(" ", "");
                 RemoveDuplicate(",", "");
-                var dups = new List<string> { "++", "--", "+-", "-+", "**", "^^", "//", "*/", "/*" };
-                //while ( dups.Any(d => equation.Contains(d))) dups.ForEach(m => RemoveDuplicate(m, m.Substring(0,1)));
-                for(; ; )
-                {
-                    var match = dups.Find(d => equation.Contains(d));
-                    if (match == null) break;
-                    RemoveDuplicate(match, match.Substring(0, 1));
-                }
+                (EvalConstants.AirthmaticOperators + EvalConstants.DecimalSeparator).PermuteNested(RemoveMixedOperators); 
 
                 //All matches those are in between brackets.
                 var matches = Regex.Matches(equation, EvalConstants.OperandParameterNestedBrackests).Cast<Match>().Select(m => m.Groups[0].Value).ToList();
@@ -60,6 +53,10 @@ namespace EvaluateExpression.Helpers
                 //returns bracket set operands.
                 return matches;
 
+                void RemoveMixedOperators(string mixenOperators)
+                {                    
+                    RemoveDuplicate(mixenOperators, mixenOperators.Substring(0, 1));
+                }
                 void RemoveDuplicate(string search, string replace)
                 {
                     while (equation.Contains(search)) equation = equation.Replace(search, replace);
