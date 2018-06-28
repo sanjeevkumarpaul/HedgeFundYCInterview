@@ -59,7 +59,11 @@ namespace EvaluateExpression.Helpers
                 }
                 void RemoveDuplicate(string search, string replace)
                 {
-                    while (equation.Contains(search)) equation = equation.Replace(search, replace);
+                    //special case
+                    if (search != "/-")
+                    {
+                        while (equation.Contains(search)) equation = equation.Replace(search, replace);
+                    }
                 }
             }
 
