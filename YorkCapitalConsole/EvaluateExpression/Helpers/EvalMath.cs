@@ -60,7 +60,7 @@ namespace EvaluateExpression.Helpers
                 void RemoveDuplicate(string search, string replace)
                 {
                     //special case
-                    if (search != "/-")
+                    if (!search.Match(@"/-"))
                     {
                         while (equation.Contains(search)) equation = equation.Replace(search, replace);
                     }

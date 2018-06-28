@@ -197,7 +197,7 @@ namespace APIUtilCallDemo
             #region - Regex experiment
             //int rcnt = 0;
             //var operand = "(-Para^3+1) + (5*2) + (2.0*(100/Sentence))";
-            var operand = "5^3+1+2-(((4/-2)))*/*5"; //"(5*3)+1-(4/2)"; 
+            var operand = "5^3+1+2-(((4//-2)))*/*5"; //"(5*3)+1-(4/2)"; 
             //var operand = "(-1 * (40^1)) + (5*2) + (2.0*100/2)"; //70
 
             var res = EvaluateExpression.Evaluate.Math<double>(operand, new { Para = 40, Sentence = 90  });

@@ -331,6 +331,7 @@ namespace Extensions
             return _final;
         }
 
+        #region ^Permutation & combination
         public static string[] PermuteNested(this string pattern, Action<string> action = null)
         {
             List<string> perms = new List<string>();
@@ -344,8 +345,9 @@ namespace Extensions
                 perms.AddRange(_next);
             }
             perms.InsertRange(0, _initial);
+            perms.AddRange(pattern.Combination());
             if (action != null) perms.ForEach(per => InvokeAction(per));
-
+            
             return perms.ToArray();
 
             //Local function to invoke Action
@@ -364,6 +366,24 @@ namespace Extensions
                                select c + p;
 
             return permutations;
+        }
+
+        private static List<string> Combination(this string source, int repeat = Int32.MaxValue )
+        {
+            if (repeat == 1) return new List<string>();
+            if (repeat > source.Length) repeat = source.Length;
+
+            var combination = (from c in source
+                               select c.ToString().Repeat(repeat)).ToList();
+            combination.AddRange(Combination(source, repeat - 1));
+
+            return combination;
+        }
+        #endregion ~Permutation
+
+        public static bool Match(this string str, string pattern)
+        {
+            return Regex.IsMatch(str, pattern);            
         }
     }
 }
