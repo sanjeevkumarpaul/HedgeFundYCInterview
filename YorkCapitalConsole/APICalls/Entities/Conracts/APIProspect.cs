@@ -10,13 +10,14 @@ using Extensions;
 
 namespace APICalls.Entities.Contracts
 {
-    public class APIProspect<T> : APIProspectOptionBase where T: IAPIProspect, new()
+    public class APIProspect<T> : APIProspectOptionBase where T: IAPIProspect
     {        
         public T Result { get; set; }
 
         public APIProspect()
         {
-            Result = new T();
+            //Result = new T();
+            Result = Activator.CreateInstance<T>();
         }
     }
 }

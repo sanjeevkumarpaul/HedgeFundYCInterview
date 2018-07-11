@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace APICalls
 {
-    public sealed class APIUtil<T> where T : IAPIProspect, new()
+    public sealed class APIUtil<T> where T : IAPIProspect
     {
         private static readonly HttpClient client = new HttpClient();
         private APIProspect<T> prospect;
@@ -64,7 +64,8 @@ namespace APICalls
                     {
                         if (typeof(T) is IAPIProspectUpgrade)
                         {
-                            var _upgrade = new T();
+                            //var _upgrade = new T();
+                            var _upgrade = Activator.CreateInstance<T>();
                             ((IAPIProspectUpgrade)_upgrade).OtherResponses = data;
 
                             prospect.Result = _upgrade;

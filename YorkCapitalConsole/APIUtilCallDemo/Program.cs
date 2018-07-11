@@ -140,8 +140,8 @@ namespace APIUtilCallDemo
 
             #region - Observable
             //Observable
-            //var config = new APIConfiguration(options1);
-            //config.ExecuteApisObservable();
+            var config = new APIConfiguration(options1);
+            config.ExecuteApisObservable();
 
             //System.Threading.Thread.Sleep(5000);  //Sleep is required for caching concept to see through, otherwise all overservable will fire at once in async mode.
             //config.ExecuteApisObservable(true); //This is here to see if caching is working.
@@ -197,11 +197,11 @@ namespace APIUtilCallDemo
             #region - Regex experiment
             //int rcnt = 0;
             //var operand = "(-Para^3+1) + (5*2) + (2.0*(100/Sentence))";
-            var operand = "5^3+1+2-(((4//-2)))*/*5"; //"(5*3)+1-(4/2)"; 
+            //var operand = "5^3+1+2-(((4/-2)))*5"; //"(5*3)+1-(4/2)"; 
             //var operand = "(-1 * (40^1)) + (5*2) + (2.0*100/2)"; //70
 
-            var res = EvaluateExpression.Evaluate.Math<double>(operand, new { Para = 40, Sentence = 90  });
-            Console.WriteLine($"Result = {res}");
+            //var res = EvaluateExpression.Evaluate.Math<double>(operand, new { Para = 40, Sentence = 90  });
+            //Console.WriteLine($"Result = {res}");
             
             #endregion - Regex experiment
 
