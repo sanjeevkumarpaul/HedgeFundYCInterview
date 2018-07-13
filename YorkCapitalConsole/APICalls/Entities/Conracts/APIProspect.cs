@@ -15,8 +15,7 @@ namespace APICalls.Entities.Contracts
         public T Result { get; set; }
 
         public APIProspect()
-        {
-            //Result = new T();
+        {            
             Result = Activator.CreateInstance<T>();
         }
     }

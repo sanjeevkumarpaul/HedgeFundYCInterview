@@ -64,7 +64,6 @@ namespace APICalls
                     {
                         if (typeof(T) is IAPIProspectUpgrade)
                         {
-                            //var _upgrade = new T();
                             var _upgrade = Activator.CreateInstance<T>();
                             ((IAPIProspectUpgrade)_upgrade).OtherResponses = data;
 
@@ -85,6 +84,10 @@ namespace APICalls
             }
         }
 
+        /// <summary>
+        /// creates the request based on content Type/Authorization etc.
+        /// </summary>
+        /// <returns>HttpRequestMessage</returns>
         private HttpRequestMessage CreateRequest()
         {
             AddContentTypes();            
@@ -94,6 +97,9 @@ namespace APICalls
             return request;
         }
 
+        /// <summary>
+        /// Adding content types from options.
+        /// </summary>
         private void AddContentTypes()
         {
             var contents = prospect.RequestHeaders?.AcceptContentTypes ?? null;
@@ -106,6 +112,12 @@ namespace APICalls
             else client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
+        /// <summary>
+        /// Adding parameters for the body of API reqeust. Mostly for POST method.
+        /// </summary>
+        /// <typeparam name="W"></typeparam>
+        /// <param name="request"></param>
+        /// <returns></returns>
         private W AddParameters<W>(W request)
         {
             if (request is HttpRequestMessage && prospect.ParameterBody != null)
@@ -116,6 +128,11 @@ namespace APICalls
             return request;
         }
 
+        /// <summary>
+        /// Adding headers or Autorization token as Header
+        /// </summary>
+        /// <param name="request">HttpRequestMessage</param>
+        /// <param name="token">string denoted as token</param>
         private void AddHeaders(HttpRequestMessage request, string token = null)
         {
             var headers = ( token != null ) ? new APINamePareMedia[] { new APINamePareMedia { Key = "Authorization", Value = token  } }  : prospect.RequestHeaders?.Headers ?? null;
@@ -134,7 +151,11 @@ namespace APICalls
                 }
             }
         }
-           
+
+        /// <summary>
+        ///  Adding authorization token as Header or Autorization iteself
+        /// </summary>
+        /// <param name="request">HttpRequestMessage</param>
         private void AddAuthorization(HttpRequestMessage request)
         {
             client.DefaultRequestHeaders.Authorization = null;
@@ -153,6 +174,10 @@ namespace APICalls
             }
         }
 
+        /// <summary>
+        /// Calling web API asynchronously.
+        /// </summary>
+        /// <returns>dynamic object which will be deserialized with respect to Result object set via Generic Type</returns>
         private async Task<dynamic> CallAsyn()
         {
             HttpResponseMessage response = null;
@@ -196,6 +221,12 @@ namespace APICalls
             }
         }
         
+        /// <summary>
+        /// Creates Exception object related to API 
+        /// </summary>
+        /// <param name="response">Status/Message is put as exception message</param>
+        /// <param name="e">Exception</param>
+        /// <returns></returns>
         private APIException CreateException(HttpResponseMessage response, Exception e)
         {
             return
