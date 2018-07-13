@@ -6,14 +6,21 @@ using System.Threading.Tasks;
 
 namespace WebCache
 {
-    public abstract class CacheManager<CacheType> : ICacheManager<CacheType> where CacheType : class, new()
+    public abstract class CacheManager<CacheType> : ICacheManager<CacheType> where CacheType : class
     {
         protected CacheType Storage = null;
         protected static readonly object lockobj = new object();
 
+        /// <summary>
+        /// Making sure that Chache object is retrieved.
+        /// IfSystem.Web.Caching.Cache is used as cache object take theone which ASP.net has in its context.
+        /// </summary>
         internal CacheManager()
         {
-            Storage = new CacheType();
+            if (typeof(CacheType).Equals(typeof(System.Web.Caching.Cache)))
+                Storage = (System.Web.HttpContext.Current.Cache as CacheType );
+            else
+                Storage = Activator.CreateInstance<CacheType>();
         }
 
         public T Add<T>(string key, T item, Nullable<TimeSpan> time = null)
