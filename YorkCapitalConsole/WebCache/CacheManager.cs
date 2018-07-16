@@ -13,7 +13,7 @@ namespace WebCache
 
         /// <summary>
         /// Making sure that Chache object is retrieved.
-        /// IfSystem.Web.Caching.Cache is used as cache object take theone which ASP.net has in its context.
+        /// If System.Web.Caching.Cache is used as cache object take theone which ASP.net Ha
         /// </summary>
         internal CacheManager()
         {
