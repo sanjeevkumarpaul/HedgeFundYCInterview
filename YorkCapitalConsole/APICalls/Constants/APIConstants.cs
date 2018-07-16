@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace APICalls.Constants
+﻿namespace APICalls.Constants
 {
     internal static class APIConstants
     {

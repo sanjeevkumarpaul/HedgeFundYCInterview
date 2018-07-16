@@ -1,6 +1,5 @@
 ﻿using APICalls.Bases;
 using APICalls.Dependents;
-using APICalls.Entities;
 using APICalls.Entities.Contracts;
 using APICalls.Entities.Interfaces;
 using APICalls.Enum;

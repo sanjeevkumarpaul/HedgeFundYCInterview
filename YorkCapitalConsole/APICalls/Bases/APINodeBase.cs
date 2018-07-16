@@ -1,13 +1,6 @@
-﻿using APICalls.Configurations;
-using APICalls.Configurations.Filters;
-using APICalls.Dependents;
-using APICalls.Entities;
+﻿using APICalls.Configurations.Filters;
 using APICalls.Enum;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APICalls.Bases
 {

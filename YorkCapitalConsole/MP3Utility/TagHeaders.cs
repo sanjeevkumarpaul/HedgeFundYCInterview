@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Wrappers;
 using Extensions;
 
-using TagLib;
 using TagUtility.Entities;
 using TagUtility.Utility;
-using TagUtility.Taglib;
 
 
 namespace TagUtility
