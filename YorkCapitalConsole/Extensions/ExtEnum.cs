@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -34,6 +35,16 @@ namespace Extensions
 
             return res;
         }
-        
+
+        public static List<string> Names<T>(this T enums) where T : struct
+        {
+            return Enum.GetNames(typeof(T)).Cast<string>().ToList();
+        }
+
+        public static List<string> Values<T>(this T enums) where T : struct
+        {
+            return Enum.GetValues(typeof(T)).Cast<string>().ToList();
+        }
+
     }
 }
