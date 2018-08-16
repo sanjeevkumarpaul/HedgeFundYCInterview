@@ -47,10 +47,7 @@ namespace APICalls.Configurations
         public ICacheManagerFactory Cache { get; set; } = CacheMemory.Cache;
 
         internal IAPIParallelResult SubscriberParallel { get { return _subscriberParallel;  } }
-        
-        internal void Validate()
-        {
-            _subscriberParallel = Subscriber is IAPIParallelResult ? Subscriber as IAPIParallelResult :  null;
-        }
+
+        internal void Validate() => _subscriberParallel = Subscriber is IAPIParallelResult ? Subscriber as IAPIParallelResult : null;
     }
 }
