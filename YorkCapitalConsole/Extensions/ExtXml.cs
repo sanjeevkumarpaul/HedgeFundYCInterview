@@ -63,6 +63,19 @@ namespace Extensions
         {
             return (nodes != null && nodes.Count > 0);
         }
+        
+        public static T Map<T>(this XElement elements) where T: class
+        {
+            var _t = Activator.CreateInstance<T>();
+
+            _t.PropertyNames().ForEach(p => 
+            {
+                var _val = elements.Element(p)?.Value;
+                if (_val != null) _t.SetProperty(p, _val);
+            });
+
+            return _t;
+        }
 
         /////
         private static XmlElement GetElement(this XmlNode node, string ExceptionIfNullOrNoChilden = null)
