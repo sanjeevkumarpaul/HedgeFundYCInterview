@@ -36,14 +36,14 @@ namespace Extensions
             return res;
         }
 
-        public static List<string> Names<T>(this T enums) where T : struct
+        public static List<string> Names<T>(this Type enums) where T : struct
         {
-            return Enum.GetNames(typeof(T)).Cast<string>().ToList();
+            return Enum.GetNames(enums).Cast<string>().ToList();
         }
 
-        public static List<string> Values<T>(this T enums) where T : struct
+        public static List<string> Values<T>(this Type enums) where T : struct
         {
-            return Enum.GetValues(typeof(T)).Cast<string>().ToList();
+            return Enum.GetValues(enums).Cast<string>().ToList();
         }
 
     }
