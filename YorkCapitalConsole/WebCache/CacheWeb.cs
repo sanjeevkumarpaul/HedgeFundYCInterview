@@ -22,9 +22,12 @@ namespace WebCache
 
         public override void RemoveAll()
         {
-            foreach (var item in Storage)
+            if (Storage != null)
             {
-                Storage.Remove(((System.Collections.DictionaryEntry)item).Key.ToString());
+                foreach (var item in Storage)
+                {
+                    Storage.Remove(((System.Collections.DictionaryEntry)item).Key.ToString());
+                }
             }
         }
 
@@ -34,7 +37,7 @@ namespace WebCache
             //Always delete it before inserting it.
             Delete<T>(key);  
             //Caching temporary for an hour
-            Storage.Insert(key, value, null, time.HasValue ? DateTime.UtcNow.AddTicks(time.Value.Ticks) : DateTime.UtcNow.AddHours(1), TimeSpan.Zero); 
+            Storage?.Insert(key, value, null, time.HasValue ? DateTime.UtcNow.AddTicks(time.Value.Ticks) : DateTime.UtcNow.AddHours(1), TimeSpan.Zero); 
             return value;
         }
 
@@ -47,20 +50,19 @@ namespace WebCache
         protected override T Delete<T>(string key)
         {
             var _val = Fetch<T>(key);
-            if (_val != null) Storage.Remove(key);
+            if (_val != null) Storage?.Remove(key);
 
             return _val;
-        }
-              
+        }              
 
         protected override T Fetch<T>(string key)
         {
-            return  Exists(key) ? (T)Storage[key] : default(T);
+            return  Exists(key) ? (T)Storage?[key] : default(T);
         }
 
         protected override bool Exists(string key)
         {
-            return Storage[key] != null;
+            return Storage?[key] != null;
         }
     }
 }

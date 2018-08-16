@@ -13,30 +13,25 @@ namespace WebCache
         internal CacheManager()
         {
             if (typeof(CacheType).Equals(typeof(System.Web.Caching.Cache)))
-                Storage = (System.Web.HttpContext.Current.Cache as CacheType );
+                if (System.Web.HttpContext.Current != null)
+                    Storage = (System.Web.HttpContext.Current.Cache as CacheType );                
             else
                 Storage = Activator.CreateInstance<CacheType>();
         }
 
         public T Add<T>(string key, T item, Nullable<TimeSpan> time = null)
         {
-            return Set<T>(key, item, time);
+            return Set(key, item, time);
         }
 
         public T Update<T>(string key, Func<T> action, Nullable<TimeSpan> time = null)
         {
-            return Change<T>(key, action, time);
+            return Change(key, action, time);
         }
 
-        public T Get<T>(string key)
-        {
-            return Fetch<T>(key);
-        }
+        public T Get<T>(string key) => Fetch<T>(key);
 
-        public T Remove<T>(string key)
-        {
-            return Delete<T>(key);
-        }
+        public T Remove<T>(string key) => Delete<T>(key);
 
         public abstract void RemoveAll();
         

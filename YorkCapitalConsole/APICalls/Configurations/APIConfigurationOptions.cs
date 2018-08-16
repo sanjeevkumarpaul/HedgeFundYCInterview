@@ -44,7 +44,7 @@ namespace APICalls.Configurations
         public Int32 CacheDuration { get; set; } = 0;
         public APICacheFrequency ChacheFrequency { get; set; } = APICacheFrequency.MINUTES; //denotes month 
 
-        public ICacheManagerFactory Cache { get; set; } = WebCache.CacheWeb.Cache;
+        public ICacheManagerFactory Cache { get; set; } = CacheMemory.Cache;
 
         internal IAPIParallelResult SubscriberParallel { get { return _subscriberParallel;  } }
         
