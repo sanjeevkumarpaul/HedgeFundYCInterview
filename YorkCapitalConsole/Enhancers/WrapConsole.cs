@@ -164,12 +164,26 @@ namespace Wrappers
                 {
                     var _option = table.ColumnOptions[i++];
                     var _color = R.Color == Console.BackgroundColor ? _option.Color : R.Color;
+                    var _alText = _option.Alignment == WrapAlignment.LEFT ? 
+                                        (R.Text).PadRight(_option.Width) :
+                                        _option.Alignment == WrapAlignment.RIGHT ? (R.Text).PadLeft(_option.Width) : Centered(R.Text, _option.Width);
 
-                    WriteItColor( $" { (R.Text).PadRight( _option.Width ) }", _color , false );
-                    WriteItColor("|", ConsoleColor.Gray, false);                
+                    WriteItColor( $" { _alText }", _color , false );
+
+                    if (_option.Alignment == WrapAlignment.CENTER)
+                        WriteItColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", ConsoleColor.Gray, false);
+                    else
+                        WriteItColor("|", ConsoleColor.Gray, false);                
                 });
                 Console.WriteLine();
                 WriteItColor($"{separator}", ConsoleColor.Gray);
+            }
+
+            string Centered(string text, int width)
+            {
+                var len = width - text.Length;
+                var padlen = ((int)len / 2) + text.Length;
+                return text.PadLeft(padlen);
             }
         }
         
@@ -179,7 +193,7 @@ namespace Wrappers
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow  },
-                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.White },
+                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.CENTER , Color = ConsoleColor.White },
                     },
 
                     Rows = new List<ConsoleRow>
