@@ -57,6 +57,11 @@ namespace Wrappers
             PaintIt(str, bgColor, foreColor, 1, align);
         }
         
+        public static void WriteTable(ConsoleTable table)
+        {
+            PutTable(table);
+        }
+        
     }
 
     public partial class WrapConsole
@@ -133,5 +138,69 @@ namespace Wrappers
 
             return str;
         }
+        
+        private static void PutTable(ConsoleTable table)
+        {
+            #region ^Finding Column Width
+            var max = table.ColumnOptions.Count();
+            for (int i =0; i < max - 1; i++)
+            {
+                var _len = table.Rows.Select(R => R.Row[i]).Max(R => R.Text.Length);
+                if (table.ColumnOptions[i].Width <= _len) table.ColumnOptions[i].Width = _len;
+            }
+            max = table.ColumnOptions.Sum(c => c.Width);
+            #endregion ~Finding Column Width
+
+            var separator = "-".Repeat(max + 5);
+            
+            Console.WriteLine();
+            WriteItColor($"{separator}", ConsoleColor.Gray);
+
+            foreach (var rows in table.Rows)
+            {
+                WriteItColor("|", ConsoleColor.Gray, false);
+                int i = 0;
+                rows.Row.ForEach(R => 
+                {
+                    var _option = table.ColumnOptions[i++];
+                    var _color = R.Color == Console.BackgroundColor ? _option.Color : R.Color;
+
+                    WriteItColor( $" { (R.Text).PadRight( _option.Width ) }", _color , false );
+                    WriteItColor("|", ConsoleColor.Gray, false);                
+                });
+                Console.WriteLine();
+                WriteItColor($"{separator}", ConsoleColor.Gray);
+            }
+        }
+        
+        /*
+                WrapConsole.WriteTable(new ConsoleTable
+                {
+                    ColumnOptions = new List<ConsoleColumnOptions>
+                    {
+                        new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow  },
+                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.White },
+                    },
+
+                    Rows = new List<ConsoleRow>
+                    {
+                         new ConsoleRow
+                         {
+                             Row = new List<ConsoleRecord>
+                             {
+                                 new ConsoleRecord { Text = "Name", Color = ConsoleColor.DarkGray },
+                                 new ConsoleRecord { Text = "Display Name", Color = ConsoleColor.DarkGray},
+                             }
+                         },
+                         new ConsoleRow
+                         {
+                             Row = new List<ConsoleRecord>
+                             {
+                                 new ConsoleRecord { Text = $"{result.Info.SurName}, {result.Info.GivenName}"},
+                                 new ConsoleRecord { Text = $"{result.Info.DisplayName}" },
+                             }
+                         }
+                }   });
+        */
     }
 }
