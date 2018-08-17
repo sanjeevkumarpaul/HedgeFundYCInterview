@@ -1,14 +1,13 @@
 ﻿using APICalls.Configurations;
-using APICalls.Entities;
 using APICalls.Entities.Interfaces;
 using APICalls.Example;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Extensions;
 using APICalls.Entities.Contracts;
+
+using Wrappers;
 
 namespace APIUtilCallDemo
 {
@@ -35,7 +34,7 @@ namespace APIUtilCallDemo
             public void Final(IAPIProspect result)
             {
                 Console.WriteLine();
-                Console.WriteLine("API Call is completely done.");
+                "API Call is completely done.".WriteLine(WrapConsoleStyle.COMPLETE);
             }
 
             public void Post(IEnumerable<IAPIProspect> results)
@@ -75,8 +74,9 @@ namespace APIUtilCallDemo
                 {
                     var res = (result as RealtimeCurrencyExchange).RealtimeCurrencyExchangeRate;
 
-                    Console.WriteLine("Exchange Currency Information Received...");
-                    Console.WriteLine($@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}");
+                    "Exchange Currency ".Write(WrapConsoleStyle.INVERSE); "Information Received...".WriteLine(WrapConsoleStyle.SUCCESS);
+                    $@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}"
+                        .WriteLine(WrapConsoleStyle.WARNING);
 
                     //if (_exchangeCountry > 2) config?.Cancel(); //Cancellation Token used.
                     //if (_exchangeCountry > 2) config?.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
@@ -94,8 +94,8 @@ namespace APIUtilCallDemo
                 {
                     var res = (result as StockQuoteMaster).StockQuotes;
 
-                    Console.WriteLine("Stock Quotes Information Received...");
-                    Console.WriteLine($@"     >> Price Volume: {res?.Sum(r => r.Price?.ToDouble())} ");
+                    "Stock Quotes ".Write(WrapConsoleStyle.SATISFACTORY); " Information Received...".WriteLine(WrapConsoleStyle.INFORMATION);
+                    $@"     >> Price Volume: {res?.Sum(r => r.Price?.ToDouble())} ".WriteLine(WrapConsoleStyle.FAILURE);
                 }
             }
 

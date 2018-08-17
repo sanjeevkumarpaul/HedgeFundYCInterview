@@ -55,6 +55,10 @@
       <Project>{bacd1e5f-4cb0-4bba-b193-1aee69b7c41f}</Project>
       <Name>APICalls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Enhancers\Wrappers.csproj">
+      <Project>{31ca682a-a9c6-47bf-a9cf-bed5d6296888}</Project>
+      <Name>Wrappers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EvaluateExpression\EvaluateExpression.csproj">
       <Project>{7feac70c-d420-4d6c-a13c-8e98801a7ede}</Project>
       <Name>EvaluateExpression</Name>

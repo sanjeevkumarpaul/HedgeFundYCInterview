@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WrapConsole.cs" />
     <Compile Include="WrapEntityFramework.cs" />
     <Compile Include="WrapExpandos.cs" />
     <Compile Include="WrapIOs.cs" />
