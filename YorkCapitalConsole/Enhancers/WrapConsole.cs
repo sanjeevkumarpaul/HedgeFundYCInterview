@@ -119,26 +119,16 @@ namespace Wrappers
         }
 
         private static string SetAlignment(string str, WrapAlignment align, bool isfill = false)
-        {
-            str = str.Trim();
+        {            
             switch (align)
             {
                 case WrapAlignment.LEFT: if (isfill) str = str.PadRight(Console.WindowWidth - 1); break;
                 case WrapAlignment.RIGHT: str = str.PadLeft(Console.WindowWidth - 1); break;
-                case WrapAlignment.CENTER: CalculateCenter(); break;
+                case WrapAlignment.CENTER: str = CenteredText(str, Console.WindowWidth - 1); break;
             }
-
-            void CalculateCenter()
-            {
-                var len = (Console.WindowWidth - 1) - str.Length;
-                var padlen = ( (int)len / 2 ) + str.Length;
-                str = str.PadLeft(padlen);
-            }
-
-
             return str;
         }
-        
+
         private static void PutTable(ConsoleTable table)
         {
             #region ^Finding Column Width
@@ -166,7 +156,7 @@ namespace Wrappers
                     var _color = R.Color == Console.BackgroundColor ? _option.Color : R.Color;
                     var _alText = _option.Alignment == WrapAlignment.LEFT ? 
                                         (R.Text).PadRight(_option.Width) :
-                                        _option.Alignment == WrapAlignment.RIGHT ? (R.Text).PadLeft(_option.Width) : Centered(R.Text, _option.Width);
+                                        _option.Alignment == WrapAlignment.RIGHT ? (R.Text).PadLeft(_option.Width) : CenteredText(R.Text, _option.Width);
 
                     WriteItColor( $" { _alText }", _color , false );
 
@@ -177,14 +167,21 @@ namespace Wrappers
                 });
                 Console.WriteLine();
                 WriteItColor($"{separator}", ConsoleColor.Gray);
-            }
+            }            
+        }
 
-            string Centered(string text, int width)
-            {
-                var len = width - text.Length;
-                var padlen = ((int)len / 2) + text.Length;
-                return text.PadLeft(padlen);
-            }
+        /// <summary>
+        /// Aligns a text center to any width.
+        /// Obvious reason being Text should be less than the Width specified.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
+        private static string CenteredText(string text, int width)
+        {
+            var len = width - text.Length;
+            var padlen = ((int)len / 2) + text.Length;
+            return text.PadLeft(padlen);
         }
         
         /*
