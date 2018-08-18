@@ -195,8 +195,6 @@ namespace Wrappers
             var len = width - text.Length;
             var padlen = ((int)len / 2) + text.Length;
             return text.PadLeft(padlen);
-        }
-        
-        
+        }               
     }
 }

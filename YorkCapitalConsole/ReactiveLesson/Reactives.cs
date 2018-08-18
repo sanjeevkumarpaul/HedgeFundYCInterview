@@ -174,9 +174,9 @@ namespace ReactiveLesson
                                          .SubscribeOn(NewThreadScheduler.Default)
                                          .Finally(() => { Console.WriteLine($"I am always there, even error occurs -  on {Thread.CurrentThread.ManagedThreadId}"); });
 
-            onums.Subscribe<int>((val) => { Console.WriteLine($"{val} on {Thread.CurrentThread.ManagedThreadId}"); }, 
-                                 (e) => { Console.WriteLine($"{e.Message} on {Thread.CurrentThread.ManagedThreadId}"); }, 
-                                 () => { Console.WriteLine($"Completed  on {Thread.CurrentThread.ManagedThreadId}"); });
+            onums.Subscribe<int>((val) => { Console.WriteLine($"{val} on {Thread.CurrentThread.ManagedThreadId}"); },  //onNext
+                                 (e) => { Console.WriteLine($"{e.Message} on {Thread.CurrentThread.ManagedThreadId}"); }, //OnError
+                                 () => { Console.WriteLine($"Completed  on {Thread.CurrentThread.ManagedThreadId}"); }); //OnComplete
         }
         
     }
