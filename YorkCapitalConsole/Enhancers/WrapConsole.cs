@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Extensions;
 
 namespace Wrappers
 {
@@ -23,6 +23,60 @@ namespace Wrappers
         LEFT,
         RIGHT,
         CENTER
+    }
+
+    /*
+                WrapConsole.WriteTable(new ConsoleTable
+                {
+                    ColumnOptions = new List<ConsoleColumnOptions>
+                    {
+                        new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow  },
+                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.CENTER , Color = ConsoleColor.White },
+                    },
+
+                    Rows = new List<ConsoleRow>
+                    {
+                         new ConsoleRow
+                         {
+                             Row = new List<ConsoleRecord>
+                             {
+                                 new ConsoleRecord { Text = "Name", Color = ConsoleColor.DarkGray },
+                                 new ConsoleRecord { Text = "Display Name", Color = ConsoleColor.DarkGray},
+                             }
+                         },
+                         new ConsoleRow
+                         {
+                             Row = new List<ConsoleRecord>
+                             {
+                                 new ConsoleRecord { Text = $"{result.Info.SurName}, {result.Info.GivenName}"},
+                                 new ConsoleRecord { Text = $"{result.Info.DisplayName}" },
+                             }
+                         }
+                }   });
+        */
+
+    public class ConsoleColumnOptions
+    {
+        public int Width { get; set; }
+        public WrapAlignment Alignment { get; set; }
+        public ConsoleColor Color { get; set; }
+    }
+
+    public class ConsoleRow
+    {
+        public List<ConsoleRecord> Row { get; set; }
+    }
+
+    public class ConsoleRecord
+    {        
+        public string Text { get; set; }
+        public ConsoleColor Color { get; set; }
+    }
+
+    public class ConsoleTable
+    {
+        public List<ConsoleColumnOptions> ColumnOptions { get; set; }
+        public List<ConsoleRow> Rows { get; set; }
     }
 
     public static partial class WrapConsole
@@ -141,7 +195,7 @@ namespace Wrappers
             max = table.ColumnOptions.Sum(c => c.Width);
             #endregion ~Finding Column Width
 
-            var separator = "-".Repeat(max + 5);
+            var separator = "-".Repeat(max + ( table.ColumnOptions.Count() + 1 ));
             
             Console.WriteLine();
             WriteItColor($"{separator}", ConsoleColor.Gray);
@@ -184,34 +238,6 @@ namespace Wrappers
             return text.PadLeft(padlen);
         }
         
-        /*
-                WrapConsole.WriteTable(new ConsoleTable
-                {
-                    ColumnOptions = new List<ConsoleColumnOptions>
-                    {
-                        new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow  },
-                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.CENTER , Color = ConsoleColor.White },
-                    },
-
-                    Rows = new List<ConsoleRow>
-                    {
-                         new ConsoleRow
-                         {
-                             Row = new List<ConsoleRecord>
-                             {
-                                 new ConsoleRecord { Text = "Name", Color = ConsoleColor.DarkGray },
-                                 new ConsoleRecord { Text = "Display Name", Color = ConsoleColor.DarkGray},
-                             }
-                         },
-                         new ConsoleRow
-                         {
-                             Row = new List<ConsoleRecord>
-                             {
-                                 new ConsoleRecord { Text = $"{result.Info.SurName}, {result.Info.GivenName}"},
-                                 new ConsoleRecord { Text = $"{result.Info.DisplayName}" },
-                             }
-                         }
-                }   });
-        */
+        
     }
 }
