@@ -3,28 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Extensions;
+using Wrappers.Consoles;
+using Wrappers.Consoles.Enums;
 
 namespace Wrappers
 {
-    public enum WrapConsoleStyle
-    {
-        NORMAL,
-        SUCCESS,
-        FAILURE,
-        WARNING,
-        COMPLETE,
-        INFORMATION,
-        SATISFACTORY,
-        INVERSE,
-    }
-    
-    public enum WrapAlignment
-    {
-        LEFT,
-        RIGHT,
-        CENTER
-    }
-
     /*
                 WrapConsole.WriteTable(new ConsoleTable
                 {
@@ -54,30 +37,6 @@ namespace Wrappers
                          }
                 }   });
         */
-
-    public class ConsoleColumnOptions
-    {
-        public int Width { get; set; }
-        public WrapAlignment Alignment { get; set; }
-        public ConsoleColor Color { get; set; }
-    }
-
-    public class ConsoleRow
-    {
-        public List<ConsoleRecord> Row { get; set; }
-    }
-
-    public class ConsoleRecord
-    {        
-        public string Text { get; set; }
-        public ConsoleColor Color { get; set; }
-    }
-
-    public class ConsoleTable
-    {
-        public List<ConsoleColumnOptions> ColumnOptions { get; set; }
-        public List<ConsoleRow> Rows { get; set; }
-    }
 
     public static partial class WrapConsole
     {

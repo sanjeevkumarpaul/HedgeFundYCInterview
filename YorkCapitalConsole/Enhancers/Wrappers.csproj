@@ -52,6 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consoles\ConsoleCloumnOptions.cs" />
+    <Compile Include="Consoles\ConsoleRecord.cs" />
+    <Compile Include="Consoles\ConsoleRow.cs" />
+    <Compile Include="Consoles\ConsoleTable.cs" />
+    <Compile Include="Consoles\Enums\WrapAlignment.cs" />
+    <Compile Include="Consoles\Enums\WrapConsoleStyle.cs" />
     <Compile Include="WrapConsole.cs" />
     <Compile Include="WrapEntityFramework.cs" />
     <Compile Include="WrapExpandos.cs" />
@@ -78,5 +84,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
