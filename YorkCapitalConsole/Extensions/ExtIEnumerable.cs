@@ -60,5 +60,23 @@ namespace Extensions
             return source.Provider.CreateQuery<T>(resultExp);
         }
 
+        //public static T Median<T>(IEnumerable<T> nums) 
+        //{
+        //    var _nums = nums.OrderBy(r => r);
+        //    int _prev = nums.Count() - 1;
+        //    int _next = 0;
+        //    bool _doubleflag = false;
+
+        //    while (true)
+        //    {
+        //        if (_prev == _next) break;
+        //        if (_prev - 1 == _next && _next + 1 == _prev) { _doubleflag = true; break; }
+        //        _next++;
+        //        _prev--;
+        //    }
+
+        //    return _doubleflag ? (T) ((_nums.ElementAt(_prev).ToString().ToDouble() + _nums.ElementAt(_next).ToString().ToDouble()) / 2) : _nums.ElementAt(_prev);
+        //}
+
     }
 }

@@ -144,17 +144,19 @@ namespace Wrappers
 
         private static void PutTable(ConsoleTable table)
         {
+            table = CalculateAggregation(table);
+
             #region ^Finding Column Width
             var max = table.ColumnOptions.Count();
             for (int i =0; i < max - 1; i++)
             {
-                var _len = table.Rows.Select(R => R.Row[i]).Max(R => R.Text.Length);
+                var _len = table.Rows.Select(R => R.Column[i]).Max(R => R.Text.Length);
                 if (table.ColumnOptions[i].Width <= _len) table.ColumnOptions[i].Width = _len;
             }
             max = table.ColumnOptions.Sum(c => c.Width);
             #endregion ~Finding Column Width
 
-            var separator = "-".Repeat(max + ( table.ColumnOptions.Count() *2 ) + 1);
+            var separator = "-".Repeat(max + ( table.ColumnOptions.Count() * 2 ) + 1);
             
             Console.WriteLine();
             WriteItColor($"{separator}", ConsoleColor.Gray);
@@ -163,7 +165,7 @@ namespace Wrappers
             {
                 WriteItColor("|", ConsoleColor.Gray, false);
                 int i = 0;
-                rows.Row.ForEach(R => 
+                rows.Column.ForEach(R => 
                 {
                     var _option = table.ColumnOptions[i++];
                     var _color = R.Color == Console.BackgroundColor ? _option.Color : R.Color;
@@ -197,6 +199,57 @@ namespace Wrappers
             var len = width - text.Length;
             var padlen = ((int)len / 2) + text.Length;
             return text.PadLeft(padlen);
-        }               
+        }
+
+        private static ConsoleTable CalculateAggregation(ConsoleTable table)
+        {
+            List<ConsoleRecord> Agg = new List<ConsoleRecord>();
+
+            int i = 0;
+            foreach (var option in table.ColumnOptions)
+            {
+                Agg.Add(new ConsoleRecord
+                {
+                    Text = option.Aggregate == WrapAggregate.NONE ? "" : Aggregate(i, option)
+                });
+                i++;
+            }
+            if(Agg.Any(a => !a.Text.Empty()))                
+                table.Rows.Add(new ConsoleRow { Column = Agg });
+            
+            string Aggregate(int colIndex, ConsoleColumnOptions option)
+            {
+                var vals = table.Rows.Select(r => r.Column[colIndex]).Select(c => c.Text.ToDouble());
+
+                switch(option.Aggregate)
+                {
+                    case WrapAggregate.NONE: return "";
+                    case WrapAggregate.SUM: return vals.Sum(d => d).ToString("(Sum) #.00");
+                    case WrapAggregate.AVERAGE: return vals.Average(d => d).ToString("(Average) #.00");
+                    case WrapAggregate.MEDIAN: return Median(vals).ToString("(Median) #.00");
+                }
+
+                return "";
+            }
+
+            double Median(IEnumerable<double> nums)
+            {
+                var _nums = nums.OrderBy(r => r);
+                int _prev = nums.Count() - 1;
+                int _next = 1;
+                bool _doubleflag = false;
+
+                while(true)
+                {
+                    if (_prev == _next) break;
+                    if (_prev - 1 == _next && _next + 1 == _prev) { _doubleflag = true; break; }
+                    _next++; _prev--;
+                }
+
+                return _doubleflag ? (_nums.ElementAt(_prev)+ _nums.ElementAt(_next)) / 2 : _nums.ElementAt(_prev);
+            }
+
+            return table;
+        }        
     }
-}
+} 

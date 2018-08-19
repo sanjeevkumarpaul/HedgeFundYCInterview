@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wrappers.Consoles
+namespace Wrappers.Consoles.Enums
 {
-    public class ConsoleRow
+    public enum WrapAggregate
     {
-        public List<ConsoleRecord> Column { get; set; }
+        NONE,
+        SUM,
+        AVERAGE,
+        MEDIAN
     }
 }
