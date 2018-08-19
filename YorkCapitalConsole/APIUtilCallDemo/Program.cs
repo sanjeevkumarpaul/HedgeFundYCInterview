@@ -8,6 +8,7 @@ using Extensions;
 using APICalls.Entities.Contracts;
 
 using Wrappers;
+using Wrappers.Consoles.Enums;
 
 namespace APIUtilCallDemo
 {

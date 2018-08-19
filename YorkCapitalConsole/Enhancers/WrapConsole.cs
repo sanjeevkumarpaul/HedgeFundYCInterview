@@ -154,7 +154,7 @@ namespace Wrappers
             max = table.ColumnOptions.Sum(c => c.Width);
             #endregion ~Finding Column Width
 
-            var separator = "-".Repeat(max + ( table.ColumnOptions.Count() + 1 ));
+            var separator = "-".Repeat(max + ( table.ColumnOptions.Count() *2 ) + 1);
             
             Console.WriteLine();
             WriteItColor($"{separator}", ConsoleColor.Gray);
@@ -170,8 +170,10 @@ namespace Wrappers
                     var _alText = _option.Alignment == WrapAlignment.LEFT ? 
                                         (R.Text).PadRight(_option.Width) :
                                         _option.Alignment == WrapAlignment.RIGHT ? (R.Text).PadLeft(_option.Width) : CenteredText(R.Text, _option.Width);
+                    var _prefix = _option.Alignment != WrapAlignment.RIGHT ? " " : ""; //Left space
+                    var _postfix = _option.Alignment == WrapAlignment.RIGHT ? " " : "";//Right space
 
-                    WriteItColor( $" { _alText }", _color , false );
+                    WriteItColor( $"{_prefix}{ _alText }{_postfix}", _color , false );
 
                     if (_option.Alignment == WrapAlignment.CENTER)
                         WriteItColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", ConsoleColor.Gray, false);
