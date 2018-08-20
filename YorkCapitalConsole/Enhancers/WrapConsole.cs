@@ -163,7 +163,11 @@ namespace Wrappers
 
             foreach (var rows in table.Rows)
             {
-                WriteItColor("|", table.OtherOptions.BorderColor, false);
+                var _borderColor = (rows.IsAggregate || (rows.IsLastRow && table.OtherOptions.IsAggregateRowExists)) ?
+                                            table.OtherOptions.AggregateBorderColor : table.OtherOptions.BorderColor;
+                var _borderBarColor = rows.IsAggregate ? _borderColor : table.OtherOptions.BorderColor;
+
+                WriteItColor("|", _borderBarColor, false);
                 int i = 0;
                 rows.Column.ForEach(R => 
                 {
@@ -178,12 +182,12 @@ namespace Wrappers
                     WriteItColor( $"{_prefix}{ _alText }{_postfix}", _color , false );
 
                     if (_option.Alignment == WrapAlignment.CENTER)
-                        WriteItColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", table.OtherOptions.BorderColor, false);
+                        WriteItColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor, false);
                     else
-                        WriteItColor("|", table.OtherOptions.BorderColor, false);                
+                        WriteItColor("|", _borderBarColor, false);                
                 });
                 Console.WriteLine();
-                WriteItColor($"{separator}", table.OtherOptions.BorderColor);
+                WriteItColor($"{separator}", _borderColor);
             }            
         }
 
@@ -215,8 +219,13 @@ namespace Wrappers
                 });
                 i++;
             }
-            if(Agg.Any(a => !a.Text.Empty()))                
-                table.Rows.Add(new ConsoleRow { Column = Agg });
+            table.Rows.Last().IsLastRow = true;
+            if (Agg.Any(a => !a.Text.Empty()))
+            {
+                table.Rows.Add(new ConsoleRow { Column = Agg, IsAggregate = true });
+                table.OtherOptions.IsAggregateRowExists = true;
+            }
+            
             
             string Aggregate(int colIndex, ConsoleColumnOptions option)
             {

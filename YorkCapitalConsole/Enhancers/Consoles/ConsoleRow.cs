@@ -9,5 +9,7 @@ namespace Wrappers.Consoles
     public class ConsoleRow
     {
         public List<ConsoleRecord> Column { get; set; }
+        internal bool IsAggregate { get; set; } = false;
+        internal bool IsLastRow { get; set; } = false;        
     }
 }
