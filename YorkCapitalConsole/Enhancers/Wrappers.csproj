@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Consoles\ConsoleCloumnOptions.cs" />
+    <Compile Include="Consoles\ConsoleOtherOptions.cs" />
     <Compile Include="Consoles\ConsoleRecord.cs" />
     <Compile Include="Consoles\ConsoleRow.cs" />
     <Compile Include="Consoles\ConsoleTable.cs" />

@@ -10,5 +10,6 @@ namespace Wrappers.Consoles
     {
         public string Text { get; set; }
         public ConsoleColor Color { get; set; }
+        internal bool IsAggregate { get; set; } = false;
     }
 }

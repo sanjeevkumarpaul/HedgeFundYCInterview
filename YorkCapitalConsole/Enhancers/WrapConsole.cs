@@ -156,34 +156,34 @@ namespace Wrappers
             max = table.ColumnOptions.Sum(c => c.Width);
             #endregion ~Finding Column Width
 
-            var separator = "-".Repeat(max + ( table.ColumnOptions.Count() * 2 ) + 1);
+            var separator = table.OtherOptions.BorderChar.ToString().Repeat(max + ( table.ColumnOptions.Count() * 2 ) + 1);
             
             Console.WriteLine();
-            WriteItColor($"{separator}", ConsoleColor.Gray);
+            WriteItColor($"{separator}", table.OtherOptions.BorderColor);
 
             foreach (var rows in table.Rows)
             {
-                WriteItColor("|", ConsoleColor.Gray, false);
+                WriteItColor("|", table.OtherOptions.BorderColor, false);
                 int i = 0;
                 rows.Column.ForEach(R => 
                 {
-                    var _option = table.ColumnOptions[i++];
-                    var _color = R.Color == Console.BackgroundColor ? _option.Color : R.Color;
+                    var _option = table.ColumnOptions[i++];                    
                     var _alText = _option.Alignment == WrapAlignment.LEFT ? 
                                         (R.Text).PadRight(_option.Width) :
                                         _option.Alignment == WrapAlignment.RIGHT ? (R.Text).PadLeft(_option.Width) : CenteredText(R.Text, _option.Width);
+                    var _color = R.IsAggregate ? table.OtherOptions.AggregateColor : ( R.Color == Console.BackgroundColor ? _option.Color : R.Color );
                     var _prefix = _option.Alignment != WrapAlignment.RIGHT ? " " : ""; //Left space
                     var _postfix = _option.Alignment == WrapAlignment.RIGHT ? " " : "";//Right space
 
                     WriteItColor( $"{_prefix}{ _alText }{_postfix}", _color , false );
 
                     if (_option.Alignment == WrapAlignment.CENTER)
-                        WriteItColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", ConsoleColor.Gray, false);
+                        WriteItColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", table.OtherOptions.BorderColor, false);
                     else
-                        WriteItColor("|", ConsoleColor.Gray, false);                
+                        WriteItColor("|", table.OtherOptions.BorderColor, false);                
                 });
                 Console.WriteLine();
-                WriteItColor($"{separator}", ConsoleColor.Gray);
+                WriteItColor($"{separator}", table.OtherOptions.BorderColor);
             }            
         }
 
@@ -210,7 +210,8 @@ namespace Wrappers
             {
                 Agg.Add(new ConsoleRecord
                 {
-                    Text = option.Aggregate == WrapAggregate.NONE ? "" : Aggregate(i, option)
+                    Text = option.Aggregate == WrapAggregate.NONE ? "" : Aggregate(i, option),
+                    IsAggregate = true
                 });
                 i++;
             }
@@ -220,23 +221,24 @@ namespace Wrappers
             string Aggregate(int colIndex, ConsoleColumnOptions option)
             {
                 var vals = table.Rows.Select(r => r.Column[colIndex]).Select(c => c.Text.ToDouble());
+                double cal = 0.0d;
 
                 switch(option.Aggregate)
                 {
-                    case WrapAggregate.NONE: return "";
-                    case WrapAggregate.SUM: return vals.Sum(d => d).ToString("(Sum) #.00");
-                    case WrapAggregate.AVERAGE: return vals.Average(d => d).ToString("(Average) #.00");
-                    case WrapAggregate.MEDIAN: return Median(vals).ToString("(Median) #.00");
+                    case WrapAggregate.NONE: break;
+                    case WrapAggregate.SUM: cal = vals.Sum(d => d); break;
+                    case WrapAggregate.AVERAGE: cal = vals.Average(d => d); break;
+                    case WrapAggregate.MEDIAN: cal = Median(vals); break;
                 }
 
-                return "";
+                return cal > 0.0d ? cal.ToString($"({option.Aggregate.ToString()}) #.00") : "";
             }
 
             double Median(IEnumerable<double> nums)
             {
                 var _nums = nums.OrderBy(r => r);
                 int _prev = nums.Count() - 1;
-                int _next = 1;
+                int _next = 1; //always start from 2nd row, as 1st row is headers.
                 bool _doubleflag = false;
 
                 while(true)
