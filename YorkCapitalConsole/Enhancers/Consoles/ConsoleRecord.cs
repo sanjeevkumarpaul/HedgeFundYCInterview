@@ -8,8 +8,7 @@ namespace Wrappers.Consoles
 {
     public class ConsoleRecord
     {
-        public string Text { get; set; }
-        public ConsoleColor Color { get; set; }
+        public string Text { get; set; }        
         internal bool IsAggregate { get; set; } = false;
     }
 }

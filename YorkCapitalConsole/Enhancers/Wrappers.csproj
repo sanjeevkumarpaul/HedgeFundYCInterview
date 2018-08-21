@@ -56,11 +56,14 @@
     <Compile Include="Consoles\ConsoleOtherOptions.cs" />
     <Compile Include="Consoles\ConsoleRecord.cs" />
     <Compile Include="Consoles\ConsoleRow.cs" />
+    <Compile Include="Consoles\ConsoleSort.cs" />
     <Compile Include="Consoles\ConsoleTable.cs" />
     <Compile Include="Consoles\Enums\WrapAggregate.cs" />
     <Compile Include="Consoles\Enums\WrapAlignment.cs" />
     <Compile Include="Consoles\Enums\WrapConsoleStyle.cs" />
+    <Compile Include="Consoles\Enums\WrapSort.cs" />
     <Compile Include="WrapConsole.cs" />
+    <Compile Include="WrapConsoleTable.cs" />
     <Compile Include="WrapEntityFramework.cs" />
     <Compile Include="WrapExpandos.cs" />
     <Compile Include="WrapIOs.cs" />

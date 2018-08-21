@@ -18,6 +18,7 @@ namespace ConsoleColorTables
         {   
                 WrapConsole.WriteTable(new ConsoleTable
                 {
+                    OtherOptions = new ConsoleOtherOptions { Sort = new ConsoleSort { SortColumnIndex = 1 }  },
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow  },
@@ -31,9 +32,9 @@ namespace ConsoleColorTables
                          {
                              Column = new List<ConsoleRecord>
                              {
-                                 new ConsoleRecord { Text = "Name", Color = ConsoleColor.DarkGray },
-                                 new ConsoleRecord { Text = "Display Name", Color = ConsoleColor.DarkGray},
-                                 new ConsoleRecord { Text = "Some Numbers", Color = ConsoleColor.DarkGray},
+                                 new ConsoleRecord { Text = "Name" },
+                                 new ConsoleRecord { Text = "Display Name"},
+                                 new ConsoleRecord { Text = "Some Numbers"},
                              }
                          },
                          new ConsoleRow

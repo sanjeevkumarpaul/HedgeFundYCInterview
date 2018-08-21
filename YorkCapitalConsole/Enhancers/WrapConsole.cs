@@ -72,7 +72,7 @@ namespace Wrappers
         
         public static void WriteTable(ConsoleTable table)
         {
-            PutTable(table);
+            WrapConsoleTable.PutTable(table);
         }
         
     }
@@ -137,130 +137,11 @@ namespace Wrappers
             {
                 case WrapAlignment.LEFT: if (isfill) str = str.PadRight(Console.WindowWidth - 1); break;
                 case WrapAlignment.RIGHT: str = str.PadLeft(Console.WindowWidth - 1); break;
-                case WrapAlignment.CENTER: str = CenteredText(str, Console.WindowWidth - 1); break;
+                case WrapAlignment.CENTER: str = WrapConsoleTable.CenteredText(str, Console.WindowWidth - 1); break;
             }
             return str;
         }
 
-        private static void PutTable(ConsoleTable table)
-        {
-            table = CalculateAggregation(table);
-
-            #region ^Finding Column Width
-            var max = table.ColumnOptions.Count();
-            for (int i =0; i < max - 1; i++)
-            {
-                var _len = table.Rows.Select(R => R.Column[i]).Max(R => R.Text.Length);
-                if (table.ColumnOptions[i].Width <= _len) table.ColumnOptions[i].Width = _len;
-            }
-            max = table.ColumnOptions.Sum(c => c.Width);
-            #endregion ~Finding Column Width
-
-            var separator = table.OtherOptions.BorderChar.ToString().Repeat(max + ( table.ColumnOptions.Count() * 2 ) + 1);
-            
-            Console.WriteLine();
-            WriteItColor($"{separator}", table.OtherOptions.BorderColor);
-
-            foreach (var rows in table.Rows)
-            {
-                var _borderColor = (rows.IsAggregate || (rows.IsLastRow && table.OtherOptions.IsAggregateRowExists)) ?
-                                            table.OtherOptions.AggregateBorderColor : table.OtherOptions.BorderColor;
-                var _borderBarColor = rows.IsAggregate ? _borderColor : table.OtherOptions.BorderColor;
-
-                WriteItColor("|", _borderBarColor, false);
-                int i = 0;
-                rows.Column.ForEach(R => 
-                {
-                    var _option = table.ColumnOptions[i++];                    
-                    var _alText = _option.Alignment == WrapAlignment.LEFT ? 
-                                        (R.Text).PadRight(_option.Width) :
-                                        _option.Alignment == WrapAlignment.RIGHT ? (R.Text).PadLeft(_option.Width) : CenteredText(R.Text, _option.Width);
-                    var _color = R.IsAggregate ? table.OtherOptions.AggregateColor : ( R.Color == Console.BackgroundColor ? _option.Color : R.Color );
-                    var _prefix = _option.Alignment != WrapAlignment.RIGHT ? " " : ""; //Left space
-                    var _postfix = _option.Alignment == WrapAlignment.RIGHT ? " " : "";//Right space
-
-                    WriteItColor( $"{_prefix}{ _alText }{_postfix}", _color , false );
-
-                    if (_option.Alignment == WrapAlignment.CENTER)
-                        WriteItColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor, false);
-                    else
-                        WriteItColor("|", _borderBarColor, false);                
-                });
-                Console.WriteLine();
-                WriteItColor($"{separator}", _borderColor);
-            }            
-        }
-
-        /// <summary>
-        /// Aligns a text center to any width.
-        /// Obvious reason being Text should be less than the Width specified.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="width"></param>
-        /// <returns></returns>
-        private static string CenteredText(string text, int width)
-        {
-            var len = width - text.Length;
-            var padlen = ((int)len / 2) + text.Length;
-            return text.PadLeft(padlen);
-        }
-
-        private static ConsoleTable CalculateAggregation(ConsoleTable table)
-        {
-            List<ConsoleRecord> Agg = new List<ConsoleRecord>();
-
-            int i = 0;
-            foreach (var option in table.ColumnOptions)
-            {
-                Agg.Add(new ConsoleRecord
-                {
-                    Text = option.Aggregate == WrapAggregate.NONE ? "" : Aggregate(i, option),
-                    IsAggregate = true
-                });
-                i++;
-            }
-            table.Rows.Last().IsLastRow = true;
-            if (Agg.Any(a => !a.Text.Empty()))
-            {
-                table.Rows.Add(new ConsoleRow { Column = Agg, IsAggregate = true });
-                table.OtherOptions.IsAggregateRowExists = true;
-            }
-            
-            
-            string Aggregate(int colIndex, ConsoleColumnOptions option)
-            {
-                var vals = table.Rows.Select(r => r.Column[colIndex]).Select(c => c.Text.ToDouble());
-                double cal = 0.0d;
-
-                switch(option.Aggregate)
-                {
-                    case WrapAggregate.NONE: break;
-                    case WrapAggregate.SUM: cal = vals.Sum(d => d); break;
-                    case WrapAggregate.AVERAGE: cal = vals.Average(d => d); break;
-                    case WrapAggregate.MEDIAN: cal = Median(vals); break;
-                }
-
-                return cal > 0.0d ? cal.ToString($"({option.Aggregate.ToString()}) #.00") : "";
-            }
-
-            double Median(IEnumerable<double> nums)
-            {
-                var _nums = nums.OrderBy(r => r);
-                int _prev = nums.Count() - 1;
-                int _next = 1; //always start from 2nd row, as 1st row is headers.
-                bool _doubleflag = false;
-
-                while(true)
-                {
-                    if (_prev == _next) break;
-                    if (_prev - 1 == _next && _next + 1 == _prev) { _doubleflag = true; break; }
-                    _next++; _prev--;
-                }
-
-                return _doubleflag ? (_nums.ElementAt(_prev)+ _nums.ElementAt(_next)) / 2 : _nums.ElementAt(_prev);
-            }
-
-            return table;
-        }        
+        
     }
 } 
