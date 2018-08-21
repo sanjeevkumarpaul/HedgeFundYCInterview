@@ -61,6 +61,7 @@
     <Compile Include="Consoles\Enums\WrapAggregate.cs" />
     <Compile Include="Consoles\Enums\WrapAlignment.cs" />
     <Compile Include="Consoles\Enums\WrapConsoleStyle.cs" />
+    <Compile Include="Consoles\Enums\WrapConsoleWrapType.cs" />
     <Compile Include="Consoles\Enums\WrapSort.cs" />
     <Compile Include="WrapConsole.cs" />
     <Compile Include="WrapConsoleTable.cs" />

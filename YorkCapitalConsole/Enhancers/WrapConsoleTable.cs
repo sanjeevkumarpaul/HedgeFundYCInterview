@@ -19,7 +19,9 @@ namespace Wrappers
             var max = table.ColumnOptions.Count();
             for (int i = 0; i < max - 1; i++)
             {
-                var _len = table.Rows.Select(R => R.Column[i]).Max(R => R.Text.Length);
+                Wrap(table, i);
+
+                var _len = table.Rows.Select(R => R.Column[i]).Max(R => ( R.Text.Empty() ? R.Lines : R.Text.Length ));
                 if (table.ColumnOptions[i].Width <= _len) table.ColumnOptions[i].Width = _len;
             }
             max = table.ColumnOptions.Sum(c => c.Width);
@@ -37,27 +39,39 @@ namespace Wrappers
                                             table.OtherOptions.AggregateBorderColor : table.OtherOptions.BorderColor;
                 var _borderBarColor = rows.IsAggregate ? _borderColor : table.OtherOptions.BorderColor;
 
-                int i = 0;
-                WrapConsole.WriteColor("|", _borderBarColor);                
-                rows.Column.ForEach(C =>
+                var mLines = rows.Column.Max(c => c.Lines) - 1;
+                for (int mindex = 0; mindex <= mLines; mindex++)
                 {
-                    var _option = table.ColumnOptions[i++];
-                    var _alText = _option.Alignment == WrapAlignment.LEFT ?
-                                        (C.Text).PadRight(_option.Width) :
-                                        _option.Alignment == WrapAlignment.RIGHT ? (C.Text).PadLeft(_option.Width) : CenteredText(C.Text, _option.Width);
-                    var _color = C.IsAggregate ? table.OtherOptions.AggregateColor : 
-                                        (col == 0 && table.OtherOptions.IsFirstRowAsHeader ? table.OtherOptions.HeadingColor : _option.Color);
-                    var _prefix = _option.Alignment != WrapAlignment.RIGHT ? " " : ""; //Left space
-                    var _postfix = _option.Alignment == WrapAlignment.RIGHT ? " " : "";//Right space
+                    int i = 0;
+                    WrapConsole.WriteColor("|", _borderBarColor);
+                    rows.Column.ForEach(C =>
+                    {
+                        var _option = table.ColumnOptions[i++];
+                        var _alText = C.Text;
+
+                        if ((_alText.Empty() || mindex > 0) && C.MText.Any() && C.MText.Count >= mindex)
+                            _alText = C.MText.ElementAt(mindex);
+                        else if (!_alText.Empty() && mindex > 0)
+                            _alText = "";
+
+                        _alText = _option.Alignment == WrapAlignment.LEFT ?
+                                            (_alText).PadRight(_option.Width) :
+                                            _option.Alignment == WrapAlignment.RIGHT ? (_alText).PadLeft(_option.Width) : CenteredText(_alText, _option.Width);
+
+                        var _color = C.IsAggregate ? table.OtherOptions.AggregateColor :
+                                            (col == 0 && table.OtherOptions.IsFirstRowAsHeader ? table.OtherOptions.HeadingColor : _option.Color);
+                        var _prefix = _option.Alignment != WrapAlignment.RIGHT ? " " : ""; //Left space
+                        var _postfix = _option.Alignment == WrapAlignment.RIGHT ? " " : "";//Right space
 
                     WrapConsole.WriteColor($"{_prefix}{ _alText }{_postfix}", _color);
 
-                    if (_option.Alignment == WrapAlignment.CENTER)
-                        WrapConsole.WriteColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor);
-                    else
-                        WrapConsole.WriteColor("|", _borderBarColor);                    
-                });
-                Console.WriteLine();
+                        if (_option.Alignment == WrapAlignment.CENTER)
+                            WrapConsole.WriteColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor);
+                        else
+                            WrapConsole.WriteColor("|", _borderBarColor);
+                    });
+                    Console.WriteLine();
+                }
                 WrapConsole.WriteLineColor($"{separator}", _borderColor);
                 col++;
             }
@@ -75,6 +89,40 @@ namespace Wrappers
             var len = width - text.Length;
             var padlen = ((int)len / 2) + text.Length;
             return text.PadLeft(padlen);
+        }
+
+        private static void Wrap(ConsoleTable table, int colIndex)
+        {
+            var _option = table.ColumnOptions.ElementAt(colIndex);            
+                table.Rows.ForEach(r =>
+                {
+                    var _col = r.Column.ElementAt(colIndex);                    
+                    if (_col.Text.Length > _option.Width && _option.Wrap != WrapConsoleWrapType.NOWRAP)
+                    {
+                        switch(_option.Wrap)
+                        {
+                            case WrapConsoleWrapType.ELLIPSES: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}..."; break;
+                            case WrapConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}"; break;
+                            case WrapConsoleWrapType.WRAP:
+                                {
+                                    var _lines = (int)Math.Ceiling(_col.Text.Length / (_option.Width *1d));
+                                    _col.Lines = _lines;
+                                    int _next = 0;
+                                    int _end = _option.Width;
+                                    int _total = _col.Text.Length;
+                                    for(int i = 1; i<= _lines; i++)
+                                    {
+                                        _col.MText.Add(_col.Text.Substring(_next, (_end < _total ? _end : (_end - _total - 1) ) ));
+                                        _next = _end;
+                                        _end += _end;
+                                    }
+                                    _col.Text = "";
+                                    break;
+                                }
+                        }
+                    }
+                        
+                });
         }
 
         /// <summary>
