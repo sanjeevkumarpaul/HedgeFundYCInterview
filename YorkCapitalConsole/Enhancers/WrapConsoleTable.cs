@@ -12,7 +12,7 @@ namespace Wrappers
     {
         public static void PutTable(ConsoleTable table)
         {
-            //table = Sort(table);
+            table = Sort(table);
             table = CalculateAggregation(table);
 
             #region ^Finding Column Width
@@ -91,13 +91,27 @@ namespace Wrappers
 
                 List<ConsoleRow> _rows = null;
                 if (table.OtherOptions.Sort.SortType == WrapSort.ASCENDING)
-                    _rows = table.Rows.OrderBy(d => d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex)).ToList();
+                    _rows = table.Rows.OrderBy(d => d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex).Text).ToList();
+                    //_rows = table.Rows.OrderBy(d => Convert(d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex).Text, table.OtherOptions.Sort.DataType).ToList();
                 else
-                    _rows = table.Rows.OrderByDescending(d => d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex)).ToList();
+                    _rows = table.Rows.OrderByDescending(d => d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex).Text).ToList();
 
                 _rows.Insert(0, header);
                 table.Rows.Clear();
                 table.Rows.AddRange(_rows);
+            }
+
+            object Convert(string value, WrapSortDataType sortDataType)
+            {
+                object _val = value;
+                switch (sortDataType)
+                {
+                    case WrapSortDataType.STRING: break;
+                    case WrapSortDataType.NUMBER: _val = value.ToDouble(); break;
+                    case WrapSortDataType.DATETIME: _val = value.ToDateTime(); break;
+                }
+
+                return value;
             }
 
             return table;
