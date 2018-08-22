@@ -11,6 +11,7 @@ namespace Wrappers.Consoles.Enums
         NOWRAP,
         WRAP,
         REMOVE,
-        ELLIPSES
+        ELLIPSES,
+        WORDWRAP
     }
 }

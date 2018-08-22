@@ -49,11 +49,13 @@ namespace Wrappers
                         var _option = table.ColumnOptions[i++];
                         var _alText = C.Text;
 
-                        if ((_alText.Empty() || mindex > 0) && C.MText.Any() && C.MText.Count >= mindex)
+                        //Wrapping requirement.
+                        if ((_alText.Empty() || mindex > 0) && C.MText.Any() && C.MText.Count > mindex)
                             _alText = C.MText.ElementAt(mindex);
                         else if (!_alText.Empty() && mindex > 0)
                             _alText = "";
 
+                        //Making sure of alignment
                         _alText = _option.Alignment == WrapAlignment.LEFT ?
                                             (_alText).PadRight(_option.Width) :
                                             _option.Alignment == WrapAlignment.RIGHT ? (_alText).PadLeft(_option.Width) : CenteredText(_alText, _option.Width);
@@ -63,7 +65,7 @@ namespace Wrappers
                         var _prefix = _option.Alignment != WrapAlignment.RIGHT ? " " : ""; //Left space
                         var _postfix = _option.Alignment == WrapAlignment.RIGHT ? " " : "";//Right space
 
-                    WrapConsole.WriteColor($"{_prefix}{ _alText }{_postfix}", _color);
+                        WrapConsole.WriteColor($"{_prefix}{ _alText }{_postfix}", _color);
 
                         if (_option.Alignment == WrapAlignment.CENTER)
                             WrapConsole.WriteColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor);
@@ -119,6 +121,27 @@ namespace Wrappers
                                     _col.Text = "";
                                     break;
                                 }
+                            case WrapConsoleWrapType.WORDWRAP:
+                                {
+                                    var _words = _col.Text.SplitEx(' ').Where(s => !s.Trim().Empty()).ToArray();
+                                    var _text = _words[0];
+                                    int _next = 1;
+                                    while(true)
+                                    {
+                                        if ((_text + _words[_next]).Length <= _option.Width)
+                                            _text = $"{_text} {_words[_next]}";
+                                        else
+                                        {
+                                            _col.MText.Add(_text);
+                                            _text = _words[_next];
+                                        }
+                                        _next++;
+                                        if (_next >= _words.Count()) { _col.MText.Add(_text); break; }
+                                    }
+                                    _col.Lines = _col.MText.Count();
+                                    _col.Text = "";
+                                    break;
+                                }
                         }
                     }
                         
@@ -149,18 +172,18 @@ namespace Wrappers
                 table.Rows.AddRange(_rows);
             }
 
-            object Convert(string value, WrapSortDataType sortDataType)
-            {
-                object _val = value;
-                switch (sortDataType)
-                {
-                    case WrapSortDataType.STRING: break;
-                    case WrapSortDataType.NUMBER: _val = value.ToDouble(); break;
-                    case WrapSortDataType.DATETIME: _val = value.ToDateTime(); break;
-                }
+            //object Convert(string value, WrapSortDataType sortDataType)
+            //{
+            //    object _val = value;
+            //    switch (sortDataType)
+            //    {
+            //        case WrapSortDataType.STRING: break;
+            //        case WrapSortDataType.NUMBER: _val = value.ToDouble(); break;
+            //        case WrapSortDataType.DATETIME: _val = value.ToDateTime(); break;
+            //    }
 
-                return value;
-            }
+            //    return value;
+            //}
 
             return table;
         }
