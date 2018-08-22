@@ -18,7 +18,7 @@ namespace ConsoleColorTables
         {   
                 WrapConsole.WriteTable(new ConsoleTable
                 {
-                    OtherOptions = new ConsoleOtherOptions { Sort = new ConsoleSort { SortColumnIndex = 1 }  },
+                    OtherOptions = new ConsoleOtherOptions { Sort = new ConsoleSort { SortColumnIndex = 0 }  },
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = WrapConsoleWrapType.WORDWRAP },
@@ -53,6 +53,15 @@ namespace ConsoleColorTables
                                  new ConsoleRecord { Text = "Rajendra, Patil"},
                                  new ConsoleRecord { Text = "65 million History" },
                                  new ConsoleRecord { Text = "90.00" },
+                             }
+                         },
+                         new ConsoleRow
+                         {
+                             Column = new List<ConsoleRecord>
+                             {
+                                 new ConsoleRecord { Text = "Nandu Halwai Panighat Ladayi"},
+                                 new ConsoleRecord { Text = "Current Century" },
+                                 new ConsoleRecord { Text = "23.00" },
                              }
                          }
                 }   });

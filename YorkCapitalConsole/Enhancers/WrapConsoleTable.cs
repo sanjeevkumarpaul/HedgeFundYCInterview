@@ -164,35 +164,54 @@ namespace Wrappers
         /// <returns></returns>
         private static ConsoleTable Sort(ConsoleTable table)
         {
-            if (table.OtherOptions.Sort.SortColumnIndex > 0)
+            if (table.OtherOptions.Sort.SortColumnIndex >= 0)
             {
                 var header = table.Rows.ElementAt(0);
                 table.Rows.RemoveAt(0);
 
-                List<ConsoleRow> _rows = null;
-                if (table.OtherOptions.Sort.SortType == WrapSort.ASCENDING)
-                    _rows = table.Rows.OrderBy(d => d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex).Text).ToList();
-                    //_rows = table.Rows.OrderBy(d => Convert(d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex).Text, table.OtherOptions.Sort.DataType).ToList();
-                else
-                    _rows = table.Rows.OrderByDescending(d => d.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex).Text).ToList();
+                table.Rows.ForEach(r => Convert( r.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex), table.OtherOptions.Sort.DataType ));
 
+                List<ConsoleRow> _rows = table.OtherOptions.Sort.SortType == WrapSort.ASCENDING ?
+                                               Ascending(table.OtherOptions.Sort.SortColumnIndex, table.OtherOptions.Sort.DataType) :
+                                               Descending(table.OtherOptions.Sort.SortColumnIndex, table.OtherOptions.Sort.DataType);
+                    
                 _rows.Insert(0, header);
                 table.Rows.Clear();
                 table.Rows.AddRange(_rows);
             }
 
-            //object Convert(string value, WrapSortDataType sortDataType)
-            //{
-            //    object _val = value;
-            //    switch (sortDataType)
-            //    {
-            //        case WrapSortDataType.STRING: break;
-            //        case WrapSortDataType.NUMBER: _val = value.ToDouble(); break;
-            //        case WrapSortDataType.DATETIME: _val = value.ToDateTime(); break;
-            //    }
+            void Convert(ConsoleRecord col, WrapSortDataType sortDataType)
+            {                
+                switch (sortDataType)
+                {
+                    case WrapSortDataType.STRING: col.SortedText.StringText = col.Text; break;
+                    case WrapSortDataType.NUMBER: col.SortedText.NumericText = col.Text.ToDouble(); break;
+                    case WrapSortDataType.DATETIME: col.SortedText.DateText = col.Text.ToDateTime(); break;
+                }                
+            }
 
-            //    return value;
-            //}
+            List<ConsoleRow> Ascending(int colindex, WrapSortDataType sortDataType)
+            {
+                switch (sortDataType)
+                {
+                    case WrapSortDataType.STRING: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.StringText).ToList();
+                    case WrapSortDataType.NUMBER: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.NumericText).ToList();
+                    case WrapSortDataType.DATETIME: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.DateText).ToList();
+                    default: return table.Rows;
+                }
+            }
+
+            List<ConsoleRow> Descending(int colindex, WrapSortDataType sortDataType)
+            {
+                switch (sortDataType)
+                {
+                    case WrapSortDataType.STRING: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.StringText).ToList();
+                    case WrapSortDataType.NUMBER: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.NumericText).ToList();
+                    case WrapSortDataType.DATETIME: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.DateText).ToList();
+                    default: return table.Rows;
+                }
+            }
+
 
             return table;
         }

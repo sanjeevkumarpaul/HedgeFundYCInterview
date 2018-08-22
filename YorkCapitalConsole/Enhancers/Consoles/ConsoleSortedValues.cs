@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace Wrappers.Consoles
 {
     internal class ConsoleSortedValues
-    { 
+    {
+        internal string StringText { get; set; }
         internal double NumericText { get; set; }
         internal DateTime DateText { get; set; }
     }
