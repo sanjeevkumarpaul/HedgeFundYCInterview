@@ -140,8 +140,9 @@ namespace Wrappers
                     int _next = 1;
                     while (true)
                     {
-                        if ((_text + _words[_next]).Length <= _option.Width)
-                            _text = $"{_text} {_words[_next]}";
+                        var _interim = $"{_text} {_words[_next]}";
+                        if (_interim.Length <= _option.Width)
+                            _text = _interim;
                         else
                         {
                             col.MText.Add(_text);
