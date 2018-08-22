@@ -123,7 +123,7 @@ namespace Wrappers
                 int _total = col.Text.Length;
                 for (int i = 1; i <= _lines; i++)
                 {
-                    col.MText.Add(col.Text.Substring(_next, (_end < _total ? _end : (_end - _total - 1))));
+                    col.MText.Add(col.Text.Substring(_next, (_end < _total ? _end : (_total - _option.Width))));
                     _next = _end;
                     _end += _end;
                 }
