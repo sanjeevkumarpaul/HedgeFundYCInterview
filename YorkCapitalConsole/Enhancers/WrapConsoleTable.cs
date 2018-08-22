@@ -93,6 +93,9 @@ namespace Wrappers
             return text.PadLeft(padlen);
         }
 
+        /// <summary>
+        /// wrap up the whole text in a colum and arrange it back to column record.
+        /// </summary>      
         private static void Wrap(ConsoleTable table, int colIndex)
         {
             var _option = table.ColumnOptions.ElementAt(colIndex);            
@@ -104,7 +107,7 @@ namespace Wrappers
                     switch(_option.Wrap)
                     {
                         case WrapConsoleWrapType.ELLIPSES: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}..."; break;
-                        case WrapConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}"; break;
+                        case WrapConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width)}"; break;
                         case WrapConsoleWrapType.WRAP: WrapAround(_col); break;                            
                         case WrapConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;                            
                     }//switch
