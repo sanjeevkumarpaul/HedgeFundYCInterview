@@ -95,6 +95,11 @@ namespace Wrappers
             return text.PadLeft(padlen);
         }
 
+        /// <summary>
+        /// Drawing Header and Footers for the console table with LEFT/RIGHT Alignment
+        /// CENTER alignment is considered to be LEFT at this moment.
+        /// </summary>
+        /// <param name="separator">Total Width Bordered Text (helps to calculate the header/footer width)</param>        
         private static void DrawHeaderFooter(ConsoleTable table, string separator, bool header = true)
         {
             var _rows = header ? table.Headers : table.Footers;
@@ -107,15 +112,30 @@ namespace Wrappers
                 var _leftWidth = _rows.Max(r => r.Heading.Length) + 2;
                 int _colonWidth = 3;
                 var _rightWidth = separator.Length - (_leftWidth + _colonWidth + 3);
+                var _textWidth = _rows.Max(r => r.Value.Length);
 
                 foreach(var row in _rows)
                 {
                     WrapConsole.WriteColor($"|", table.OtherOptions.BorderColor);
-                    WrapConsole.WriteColor($" { row.Heading }", row.HeadingColor);
-                    WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.Heading.Length), table.OtherOptions.BorderColor);
-                    WrapConsole.WriteColor(" : ", row.HeadingColor);                    
-                    WrapConsole.WriteColor($" {row.Value}", row.ValueColor);
-                    WrapConsole.WriteLineColor("|".PadLeft(_rightWidth - row.Value.Length), table.OtherOptions.BorderColor);
+
+                    if (row.Alignment == WrapAlignment.LEFT || row.Alignment == WrapAlignment.CENTER)
+                    {
+                        WrapConsole.WriteColor($" { row.Heading }", row.HeadingColor);
+                        WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.Heading.Length), table.OtherOptions.BorderColor);
+                        WrapConsole.WriteColor(" : ", row.HeadingColor);
+                        WrapConsole.WriteColor($" {row.Value}", row.ValueColor);
+                        WrapConsole.WriteLineColor("|".PadLeft(_rightWidth - row.Value.Length), table.OtherOptions.BorderColor);
+                    }
+                    else
+                    {
+                        WrapConsole.WriteColor(" ".PadLeft(separator.Length - (_leftWidth + _colonWidth + _textWidth + 2)), table.OtherOptions.BorderColor);
+                        WrapConsole.WriteColor($"{ row.Heading }", row.HeadingColor);
+                        WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.Heading.Length), table.OtherOptions.BorderColor);
+                        WrapConsole.WriteColor(" : ", row.HeadingColor);
+                        WrapConsole.WriteColor($"{row.Value}", row.ValueColor);
+                        WrapConsole.WriteColor(" ".PadLeft(_textWidth - row.Value.Length ), table.OtherOptions.BorderColor);
+                        WrapConsole.WriteLineColor("|", table.OtherOptions.BorderColor);
+                    }
                 }
 
                 WrapConsole.WriteLineColor($"{separator}", table.OtherOptions.BorderColor);
