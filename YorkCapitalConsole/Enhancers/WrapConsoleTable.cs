@@ -107,7 +107,7 @@ namespace Wrappers
             if (header)
                 WrapConsole.WriteLineColor($"{separator}", table.OtherOptions.BorderColor);
 
-            if (_rows.Any())
+            if (_rows != null && _rows.Any())
             {
                 var _leftWidth = _rows.Max(r => r.Heading.Length) + 2;
                 int _colonWidth = 3;
