@@ -104,18 +104,18 @@ namespace Wrappers
 
             if (_rows.Any())
             {
-                var _leftWidth = _rows.Max(r => r.StaticText.Length) + 2;
+                var _leftWidth = _rows.Max(r => r.Heading.Length) + 2;
                 int _colonWidth = 3;
                 var _rightWidth = separator.Length - (_leftWidth + _colonWidth + 3);
 
                 foreach(var row in _rows)
                 {
                     WrapConsole.WriteColor($"|", table.OtherOptions.BorderColor);
-                    WrapConsole.WriteColor($" { row.StaticText }", row.TextColor);
-                    WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.StaticText.Length), table.OtherOptions.BorderColor);
-                    WrapConsole.WriteColor(" : ", row.TextColor);                    
-                    WrapConsole.WriteColor($" {row.StaticValue}", row.ValueColor);
-                    WrapConsole.WriteLineColor("|".PadLeft(_rightWidth - row.StaticValue.Length), table.OtherOptions.BorderColor);
+                    WrapConsole.WriteColor($" { row.Heading }", row.HeadingColor);
+                    WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.Heading.Length), table.OtherOptions.BorderColor);
+                    WrapConsole.WriteColor(" : ", row.HeadingColor);                    
+                    WrapConsole.WriteColor($" {row.Value}", row.ValueColor);
+                    WrapConsole.WriteLineColor("|".PadLeft(_rightWidth - row.Value.Length), table.OtherOptions.BorderColor);
                 }
 
                 WrapConsole.WriteLineColor($"{separator}", table.OtherOptions.BorderColor);
