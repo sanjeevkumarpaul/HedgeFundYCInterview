@@ -21,8 +21,8 @@ namespace ConsoleColorTables
                     OtherOptions = new ConsoleOtherOptions { Sort = new ConsoleSort { SortColumnIndex = 0 }  },
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
-                        new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.DarkYellow, Wrap = WrapConsoleWrapType.WORDWRAP },
-                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.CENTER , Color = ConsoleColor.DarkGreen },
+                        new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = WrapConsoleWrapType.WORDWRAP },
+                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.CENTER , Color = ConsoleColor.Green },
                         new ConsoleColumnOptions {Width = 20, Alignment = WrapAlignment.RIGHT , Color = ConsoleColor.Cyan, Aggregate = WrapAggregate.MEDIAN },
                     },
 

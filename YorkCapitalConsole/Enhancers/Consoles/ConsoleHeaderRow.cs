@@ -11,8 +11,8 @@ namespace Wrappers.Consoles
     {
         public string Heading { get; set; }
         public string Value { get; set; }
-        public ConsoleColor HeadingColor { get; set; } = ConsoleColor.Yellow;
-        public ConsoleColor ValueColor { get; set; } = ConsoleColor.White;
+        public ConsoleColor HeadingColor { get; set; } = ConsoleColor.DarkYellow;
+        public ConsoleColor ValueColor { get; set; } = ConsoleColor.DarkCyan;
         public WrapAlignment Alignment { get; set; } = WrapAlignment.LEFT; //CENTER not allowed. If set, LEFT will be considered.
     }
 }

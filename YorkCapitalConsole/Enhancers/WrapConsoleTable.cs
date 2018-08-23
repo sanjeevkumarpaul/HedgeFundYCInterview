@@ -133,7 +133,8 @@ namespace Wrappers
                         WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.Heading.Length), table.OtherOptions.BorderColor);
                         WrapConsole.WriteColor(" : ", row.HeadingColor);
                         WrapConsole.WriteColor($"{row.Value}", row.ValueColor);
-                        WrapConsole.WriteColor(" ".PadLeft(_textWidth - row.Value.Length ), table.OtherOptions.BorderColor);
+                        if (_textWidth - row.Value.Length > 0)
+                            WrapConsole.WriteColor(" ".PadLeft(_textWidth - row.Value.Length ), table.OtherOptions.BorderColor);
                         WrapConsole.WriteLineColor("|", table.OtherOptions.BorderColor);
                     }
                 }
