@@ -30,8 +30,8 @@ namespace Wrappers
             var separator = table.OtherOptions.BorderChar.ToString().Repeat(max + (table.ColumnOptions.Count() * 2) + 1);
 
             Console.WriteLine();
-            WrapConsole.WriteLineColor($"{separator}", table.OtherOptions.BorderColor);
-
+            DrawHeaderFooter(table, separator);
+            
             int col = 0;
             foreach (var rows in table.Rows)
             {
@@ -77,6 +77,8 @@ namespace Wrappers
                 WrapConsole.WriteLineColor($"{separator}", _borderColor);
                 col++;
             }
+
+            DrawHeaderFooter(table, separator, false);
         }
 
         /// <summary>
@@ -91,6 +93,33 @@ namespace Wrappers
             var len = width - text.Length;
             var padlen = ((int)len / 2) + text.Length;
             return text.PadLeft(padlen);
+        }
+
+        private static void DrawHeaderFooter(ConsoleTable table, string separator, bool header = true)
+        {
+            var _rows = header ? table.Headers : table.Footers;
+
+            if (header)
+                WrapConsole.WriteLineColor($"{separator}", table.OtherOptions.BorderColor);
+
+            if (_rows.Any())
+            {
+                var _leftWidth = _rows.Max(r => r.StaticText.Length) + 2;
+                int _colonWidth = 3;
+                var _rightWidth = separator.Length - (_leftWidth + _colonWidth + 3);
+
+                foreach(var row in _rows)
+                {
+                    WrapConsole.WriteColor($"|", table.OtherOptions.BorderColor);
+                    WrapConsole.WriteColor($" { row.StaticText }", row.TextColor);
+                    WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.StaticText.Length), table.OtherOptions.BorderColor);
+                    WrapConsole.WriteColor(" : ", row.TextColor);                    
+                    WrapConsole.WriteColor($" {row.StaticValue}", row.ValueColor);
+                    WrapConsole.WriteLineColor("|".PadLeft(_rightWidth - row.StaticValue.Length), table.OtherOptions.BorderColor);
+                }
+
+                WrapConsole.WriteLineColor($"{separator}", table.OtherOptions.BorderColor);
+            }
         }
 
         /// <summary>

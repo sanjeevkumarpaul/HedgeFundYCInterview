@@ -21,9 +21,20 @@ namespace ConsoleColorTables
                     OtherOptions = new ConsoleOtherOptions { Sort = new ConsoleSort { SortColumnIndex = 0 }  },
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
-                        new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = WrapConsoleWrapType.WORDWRAP },
-                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.CENTER , Color = ConsoleColor.White },
+                        new ConsoleColumnOptions {Width = 35, Alignment = WrapAlignment.LEFT , Color = ConsoleColor.DarkYellow, Wrap = WrapConsoleWrapType.WORDWRAP },
+                        new ConsoleColumnOptions {Width = 30, Alignment = WrapAlignment.CENTER , Color = ConsoleColor.DarkGreen },
                         new ConsoleColumnOptions {Width = 20, Alignment = WrapAlignment.RIGHT , Color = ConsoleColor.Cyan, Aggregate = WrapAggregate.MEDIAN },
+                    },
+
+                    Headers = new List<ConsoleHeaderFooterRow>
+                    {
+                        new ConsoleHeaderFooterRow { StaticText = "Information", StaticValue = "Test Naming" },
+                        new ConsoleHeaderFooterRow { StaticText = "Sorting", StaticValue = "Ascending" },
+                        new ConsoleHeaderFooterRow { StaticText = "Wrapping", StaticValue = "Word Wrapping" }
+                    },
+                    Footers = new List<ConsoleHeaderFooterRow>
+                    {
+                        new ConsoleHeaderFooterRow { StaticText = "Signature", StaticValue = "Machine" }                        
                     },
 
                     Rows = new List<ConsoleRow>
