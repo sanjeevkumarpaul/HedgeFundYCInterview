@@ -14,5 +14,6 @@ namespace Wrappers.Consoles
         public ConsoleColor Color { get; set; }
         public WrapAggregate Aggregate { get; set; } = WrapAggregate.NONE;
         public WrapConsoleWrapType Wrap { get; set; } = WrapConsoleWrapType.WRAP;
+        public ConsoleGroupByOption Group { get; set; }
     }
 }

@@ -75,7 +75,8 @@ namespace ConsoleColorTables
                                  new ConsoleRecord { Text = "23.00" },
                              }
                          }
-                }   });
+                    }
+                });
         
         }
     }
