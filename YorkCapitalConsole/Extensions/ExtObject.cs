@@ -153,22 +153,24 @@ namespace Extensions
         {
             Dictionary<string, string> value = new Dictionary<string, string>();
 
-            var tree = obj.PropertiesTree(virtuals, privates);
-
-            tree.ForEach((p) =>
+            if (obj != null)
             {
-                if (p.PropertyType.Namespace.ToLower().Equals("system"))
-                {
-                    string val = obj.GetVal(p.Name);                    
-                    value.Add( $"{parentName}{(parentName.Empty()? "":".")}{p.Name}", val.ToEmpty());
-                }
-                else
-                {                    
-                    var partialValue = DictionaryValuesTrees(p.GetValue(obj), p.Name, virtuals, privates);
-                    foreach (var dic in partialValue) value.Add(dic.Key, dic.Value);
-                }
-            });
+                var tree = obj.PropertiesTree(virtuals, privates);
 
+                tree.ForEach((p) =>
+                {
+                    if (p.PropertyType.Namespace.ToLower().Equals("system"))
+                    {
+                        string val = obj.GetVal(p.Name);
+                        value.Add($"{parentName}{(parentName.Empty() ? "" : ".")}{p.Name}", val.ToEmpty());
+                    }
+                    else
+                    {
+                        var partialValue = DictionaryValuesTrees(p.GetValue(obj), p.Name, virtuals, privates);
+                        foreach (var dic in partialValue) value.Add(dic.Key, dic.Value);
+                    }
+                });
+            }
             return value;
         }
 
