@@ -31,7 +31,15 @@ namespace Extensions
         public static T ToEnum<T>(this string str, T defaultValue = default(T)) where T : struct
         {
             T res = defaultValue;
-            Enum.TryParse<T>(str, out res);
+            try
+            {
+                res = (T)Enum.Parse(typeof(T), str);
+            }
+            catch
+            {
+                res = defaultValue;
+            }
+            
 
             return res;
         }
