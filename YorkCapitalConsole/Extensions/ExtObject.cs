@@ -148,6 +148,34 @@ namespace Extensions
 
             return value.Substring(0, value.Length - 1);
         }
+        
+        private static Dictionary<string, string> DictionaryValuesTrees(object obj, string parentName, bool virtuals = false, bool privates = false)
+        {
+            Dictionary<string, string> value = new Dictionary<string, string>();
+
+            var tree = obj.PropertiesTree(virtuals, privates);
+
+            tree.ForEach((p) =>
+            {
+                if (p.PropertyType.Namespace.ToLower().Equals("system"))
+                {
+                    string val = obj.GetVal(p.Name);                    
+                    value.Add( $"{parentName}{(parentName.Empty()? "":".")}{p.Name}", val.ToEmpty());
+                }
+                else
+                {                    
+                    var partialValue = DictionaryValuesTrees(p.GetValue(obj), p.Name, virtuals, privates);
+                    foreach (var dic in partialValue) value.Add(dic.Key, dic.Value);
+                }
+            });
+
+            return value;
+        }
+
+        public static Dictionary<string, string> DictionaryValuesTree<T>(this T obj,  bool nullToEmpty = true, bool virtuals = false, bool privates = false)
+        {
+            return DictionaryValuesTrees(obj, "", virtuals, privates);            
+        }
 
 
         public static string ClosestFieldName<T>(this T obj, string unAccountedfieldName)
