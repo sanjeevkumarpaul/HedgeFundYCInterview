@@ -1,0 +1,68 @@
+{
+  "Commands": [
+    {
+      "UserCommands": [ "VENDOR --" ],
+      "Options": [
+
+        {
+          "Width": "40",
+          "Color": "Yellow",
+          "Wrap": "WORDWRAP",
+          "Heading": "Company",
+          "ValueProperty": "Company"
+        },
+        {
+          "Width": "15",
+          "Color": "White",
+          "Heading": "Tax ID",
+          "ValueProperty": "TaxID"
+        },
+        {
+          "Width": "20",
+          "Color": "Cyan",
+          "Wrap": "WORDWRAP",
+          "Heading": "Qual.",
+          "ValueProperty": "Qualification.Description"
+        },
+        {
+          "Width": "14",
+          "Color": "Cyan",
+          "Heading": "Qual. Start",
+          "ValueProperty": "Qualification.Commence"
+        },
+        {
+          "Width": "14",
+          "Color": "Cyan",
+          "Heading": "Qual. Exp.",
+          "ValueProperty": "Qualification.Expiration"
+        },
+        {
+          "Width": "20",
+          "Color": "Red",
+          "Wrap": "WORDWRAP",
+          "Heading": "Cert.",
+          "ValueProperty": "Ceritificaton.Description"
+        },
+        {
+          "Width": "14",
+          "Color": "Red",
+          "Heading": "Cert. Start",
+          "ValueProperty": "Ceritificaton.Commence"
+        },
+        {
+          "Width": "14",
+          "Color": "Red",
+          "Heading": "Cert. Exp.",
+          "ValueProperty": "Ceritificaton.Expiration"
+        },
+        {
+          "Width": "14",
+          "Color": "Green",
+          "Heading": "Contact(s)",
+          "ValueProperty": "ContactCount"
+        }
+
+      ]
+    }
+  ]
+}

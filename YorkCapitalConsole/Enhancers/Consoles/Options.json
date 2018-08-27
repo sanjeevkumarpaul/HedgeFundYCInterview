@@ -1,0 +1,47 @@
+{
+  "Commands": [
+    {
+      "UserCommands": [ "Vendor --" ],
+      "Options": {
+        "ColumnHeaderColor": "White",
+        "AggregateColor": "White",
+        "BorderColor": "DarkGreen",
+        "BorderChar": "-",
+        "SortColumnIndex": "-1",
+        "SortType": "ASCENDING",
+        "SortDataType": "STRING",
+        "Footer": {
+          "Text": "",
+          "Value": "",
+          "TextColor": "RED",
+          "ValueColor": "RED",
+          "Alignment": "LEFT"
+        },
+        "Header": {
+          "Text": "",
+          "Value": "",
+          "TextColor": "RED",
+          "ValueColor": "RED",
+          "Alignment": "LEFT"
+        }
+      },
+      "Columns": [
+        {
+          "Width": "40",
+          "Color": "Yellow",
+          "Wrap": "WORDWRAP",
+          "Heading": "Company",
+          "ValueProperty": "Company",
+          "Alignment": "LEFT"
+        },
+        {
+          "Width": "15",
+          "Color": "White",
+          "Heading": "Tax ID",
+          "ValueProperty": "TaxID",
+          "Aggregate": "SUM"
+        }
+      ]
+    }
+  ]
+}

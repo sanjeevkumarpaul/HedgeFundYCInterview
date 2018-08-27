@@ -91,8 +91,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Consoles\Options.json" />
     <None Include="packages.config" />
+    <None Include="Resources\ExampleCommand.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Consoles\Options Classes.txt" />
+    <Content Include="Resources\Console Config Classes.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

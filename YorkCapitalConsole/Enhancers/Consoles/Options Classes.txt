@@ -1,0 +1,91 @@
+﻿public partial class ConsoleCommandConfigs
+    {
+        [JsonProperty("Commands")]
+        public List<Command> Commands { get; set; }
+    }
+
+    public partial class Command
+    {
+        [JsonProperty("UserCommands")]
+        public List<string> UserCommands { get; set; }
+
+        [JsonProperty("Options")]
+        public Options Options { get; set; }
+
+        [JsonProperty("Columns")]
+        public List<Column> Columns { get; set; }
+    }
+
+    public partial class Column
+    {
+        [JsonProperty("Width")]
+        [JsonConverter(typeof(ParseStringConverter))]
+        public long Width { get; set; }
+
+        [JsonProperty("Color")]
+        public string Color { get; set; }
+
+        [JsonProperty("Wrap", NullValueHandling = NullValueHandling.Ignore)]
+        public string Wrap { get; set; }
+
+        [JsonProperty("Heading")]
+        public string Heading { get; set; }
+
+        [JsonProperty("ValueProperty")]
+        public string ValueProperty { get; set; }
+
+        [JsonProperty("Alignment", NullValueHandling = NullValueHandling.Ignore)]
+        public string Alignment { get; set; }
+
+        [JsonProperty("Aggregate", NullValueHandling = NullValueHandling.Ignore)]
+        public string Aggregate { get; set; }
+    }
+
+    public partial class Options
+    {
+        [JsonProperty("ColumnHeaderColor")]
+        public string ColumnHeaderColor { get; set; }
+
+        [JsonProperty("AggregateColor")]
+        public string AggregateColor { get; set; }
+
+        [JsonProperty("BorderColor")]
+        public string BorderColor { get; set; }
+
+        [JsonProperty("BorderChar")]
+        public string BorderChar { get; set; }
+
+        [JsonProperty("SortColumnIndex")]
+        [JsonConverter(typeof(ParseStringConverter))]
+        public long SortColumnIndex { get; set; }
+
+        [JsonProperty("SortType")]
+        public string SortType { get; set; }
+
+        [JsonProperty("SortDataType")]
+        public string SortDataType { get; set; }
+
+        [JsonProperty("Footer")]
+        public Footer Footer { get; set; }
+
+        [JsonProperty("Header")]
+        public Footer Header { get; set; }
+    }
+
+    public partial class Footer
+    {
+        [JsonProperty("Text")]
+        public string Text { get; set; }
+
+        [JsonProperty("Value")]
+        public string Value { get; set; }
+
+        [JsonProperty("TextColor")]
+        public string TextColor { get; set; }
+
+        [JsonProperty("ValueColor")]
+        public string ValueColor { get; set; }
+
+        [JsonProperty("Alignment")]
+        public string Alignment { get; set; }
+    }
