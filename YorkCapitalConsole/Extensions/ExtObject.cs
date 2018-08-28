@@ -165,8 +165,10 @@ namespace Extensions
                         value.Add($"{parentName}{(parentName.Empty() ? "" : ".")}{p.Name}", val.ToEmpty());
                     }
                     else
-                    {
-                        var partialValue = DictionaryValuesTrees(p.GetValue(obj), p.Name, virtuals, privates);
+                    {                        
+                        parentName = !parentName.Empty() ? $"{parentName}.{p.Name}" : p.Name;
+
+                        var partialValue = DictionaryValuesTrees(p.GetValue(obj), parentName, virtuals, privates);
                         foreach (var dic in partialValue) value.Add(dic.Key, dic.Value);
                     }
                 });
@@ -174,7 +176,7 @@ namespace Extensions
             return value;
         }
 
-        public static Dictionary<string, string> DictionaryValuesTree<T>(this T obj,  bool nullToEmpty = true, bool virtuals = false, bool privates = false)
+        public static Dictionary<string, string> DictionaryValuesTree<T>(this T obj,  bool virtuals = false, bool privates = false)
         {
             return DictionaryValuesTrees(obj, "", virtuals, privates);            
         }
