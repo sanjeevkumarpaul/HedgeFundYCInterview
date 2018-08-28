@@ -166,9 +166,9 @@ namespace Extensions
                     }
                     else
                     {                        
-                        parentName = !parentName.Empty() ? $"{parentName}.{p.Name}" : p.Name;
+                        var _name = !parentName.Empty() ? $"{parentName}.{p.Name}" : p.Name;
 
-                        var partialValue = DictionaryValuesTrees(p.GetValue(obj), parentName, virtuals, privates);
+                        var partialValue = DictionaryValuesTrees(p.GetValue(obj), _name, virtuals, privates);
                         foreach (var dic in partialValue) value.Add(dic.Key, dic.Value);
                     }
                 });
