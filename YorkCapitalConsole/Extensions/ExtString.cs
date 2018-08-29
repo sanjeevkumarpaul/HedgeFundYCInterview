@@ -53,6 +53,16 @@ namespace Extensions
             return string.IsNullOrWhiteSpace(str);
         }
         
+        public static string ToBoolText(this string str, string YesVal = "YES", string NoVal = "NO"  )
+        {
+            bool yesno = (YesVal.ToEmpty() == "YES" && NoVal.ToEmpty() == "NO");
+            bool truefalse = YesVal.Empty() && NoVal.Empty();
+            bool _flag = str.ToEmpty().ToBool();
+            
+
+            return  yesno ? (_flag ? "YES" : "NO") : ( truefalse ? (_flag ? "TRUE" : "FALSE")  : (_flag ? YesVal : NoVal )   );
+        }
+        
         public static string RemoveSeprators(this string str)
         {
             return Regex.Replace(str, "[^0-9a-zA-Z]+", "");
