@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -162,7 +162,7 @@ namespace Wrappers
                         case WrapConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;
                     }//switch
 
-                    if (_col.MText.Count() > 1)
+                    if (_col.MText.Any())
                     {
                         var emptylines = _col.MText.Where(l => l.Trim().Empty());
                         if (emptylines.Any())
