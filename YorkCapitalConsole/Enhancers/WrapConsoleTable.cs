@@ -148,36 +148,50 @@ namespace Wrappers
         /// </summary>      
         private static void Wrap(ConsoleTable table, int colIndex)
         {
-            var _option = table.ColumnOptions.ElementAt(colIndex);            
+            var _option = table.ColumnOptions.ElementAt(colIndex);
             table.Rows.ForEach(r =>
             {
-                var _col = r.Column.ElementAt(colIndex);                    
+                var _col = r.Column.ElementAt(colIndex);
                 if (_col.Text.Length > _option.Width && _option.Wrap != WrapConsoleWrapType.NOWRAP)
                 {
-                    switch(_option.Wrap)
+                    switch (_option.Wrap)
                     {
                         case WrapConsoleWrapType.ELLIPSES: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}..."; break;
-                        case WrapConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width)}"; break;
-                        case WrapConsoleWrapType.WRAP: WrapAround(_col); break;                            
-                        case WrapConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;                            
+                        case WrapConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}"; break;
+                        case WrapConsoleWrapType.WRAP: WrapAround(_col); break;
+                        case WrapConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;
                     }//switch
-                }                        
-             });
+
+                    if (_col.MText.Count() > 1)
+                    {
+                        var emptylines = _col.MText.Where(l => l.Trim().Empty());
+                        if (emptylines.Any())
+                            _col.MText.RemoveEx(emptylines.ToList());
+                        _col.Lines = _col.MText.Count();
+                        _col.Text = "";
+                    }
+                }
+            });
 
             void WrapAround(ConsoleRecord col)
             {
-                var _lines = (int)Math.Ceiling(col.Text.Length / (_option.Width * 1d));
-                col.Lines = _lines;
+                var _lines = (int)Math.Ceiling(col.Text.Length / (_option.Width * 1d));              
                 int _next = 0;
                 int _end = _option.Width;
                 int _total = col.Text.Length;
                 for (int i = 1; i <= _lines; i++)
-                {
-                    col.MText.Add(col.Text.Substring(_next, (_end < _total ? _end : (_total - _option.Width))));
+                {                    
+                    try
+                    {
+                        col.MText.Add(col.Text.Substring(_next, (_end < _total ? _option.Width : (_end - _total))));
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine($"Error at Wrap: - {col.Text}, Width: {_option.Width}, Message: {e.Message}");
+                    }
                     _next = _end;
-                    _end += _end;
-                }
-                col.Text = "";
+                    _end += _option.Width;
+                }               
             }
 
             void WrapWordAround(ConsoleRecord col)
@@ -200,9 +214,7 @@ namespace Wrappers
                         }
                         _next++;
                         if (_next >= _words.Count()) { col.MText.Add(_text); break; }
-                    }
-                    col.Lines = col.MText.Count();
-                    col.Text = "";
+                    }                   
                 }
             }
         }
