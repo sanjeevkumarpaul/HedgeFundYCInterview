@@ -19,25 +19,6 @@
 <#@ import namespace="Microsoft.VisualStudio.Shell" #>
 <#@ import namespace="Microsoft.VisualStudio.Shell.Interop" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
-<#@ import namespace="Microsoft.VisualStudio.OLE.Interop" #>
-
-namespace nameabc
-{
-	using System;
-
-<#
-	string templateDirectory = Path.GetDirectoryName(Host.TemplateFile);
-#>
-	public class SomeClass
-	{
-		static void somemethod()
-		{
-			Console.WriteLine(@"<# Write( templateDirectory ); #>");
-		}
-	}
-}
-
-
 <#+
 	Engine __engine = new Engine();
 	void SaveOutput(string outputFileName) //Call this to save a file into a differnt project.
@@ -132,7 +113,7 @@ namespace nameabc
 		if (string.IsNullOrEmpty(projectGuid))
 			throw new Exception("Unable to find ProjectGuid element in the project file");
 
-		IServiceProvider dteServiceProvider = 
+		Microsoft.VisualStudio.OLE.Interop.IServiceProvider dteServiceProvider = 
 			(Microsoft.VisualStudio.OLE.Interop.IServiceProvider)project.DTE;
 		IServiceProvider serviceProvider = new ServiceProvider(dteServiceProvider); 
 		IVsHierarchy vsHierarchy = VsShellUtilities.GetHierarchy(serviceProvider, new Guid(projectGuid));

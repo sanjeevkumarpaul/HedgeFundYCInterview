@@ -66,11 +66,6 @@
     <Compile Include="Consoles\Enums\WrapConsoleStyle.cs" />
     <Compile Include="Consoles\Enums\WrapConsoleWrapType.cs" />
     <Compile Include="Consoles\Enums\WrapSort.cs" />
-    <Compile Include="Resources\Some.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Some.tt</DependentUpon>
-    </Compile>
     <Compile Include="WrapConsole.cs" />
     <Compile Include="WrapConsoleTable.cs" />
     <Compile Include="WrapEntityFramework.cs" />
@@ -101,11 +96,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Options Classes.txt" />
-    <Content Include="Resources\Some.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Some.cs</LastGenOutput>
-      <FormatOutput>True</FormatOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
