@@ -223,8 +223,25 @@ namespace Extensions
 
             return string.Empty;
         }
+        
+        public static bool IsGeneric(this object obj)
+        {
+            return !obj.Null() && ( obj.GetType().IsConstructedGenericType && obj.GetType().IsGenericTypeDefinition );
+        }
 
-               
+        public static bool ContainsItems(this object obj)
+        {
+            if (obj.IsGeneric())
+            {
+                Type t = obj.GetType();
+                PropertyInfo prop = t.GetProperties().FirstOrDefault(p => p.Name.EqualsIgnoreCase("count"));
+                if (prop != null)
+                    return obj.GetVal(prop.Name).ToInt() > 0;
+                return false;
+            }
+            else
+                return !obj.Null();            
+        }              
        
     }
 }
