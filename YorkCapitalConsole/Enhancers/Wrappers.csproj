@@ -93,6 +93,7 @@
     <None Include="App.config" />
     <None Include="Resources\Options.json" />
     <None Include="packages.config" />
+    <Compile Include="WrapConsoleSpinner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Options Classes.txt" />
