@@ -6,6 +6,9 @@ using System.Reflection;
 
 namespace Extensions
 {
+    //To create a instance of Enum
+    //CommandEnum = (Enum)Activator.CreateInstance(<<Assembly>>, <<enum type>>).Unwrap()
+    
     public static partial class ExtEnum
     {
         public static string Description<T>(this T en) where T : struct
