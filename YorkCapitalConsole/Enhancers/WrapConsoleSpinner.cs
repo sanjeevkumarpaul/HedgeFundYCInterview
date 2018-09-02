@@ -10,7 +10,6 @@ namespace Wrappers
         private readonly int left;
         private readonly int top;
         private readonly int delay;
-        private bool active;
         private readonly Thread thread;
 
         public WrapConsoleSpinner(int delay = 100)
@@ -21,26 +20,28 @@ namespace Wrappers
             thread = new Thread(Spin);
         }
 
+        public bool IsActive { get; private set; }
+
         public void Start()
         {
-            active = true;
+            IsActive = true;
             if (!thread.IsAlive)
                 thread.Start();
         }
 
         public void Stop()
         {
-            active = false;
+            IsActive = false;
             thread.Abort();
             Draw(' ');
             Console.WriteLine();
         }
 
-        public bool IsActive { get { return active; } }
+       
 
         private void Spin()
         {
-            while (active)
+            while (IsActive)
             {
                 Turn();
                 Thread.Sleep(delay);                
@@ -49,10 +50,12 @@ namespace Wrappers
 
         private void Draw(char c)
         {
-            //Console.SetCursorPosition(left, top);
-            Console.SetCursorPosition(left, top);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(c);
+            if (IsActive)
+            {
+                Console.SetCursorPosition(left, top);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(c);
+            }
         }
 
         private void Turn()
