@@ -183,7 +183,7 @@ namespace Wrappers
                 {                    
                     try
                     {
-                        col.MText.Add(col.Text.Substring(_next, (_end < _total ? _option.Width : (_end - _total))));
+                        col.MText.Add(col.Text.Substring(_next, (_end <= _total ? _option.Width : (_end - _total))));
                     }
                     catch(Exception e)
                     {
