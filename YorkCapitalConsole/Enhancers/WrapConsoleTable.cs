@@ -17,7 +17,7 @@ namespace Wrappers
 
             #region ^Finding Column Width
             var max = table.ColumnOptions.Count();
-            for (int i = 0; i < max - 1; i++)
+            for (int i = 0; i < max; i++)
             {
                 Wrap(table, i);
 
