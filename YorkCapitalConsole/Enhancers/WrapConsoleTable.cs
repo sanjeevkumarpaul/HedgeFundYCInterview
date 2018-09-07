@@ -152,7 +152,7 @@ namespace Wrappers
             table.Rows.ForEach(r =>
             {
                 var _col = r.Column.ElementAt(colIndex);
-                if (_col.Text.Length > _option.Width && _option.Wrap != WrapConsoleWrapType.NOWRAP)
+                if ( (_col.Text.Length > _option.Width && _option.Wrap != WrapConsoleWrapType.NOWRAP ) || ( _option.Wrap == WrapConsoleWrapType.WORDCHAR ))
                 {
                     switch (_option.Wrap)
                     {
@@ -160,6 +160,7 @@ namespace Wrappers
                         case WrapConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}"; break;
                         case WrapConsoleWrapType.WRAP: WrapAround(_col); break;
                         case WrapConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;
+                        case WrapConsoleWrapType.WORDCHAR: WrapChar(_col); break;
                     }//switch
 
                     if (_col.MText.Any())
@@ -218,7 +219,7 @@ namespace Wrappers
                 }                                
             }
             
-            void WordChar(ConsoleRecord col)
+            void WrapChar(ConsoleRecord col)
             {
                 var _sentence = col.Text.SplitEx(_option.WrapCharCharacter);
                 foreach(var sen in _sentence)
