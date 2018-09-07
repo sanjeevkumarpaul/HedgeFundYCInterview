@@ -215,6 +215,15 @@ namespace Wrappers
                         _next++;
                         if (_next >= _words.Count()) { col.MText.Add(_text); break; }
                     }                   
+                }                                
+            }
+            
+            void WordChar(ConsoleRecord col)
+            {
+                var _sentence = col.Text.SplitEx(_option.WrapCharCharacter);
+                foreach(var sen in _sentence)
+                {
+                    col.MText.Add(sen.PadRight(_option.Width));
                 }
             }
         }
