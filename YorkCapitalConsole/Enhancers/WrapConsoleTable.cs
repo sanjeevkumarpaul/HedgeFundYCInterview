@@ -174,24 +174,23 @@ namespace Wrappers
                 }
             });
 
-            void WrapAround(ConsoleRecord col)
+            void WrapAround(ConsoleRecord col, string text =  null)
             {
-                var _lines = (int)Math.Ceiling(col.Text.Length / (_option.Width * 1d));              
-                int _next = 0;
-                int _end = _option.Width;
-                int _total = col.Text.Length;
+                text = (text ?? col.Text);
+                var _lines = (int)Math.Ceiling(text.Length / (_option.Width * 1d));                            
+                int _total = text.Length;
                 for (int i = 1; i <= _lines; i++)
                 {                    
                     try
                     {
-                        col.MText.Add(col.Text.Substring(_next, (_end <= _total ? _option.Width : (_end - _total))));
+                        var _len = text.Length < _option.Width? text.Length : _option.Width;
+                        col.MText.Add(text.Substring(0, _len));
+                        text = text.Substring(_option.Width);
                     }
                     catch(Exception e)
                     {
-                        Console.WriteLine($"Error at Wrap: - {col.Text}, Width: {_option.Width}, Message: {e.Message}");
-                    }
-                    _next = _end;
-                    _end += _option.Width;
+                        Console.WriteLine($"Error at Wrap: - {text}, Width: {_option.Width}, Message: {e.Message}");
+                    }              
                 }               
             }
 
@@ -224,7 +223,10 @@ namespace Wrappers
                 var _sentence = col.Text.SplitEx(_option.WrapCharCharacter);
                 foreach(var sen in _sentence)
                 {
-                    col.MText.Add(sen.PadRight(_option.Width));
+                    if (sen.Length >= _option.Width)
+                        WrapAround(col, sen);
+                    else
+                        col.MText.Add(sen.PadRight(_option.Width));
                 }
             }
         }

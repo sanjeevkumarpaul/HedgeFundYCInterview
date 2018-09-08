@@ -15,6 +15,6 @@ namespace Wrappers.Consoles
         public WrapAggregate Aggregate { get; set; } = WrapAggregate.NONE;
         public WrapConsoleWrapType Wrap { get; set; } = WrapConsoleWrapType.WRAP;
         public ConsoleGroupByOption Group { get; set; }
-        public char WrapCharCharacter { get; set; } = ',';
+        public char WrapCharCharacter { get; set; } = '~';
     }
 }
