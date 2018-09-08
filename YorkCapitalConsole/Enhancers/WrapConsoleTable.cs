@@ -185,7 +185,8 @@ namespace Wrappers
                     {
                         var _len = text.Length < _option.Width? text.Length : _option.Width;
                         col.MText.Add(text.Substring(0, _len));
-                        text = text.Substring(_option.Width);
+                        if (text.Length >= _option.Width)
+                            text = text.Substring(_option.Width);
                     }
                     catch(Exception e)
                     {

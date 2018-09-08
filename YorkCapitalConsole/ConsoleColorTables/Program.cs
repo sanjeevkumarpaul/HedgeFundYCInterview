@@ -52,7 +52,7 @@ namespace ConsoleColorTables
                          {
                              Column = new List<ConsoleRecord>
                              {
-                                 new ConsoleRecord { Text = "Surpal~Singh Raja,      Rani Rajputana Hillay La bunglow."},
+                                 new ConsoleRecord { Text = "Surpal~Singh Raja,      Rani Rajputana Hillay La bunglow. In Paris where the doors are bells and windows are curtained."},
                                  new ConsoleRecord { Text = "Reday To Install" },
                                  new ConsoleRecord { Text = "100.00" },
                              }
@@ -70,7 +70,7 @@ namespace ConsoleColorTables
                          {
                              Column = new List<ConsoleRecord>
                              {
-                                 new ConsoleRecord { Text = "Nandu Halwai Panighat Ladayi"},
+                                 new ConsoleRecord { Text = "Nandu Halwai Panighat Ladayi Beer Sang Jai"},
                                  new ConsoleRecord { Text = "Current Century" },
                                  new ConsoleRecord { Text = "23.00" },
                              }
