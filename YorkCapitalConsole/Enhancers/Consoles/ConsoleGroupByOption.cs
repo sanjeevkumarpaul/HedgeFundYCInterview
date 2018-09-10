@@ -7,7 +7,7 @@ namespace Wrappers.Consoles
     {
         public string Text { get; set; }
         public ConsoleColor Color { get; set; } = ConsoleColor.Cyan;
-        public WrapAlignment Alignment { get; set; } = WrapAlignment.LEFT;
-        public WrapSort GroupOrder { get; set; } = WrapSort.ASCENDING;
+        public ConsoleAlignment Alignment { get; set; } = ConsoleAlignment.LEFT;
+        public ConsoleSortType GroupOrder { get; set; } = Enums.ConsoleSortType.ASCENDING;
     }
 }

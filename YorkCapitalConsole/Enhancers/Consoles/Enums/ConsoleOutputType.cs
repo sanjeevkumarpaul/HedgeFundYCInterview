@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace Wrappers.Consoles.Enums
 {
-    public enum WrapSort
-    {        
-        ASCENDING,
-        DESCENDING
-    }
-
-    public enum WrapSortDataType
+    public enum ConsoleOutputStyle
     {
-        STRING,
-        NUMBER,
-        DATETIME
+        CONSOLE,
+        HTML,
+        TEXT,
+        EXCEL
     }
 }

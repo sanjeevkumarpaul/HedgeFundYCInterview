@@ -15,6 +15,7 @@ namespace Wrappers.Consoles
         public ConsoleColor BorderColor { get; set; } = ConsoleColor.Gray;
         public char BorderChar { get; set; } = '-';
         internal bool IsAggregateRowExists { get; set; } = false;
-        public ConsoleSort Sort { get; set; } = new ConsoleSort();       
+        public ConsoleSort Sort { get; set; } = new ConsoleSort();
+        public ConsoleOutput Output { get; set; } = new ConsoleOutput();
     }
 }

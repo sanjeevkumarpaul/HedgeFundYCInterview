@@ -35,7 +35,7 @@ namespace APIUtilCallDemo
             public void Final(IAPIProspect result)
             {
                 Console.WriteLine();
-                "API Call is completely done.".WriteLine(WrapConsoleStyle.COMPLETE);
+                "API Call is completely done.".WriteLine(ConsoleTextStyle.COMPLETE);
             }
 
             public void Post(IEnumerable<IAPIProspect> results)
@@ -75,9 +75,9 @@ namespace APIUtilCallDemo
                 {
                     var res = (result as RealtimeCurrencyExchange).RealtimeCurrencyExchangeRate;
 
-                    "Exchange Currency ".Write(WrapConsoleStyle.INVERSE); "Information Received...".WriteLine(WrapConsoleStyle.SUCCESS);
+                    "Exchange Currency ".Write(ConsoleTextStyle.INVERSE); "Information Received...".WriteLine(ConsoleTextStyle.SUCCESS);
                     $@"     >> From {res?.FromCurrencyName}({res?.FromCurrencyCode}) to {res?.ToCurrencyName}({res?.ToCurrencyCode}) => Exchange Rate: {res?.ExchangeRate}"
-                        .WriteLine(WrapConsoleStyle.WARNING);
+                        .WriteLine(ConsoleTextStyle.WARNING);
 
                     //if (_exchangeCountry > 2) config?.Cancel(); //Cancellation Token used.
                     //if (_exchangeCountry > 2) config?.CancelCurrentRepeat(); //Cancellation only for current Repeated API.
@@ -95,8 +95,8 @@ namespace APIUtilCallDemo
                 {
                     var res = (result as StockQuoteMaster).StockQuotes;
 
-                    "Stock Quotes ".Write(WrapConsoleStyle.SATISFACTORY); " Information Received...".WriteLine(WrapConsoleStyle.INFORMATION);
-                    $@"     >> Price Volume: {res?.Sum(r => r.Price?.ToDouble())} ".WriteLine(WrapConsoleStyle.FAILURE);
+                    "Stock Quotes ".Write(ConsoleTextStyle.SATISFACTORY); " Information Received...".WriteLine(ConsoleTextStyle.INFORMATION);
+                    $@"     >> Price Volume: {res?.Sum(r => r.Price?.ToDouble())} ".WriteLine(ConsoleTextStyle.FAILURE);
                 }
             }
 

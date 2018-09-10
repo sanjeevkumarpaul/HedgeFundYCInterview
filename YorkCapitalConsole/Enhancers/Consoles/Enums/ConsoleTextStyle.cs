@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wrappers.Consoles.Enums
 {
-    public enum WrapConsoleStyle
+    public enum ConsoleTextStyle
     {
         NORMAL,
         SUCCESS,

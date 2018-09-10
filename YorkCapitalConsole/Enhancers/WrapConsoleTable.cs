@@ -27,58 +27,61 @@ namespace Wrappers
             max = table.ColumnOptions.Sum(c => c.Width);
             #endregion ~Finding Column Width
 
-            var separator = table.OtherOptions.BorderChar.ToString().Repeat(max + (table.ColumnOptions.Count() * 2) + 1);
-
-            Console.WriteLine();
-            DrawHeaderFooter(table, separator);
-            
-            int col = 0;
-            foreach (var rows in table.Rows)
+            if (!ExternalOutput(table))
             {
-                var _borderColor = (rows.IsAggregate || (rows.IsLastRow && table.OtherOptions.IsAggregateRowExists)) ?
-                                            table.OtherOptions.AggregateBorderColor : table.OtherOptions.BorderColor;
-                var _borderBarColor = rows.IsAggregate ? _borderColor : table.OtherOptions.BorderColor;
+                var separator = table.OtherOptions.BorderChar.ToString().Repeat(max + (table.ColumnOptions.Count() * 2) + 1);
 
-                var mLines = rows.Column.Max(c => c.Lines) - 1;
-                for (int mindex = 0; mindex <= mLines; mindex++)
+                Console.WriteLine();
+                DrawHeaderFooter(table, separator);
+
+                int col = 0;
+                foreach (var rows in table.Rows)
                 {
-                    int i = 0;
-                    WrapConsole.WriteColor("|", _borderBarColor);
-                    rows.Column.ForEach(C =>
+                    var _borderColor = (rows.IsAggregate || (rows.IsLastRow && table.OtherOptions.IsAggregateRowExists)) ?
+                                                table.OtherOptions.AggregateBorderColor : table.OtherOptions.BorderColor;
+                    var _borderBarColor = rows.IsAggregate ? _borderColor : table.OtherOptions.BorderColor;
+
+                    var mLines = rows.Column.Max(c => c.Lines) - 1;
+                    for (int mindex = 0; mindex <= mLines; mindex++)
                     {
-                        var _option = table.ColumnOptions[i++];
-                        var _alText = C.Text;
+                        int i = 0;
+                        WrapConsole.WriteColor("|", _borderBarColor);
+                        rows.Column.ForEach(C =>
+                        {
+                            var _option = table.ColumnOptions[i++];
+                            var _alText = C.Text;
 
                         //Wrapping requirement.
                         if ((_alText.Empty() || mindex > 0) && C.MText.Any() && C.MText.Count > mindex)
-                            _alText = C.MText.ElementAt(mindex);
-                        else if (!_alText.Empty() && mindex > 0)
-                            _alText = "";
+                                _alText = C.MText.ElementAt(mindex);
+                            else if (!_alText.Empty() && mindex > 0)
+                                _alText = "";
 
                         //Making sure of alignment
-                        _alText = _option.Alignment == WrapAlignment.LEFT ?
-                                            (_alText).PadRight(_option.Width) :
-                                            _option.Alignment == WrapAlignment.RIGHT ? (_alText).PadLeft(_option.Width) : CenteredText(_alText, _option.Width);
+                        _alText = _option.Alignment == ConsoleAlignment.LEFT ?
+                                                (_alText).PadRight(_option.Width) :
+                                                _option.Alignment == ConsoleAlignment.RIGHT ? (_alText).PadLeft(_option.Width) : CenteredText(_alText, _option.Width);
 
-                        var _color = C.IsAggregate ? table.OtherOptions.AggregateColor :
-                                            (col == 0 && table.OtherOptions.IsFirstRowAsHeader ? table.OtherOptions.HeadingColor : _option.Color);
-                        var _prefix = _option.Alignment != WrapAlignment.RIGHT ? " " : ""; //Left space
-                        var _postfix = _option.Alignment == WrapAlignment.RIGHT ? " " : "";//Right space
+                            var _color = C.IsAggregate ? table.OtherOptions.AggregateColor :
+                                                (col == 0 && table.OtherOptions.IsFirstRowAsHeader ? table.OtherOptions.HeadingColor : _option.Color);
+                            var _prefix = _option.Alignment != ConsoleAlignment.RIGHT ? " " : ""; //Left space
+                        var _postfix = _option.Alignment == ConsoleAlignment.RIGHT ? " " : "";//Right space
 
                         WrapConsole.WriteColor($"{_prefix}{ _alText }{_postfix}", _color);
 
-                        if (_option.Alignment == WrapAlignment.CENTER)
-                            WrapConsole.WriteColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor);
-                        else
-                            WrapConsole.WriteColor("|", _borderBarColor);
-                    });
-                    Console.WriteLine();
+                            if (_option.Alignment == ConsoleAlignment.CENTER)
+                                WrapConsole.WriteColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor);
+                            else
+                                WrapConsole.WriteColor("|", _borderBarColor);
+                        });
+                        Console.WriteLine();
+                    }
+                    WrapConsole.WriteLineColor($"{separator}", _borderColor);
+                    col++;
                 }
-                WrapConsole.WriteLineColor($"{separator}", _borderColor);
-                col++;
-            }
 
-            DrawHeaderFooter(table, separator, false);
+                DrawHeaderFooter(table, separator, false);
+            }
         }
 
         /// <summary>
@@ -93,6 +96,19 @@ namespace Wrappers
             var len = width - text.Length;
             var padlen = ((int)len / 2) + text.Length;
             return text.PadLeft(padlen);
+        }
+
+        private static bool ExternalOutput(ConsoleTable table)
+        {
+            switch(table.OtherOptions.Output.Style)
+            {
+                case ConsoleOutputStyle.CONSOLE: return false;
+                case ConsoleOutputStyle.HTML: new WrapHtmlTable(table).Draw(); break;
+                case ConsoleOutputStyle.EXCEL: break;
+                case ConsoleOutputStyle.TEXT: break;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -118,7 +134,7 @@ namespace Wrappers
                 {
                     WrapConsole.WriteColor($"|", table.OtherOptions.BorderColor);
 
-                    if (row.Alignment == WrapAlignment.LEFT || row.Alignment == WrapAlignment.CENTER)
+                    if (row.Alignment == ConsoleAlignment.LEFT || row.Alignment == ConsoleAlignment.CENTER)
                     {
                         WrapConsole.WriteColor($" { row.Heading }", row.HeadingColor);
                         WrapConsole.WriteColor(" ".PadLeft(_leftWidth - row.Heading.Length), table.OtherOptions.BorderColor);
@@ -152,15 +168,15 @@ namespace Wrappers
             table.Rows.ForEach(r =>
             {
                 var _col = r.Column.ElementAt(colIndex);
-                if ( (_col.Text.Length > _option.Width && _option.Wrap != WrapConsoleWrapType.NOWRAP ) || ( _option.Wrap == WrapConsoleWrapType.WORDCHAR ))
+                if ( (_col.Text.Length > _option.Width && _option.Wrap != ConsoleWrapType.NOWRAP ) || ( _option.Wrap == ConsoleWrapType.WORDCHAR ))
                 {
                     switch (_option.Wrap)
                     {
-                        case WrapConsoleWrapType.ELLIPSES: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}..."; break;
-                        case WrapConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}"; break;
-                        case WrapConsoleWrapType.WRAP: WrapAround(_col); break;
-                        case WrapConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;
-                        case WrapConsoleWrapType.WORDCHAR: WrapChar(_col); break;
+                        case ConsoleWrapType.ELLIPSES: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}..."; break;
+                        case ConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}"; break;
+                        case ConsoleWrapType.WRAP: WrapAround(_col); break;
+                        case ConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;
+                        case ConsoleWrapType.WORDCHAR: WrapChar(_col); break;
                     }//switch
 
                     if (_col.MText.Any())
@@ -246,7 +262,7 @@ namespace Wrappers
 
                 table.Rows.ForEach(r => Convert( r.Column.ElementAt(table.OtherOptions.Sort.SortColumnIndex), table.OtherOptions.Sort.DataType ));
 
-                List<ConsoleRow> _rows = table.OtherOptions.Sort.SortType == WrapSort.ASCENDING ?
+                List<ConsoleRow> _rows = table.OtherOptions.Sort.SortType == Consoles.Enums.ConsoleSortType.ASCENDING ?
                                                Ascending(table.OtherOptions.Sort.SortColumnIndex, table.OtherOptions.Sort.DataType) :
                                                Descending(table.OtherOptions.Sort.SortColumnIndex, table.OtherOptions.Sort.DataType);
                     
@@ -255,34 +271,34 @@ namespace Wrappers
                 table.Rows.AddRange(_rows);
             }
 
-            void Convert(ConsoleRecord col, WrapSortDataType sortDataType)
+            void Convert(ConsoleRecord col, ConsoleSortDataType sortDataType)
             {                
                 switch (sortDataType)
                 {
-                    case WrapSortDataType.STRING: col.SortedText.StringText = col.Text; break;
-                    case WrapSortDataType.NUMBER: col.SortedText.NumericText = col.Text.ToDouble(); break;
-                    case WrapSortDataType.DATETIME: col.SortedText.DateText = col.Text.ToDateTime(); break;
+                    case ConsoleSortDataType.STRING: col.SortedText.StringText = col.Text; break;
+                    case ConsoleSortDataType.NUMBER: col.SortedText.NumericText = col.Text.ToDouble(); break;
+                    case ConsoleSortDataType.DATETIME: col.SortedText.DateText = col.Text.ToDateTime(); break;
                 }                
             }
 
-            List<ConsoleRow> Ascending(int colindex, WrapSortDataType sortDataType)
+            List<ConsoleRow> Ascending(int colindex, ConsoleSortDataType sortDataType)
             {
                 switch (sortDataType)
                 {
-                    case WrapSortDataType.STRING: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.StringText).ToList();
-                    case WrapSortDataType.NUMBER: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.NumericText).ToList();
-                    case WrapSortDataType.DATETIME: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.DateText).ToList();
+                    case ConsoleSortDataType.STRING: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.StringText).ToList();
+                    case ConsoleSortDataType.NUMBER: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.NumericText).ToList();
+                    case ConsoleSortDataType.DATETIME: return table.Rows.OrderBy(d => d.Column.ElementAt(colindex).SortedText.DateText).ToList();
                     default: return table.Rows;
                 }
             }
 
-            List<ConsoleRow> Descending(int colindex, WrapSortDataType sortDataType)
+            List<ConsoleRow> Descending(int colindex, ConsoleSortDataType sortDataType)
             {
                 switch (sortDataType)
                 {
-                    case WrapSortDataType.STRING: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.StringText).ToList();
-                    case WrapSortDataType.NUMBER: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.NumericText).ToList();
-                    case WrapSortDataType.DATETIME: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.DateText).ToList();
+                    case ConsoleSortDataType.STRING: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.StringText).ToList();
+                    case ConsoleSortDataType.NUMBER: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.NumericText).ToList();
+                    case ConsoleSortDataType.DATETIME: return table.Rows.OrderByDescending(d => d.Column.ElementAt(colindex).SortedText.DateText).ToList();
                     default: return table.Rows;
                 }
             }
@@ -300,7 +316,7 @@ namespace Wrappers
             {
                 Agg.Add(new ConsoleRecord
                 {
-                    Text = option.Aggregate == WrapAggregate.NONE ? "" : Aggregate(i, option),
+                    Text = option.Aggregate == ConsoleAggregate.NONE ? "" : Aggregate(i, option),
                     IsAggregate = true
                 });
                 i++;
@@ -320,10 +336,10 @@ namespace Wrappers
 
                 switch (option.Aggregate)
                 {
-                    case WrapAggregate.NONE: break;
-                    case WrapAggregate.SUM: cal = vals.Sum(d => d); break;
-                    case WrapAggregate.AVERAGE: cal = vals.Average(d => d); break;
-                    case WrapAggregate.MEDIAN: cal = Median(vals); break;
+                    case ConsoleAggregate.NONE: break;
+                    case ConsoleAggregate.SUM: cal = vals.Sum(d => d); break;
+                    case ConsoleAggregate.AVERAGE: cal = vals.Average(d => d); break;
+                    case ConsoleAggregate.MEDIAN: cal = Median(vals); break;
                 }
 
                 return cal > 0.0d ? cal.ToString($"({option.Aggregate.ToString()}) #.00") : "";

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wrappers.Consoles.Enums
 {
-    public enum WrapConsoleWrapType
+    public enum ConsoleWrapType
     {
         NOWRAP,
         WRAP,

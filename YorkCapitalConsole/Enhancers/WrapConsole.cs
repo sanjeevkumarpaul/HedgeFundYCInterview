@@ -40,22 +40,22 @@ namespace Wrappers
 
     public static partial class WrapConsole
     {
-        public static void Write(this string str, WrapConsoleStyle style = WrapConsoleStyle.NORMAL, WrapAlignment align = WrapAlignment.LEFT)
+        public static void Write(this string str, ConsoleTextStyle style = ConsoleTextStyle.NORMAL, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             WriteIt(str, style, false, align);
         }
 
-        public static void WriteLine(this string str, WrapConsoleStyle style = WrapConsoleStyle.NORMAL, WrapAlignment align = WrapAlignment.LEFT)
+        public static void WriteLine(this string str, ConsoleTextStyle style = ConsoleTextStyle.NORMAL, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             WriteIt(str, style, align:align);
         }
 
-        public static void WriteColor(this string str, ConsoleColor color, WrapAlignment align = WrapAlignment.LEFT)
+        public static void WriteColor(this string str, ConsoleColor color, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             WriteItColor(str, color, false, align);
         }
 
-        public static void WriteLineColor(this string str, ConsoleColor color, WrapAlignment align = WrapAlignment.LEFT)
+        public static void WriteLineColor(this string str, ConsoleColor color, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             WriteItColor(str, color, align: align);
         }
@@ -65,7 +65,7 @@ namespace Wrappers
             PaintIt(" ", color, color, lines);
         }
 
-        public static void PaintLine(this string str, ConsoleColor bgColor, ConsoleColor foreColor = ConsoleColor.White, WrapAlignment align = WrapAlignment.LEFT)
+        public static void PaintLine(this string str, ConsoleColor bgColor, ConsoleColor foreColor = ConsoleColor.White, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             PaintIt(str, bgColor, foreColor, 1, align);
         }
@@ -79,44 +79,44 @@ namespace Wrappers
 
     public partial class WrapConsole
     {
-        private static void WriteOnConsole(bool linebreak, WrapAlignment align, string str, bool isfill = false)
+        private static void WriteOnConsole(bool linebreak, ConsoleAlignment align, string str, bool isfill = false)
         {
             if (!linebreak) Console.Write(SetAlignment(str, align, isfill)); else Console.WriteLine(SetAlignment(str, align, isfill));
         }
 
-        private static void WriteIt(string str, WrapConsoleStyle style, bool linebreak = true, WrapAlignment align = WrapAlignment.LEFT)
+        private static void WriteIt(string str, ConsoleTextStyle style, bool linebreak = true, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             SetColorStyle(style);            
             WriteOnConsole(linebreak, align, str);
             Console.ResetColor();
         }
 
-        private static void WriteItColor(string str, ConsoleColor color, bool linebreak = true, WrapAlignment align = WrapAlignment.LEFT)
+        private static void WriteItColor(string str, ConsoleColor color, bool linebreak = true, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             SetForeColor(color);
             WriteOnConsole(linebreak, align, str);
             Console.ResetColor();
         }
 
-        private static void PaintIt(string str, ConsoleColor bgcolor, ConsoleColor forecolor, int lines, WrapAlignment align = WrapAlignment.LEFT)
+        private static void PaintIt(string str, ConsoleColor bgcolor, ConsoleColor forecolor, int lines, ConsoleAlignment align = ConsoleAlignment.LEFT)
         {
             SetColor(bgcolor, forecolor);
             for(int i = 0; i< lines; i++) WriteOnConsole(true, align, str, true); //Console.WriteLine(SetAlignment(str, align, true));
             Console.ResetColor();
         }
 
-        private static void SetColorStyle(WrapConsoleStyle style)
+        private static void SetColorStyle(ConsoleTextStyle style)
         {
             switch (style)
             {
-                case WrapConsoleStyle.NORMAL: Console.ResetColor(); break;
-                case WrapConsoleStyle.SUCCESS: SetColor(ConsoleColor.DarkGreen, ConsoleColor.White); break;
-                case WrapConsoleStyle.FAILURE: SetColor(ConsoleColor.DarkRed, ConsoleColor.White); break;
-                case WrapConsoleStyle.WARNING: SetColor(ConsoleColor.Red, ConsoleColor.White); break;
-                case WrapConsoleStyle.COMPLETE: SetColor(ConsoleColor.Blue, ConsoleColor.White); break;
-                case WrapConsoleStyle.INFORMATION: SetColor(ConsoleColor.DarkCyan, ConsoleColor.White); break;
-                case WrapConsoleStyle.SATISFACTORY: SetColor(ConsoleColor.DarkGray, ConsoleColor.White); break;
-                case WrapConsoleStyle.INVERSE: SetColor(ConsoleColor.White, ConsoleColor.Gray); break;
+                case ConsoleTextStyle.NORMAL: Console.ResetColor(); break;
+                case ConsoleTextStyle.SUCCESS: SetColor(ConsoleColor.DarkGreen, ConsoleColor.White); break;
+                case ConsoleTextStyle.FAILURE: SetColor(ConsoleColor.DarkRed, ConsoleColor.White); break;
+                case ConsoleTextStyle.WARNING: SetColor(ConsoleColor.Red, ConsoleColor.White); break;
+                case ConsoleTextStyle.COMPLETE: SetColor(ConsoleColor.Blue, ConsoleColor.White); break;
+                case ConsoleTextStyle.INFORMATION: SetColor(ConsoleColor.DarkCyan, ConsoleColor.White); break;
+                case ConsoleTextStyle.SATISFACTORY: SetColor(ConsoleColor.DarkGray, ConsoleColor.White); break;
+                case ConsoleTextStyle.INVERSE: SetColor(ConsoleColor.White, ConsoleColor.Gray); break;
             }
         }
 
@@ -131,13 +131,13 @@ namespace Wrappers
             Console.ForegroundColor = fore;
         }
 
-        private static string SetAlignment(string str, WrapAlignment align, bool isfill = false)
+        private static string SetAlignment(string str, ConsoleAlignment align, bool isfill = false)
         {            
             switch (align)
             {
-                case WrapAlignment.LEFT: if (isfill) str = str.PadRight(Console.WindowWidth - 1); break;
-                case WrapAlignment.RIGHT: str = str.PadLeft(Console.WindowWidth - 1); break;
-                case WrapAlignment.CENTER: str = WrapConsoleTable.CenteredText(str, Console.WindowWidth - 1); break;
+                case ConsoleAlignment.LEFT: if (isfill) str = str.PadRight(Console.WindowWidth - 1); break;
+                case ConsoleAlignment.RIGHT: str = str.PadLeft(Console.WindowWidth - 1); break;
+                case ConsoleAlignment.CENTER: str = WrapConsoleTable.CenteredText(str, Console.WindowWidth - 1); break;
             }
             return str;
         }

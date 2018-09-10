@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wrappers.Consoles.Enums
 {
-    public enum WrapAggregate
+    public enum ConsoleAggregate
     {
         NONE,
         SUM,
