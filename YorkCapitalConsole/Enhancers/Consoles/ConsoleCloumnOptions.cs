@@ -7,7 +7,7 @@ using Wrappers.Consoles.Enums;
 
 namespace Wrappers.Consoles
 {
-    public class ConsoleColumnOptions
+    public partial class ConsoleColumnOptions : _ConsoleItemBase
     {
         public int Width { get; set; }
         public ConsoleAlignment Alignment { get; set; }

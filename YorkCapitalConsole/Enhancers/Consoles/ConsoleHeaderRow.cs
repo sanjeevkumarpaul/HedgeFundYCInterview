@@ -7,7 +7,7 @@ using Wrappers.Consoles.Enums;
 
 namespace Wrappers.Consoles
 {
-    public class ConsoleHeaderFooterRow
+    public partial class ConsoleHeaderFooterRow : _ConsoleItemBase
     {
         public string Heading { get; set; }
         public string Value { get; set; }

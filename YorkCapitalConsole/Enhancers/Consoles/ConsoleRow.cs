@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wrappers.Consoles
 {
-    public class ConsoleRow
+    public partial class ConsoleRow : _ConsoleItemBase
     {
         public List<ConsoleRecord> Column { get; set; }
         internal bool IsAggregate { get; set; } = false;

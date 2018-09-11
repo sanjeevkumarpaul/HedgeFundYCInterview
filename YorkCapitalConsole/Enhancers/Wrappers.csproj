@@ -68,6 +68,7 @@
     <Compile Include="Consoles\Enums\ConsoleTextStyle.cs" />
     <Compile Include="Consoles\Enums\ConsoleWrapType.cs" />
     <Compile Include="Consoles\Enums\ConsoleSort.cs" />
+    <Compile Include="Consoles\_ConsoleItemBase.cs" />
     <Compile Include="WrapConsole.cs" />
     <Compile Include="WrapConsoleTable.cs" />
     <Compile Include="WrapEntityFramework.cs" />

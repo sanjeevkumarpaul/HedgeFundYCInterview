@@ -43,7 +43,7 @@ namespace Wrappers
             internal string ExtraStyles { get; set; } = "";
         };
 
-
+        #region ^Creating CSS Style Classes
         private void CreateStyles()
         {
             _css.Append( $"<style>" );            
@@ -70,10 +70,12 @@ namespace Wrappers
                 ExtraStyles = "padding: 2px;"
             });
             var totalWidth = _table.ColumnOptions.Sum(c => c.Width);
+            int _colIndex = 0;
             _table.ColumnOptions.ForEach(col => {
+                    var _name = $"consoleWrapColumHeader{col.GetHashCode()}";
                     CreateGroupStyle(new HtmlStyles
                     {
-                        Name = $"consoleWrapColumHeader{col.GetHashCode()}",
+                        Name = _name,
                         Color = col.Color.ToString(),
                         Alignment = col.Alignment.ToString(),
                         Width = ( (col.Width * 100)/totalWidth ).ToString(),
@@ -81,6 +83,8 @@ namespace Wrappers
                         BorderStyle = "solid",
                         ExtraStyles = "padding: 2px;",                        
                     });
+
+                    AssignCssStyle(_colIndex++, _name);
                 });
             if (!_table.Headers.Null())
                 _table.Headers.ForEach(hd => CreateHeaderFooterStyle(hd));
@@ -98,14 +102,17 @@ namespace Wrappers
             void Create(bool title = true)
             {
                 var _title = title ? "Title" : "Value";
+                var _name = $"consoleWrap{_text}{_title}{hf.GetHashCode()}";
                 CreateGroupStyle(new HtmlStyles
                 {
-                    Name = $"consoleWrap{_text}{_title}{hf.GetHashCode()}",
+                    Name = _name,
                     Color = (title ? hf.HeadingColor : hf.ValueColor) .ToString(),
                     BorderColor = _table.OtherOptions.BorderColor.ToString(),
                     Alignment = hf.Alignment.ToString(),
                     ExtraStyles = "padding: 2px;"
                 });
+
+                AssignCssStyle(hf, _name);
             }
         }
 
@@ -122,5 +129,21 @@ namespace Wrappers
             _css.Append(styles.ExtraStyles);
             _css.Append(" } ");            
         }
+
+        private void AssignCssStyle(int colIndex, string cssClass, string cssStyles = null)
+        {
+            _table.Rows.ForEach(r =>
+            {
+                var col = r.Column.ElementAt(colIndex);
+                AssignCssStyle(col, cssClass, cssStyles);
+            });
+        }
+
+        private void AssignCssStyle<T>(T record, string cssClass, string cssStyles = null) where T : _ConsoleItemBase
+        {
+            record.HTMLCssClass = cssClass;
+            record.HTMLInlineStyles = cssStyles;
+        }
+        #endregion ~END OF Creating CSS Style Classes
     }
 }
