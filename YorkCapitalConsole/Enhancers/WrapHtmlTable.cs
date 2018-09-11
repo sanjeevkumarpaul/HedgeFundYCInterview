@@ -132,11 +132,14 @@ namespace Wrappers
 
         private void AssignCssStyle(int colIndex, string cssClass, string cssStyles = null)
         {
-            _table.Rows.ForEach(r =>
+            if (!(colIndex == 0 && _table.OtherOptions.IsFirstRowAsHeader) || colIndex > 0)
             {
-                var col = r.Column.ElementAt(colIndex);
-                AssignCssStyle(col, cssClass, cssStyles);
-            });
+                _table.Rows.Where(r => !r.IsAggregate).ToList().ForEach(r =>
+                {
+                    var col = r.Column.ElementAt(colIndex);
+                    AssignCssStyle(col, cssClass, cssStyles);
+                });
+            }
         }
 
         private void AssignCssStyle<T>(T record, string cssClass, string cssStyles = null) where T : _ConsoleItemBase
