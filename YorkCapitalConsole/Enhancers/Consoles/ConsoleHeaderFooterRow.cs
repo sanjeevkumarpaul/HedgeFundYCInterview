@@ -13,8 +13,8 @@ namespace Wrappers.Consoles
         private ConsoleRecord _value;
 
 
-        public ConsoleRecord Heading { get { return _heading;  } set { value.Color = ConsoleColor.DarkYellow; _heading = value; } } 
-        public ConsoleRecord Value { get { return _value; } set { value.Color = ConsoleColor.DarkCyan; _value = value; } }
+        public ConsoleRecord Heading { get { return _heading;  } set { if (value.Color == ConsoleColor.Black) value.Color = ConsoleColor.DarkYellow; _heading = value; } } 
+        public ConsoleRecord Value { get { return _value; } set { if (value.Color == ConsoleColor.Black) value.Color = ConsoleColor.DarkCyan; _value = value; } }
         public ConsoleAlignment Alignment { get; set; } = ConsoleAlignment.LEFT;
     }
 }
