@@ -247,10 +247,10 @@ namespace Wrappers
                         _tag.Append("<tr>");
                         CreateColumn(g.Key);
 
-                        _tag.Append($"<td class='{align.Heading.HTMLCssClass}' style='{align.Heading.HTMLInlineStyles.ToEmpty()}'>{GetText(align.Heading, true)}</td>");
+                        CreateRow(align.Heading);
                         _tag.Append("<td>:</td>");
-                        _tag.Append($"<td class='{align.Value.HTMLCssClass}' style='{align.Value.HTMLInlineStyles.ToEmpty()}'>{GetText(align.Value, true)}</td>");
-
+                        CreateRow(align.Value);
+                        
                         CreateColumn(g.Key, true);
                         _tag.Append("</tr>");                        
                     }
@@ -261,27 +261,17 @@ namespace Wrappers
 
             void CreateColumn(ConsoleAlignment align, bool bottom = false)
             {
-                if (!bottom)
-                {
-                    if (align == ConsoleAlignment.RIGHT)
-                        _tag.Append($"<td style='width:100%'></td>");
-                    else if (align == ConsoleAlignment.CENTER)
-                        _tag.Append($"<td style='width:50%'></td>");
-                }
-                else
-                {
-                    if (align == ConsoleAlignment.CENTER)
-                        _tag.Append($"<td style='width:50%'></td>");
-                    else if (align == ConsoleAlignment.LEFT)
-                        _tag.Append($"<td style='width:100%'></td>");
-                }
-                
-                switch(align)
+               switch(align)
                 {
                     case ConsoleAlignment.CENTER: _tag.Append($"<td style='width:50%'></td>"); break;
                     case ConsoleAlignment.LEFT: if (bottom) _tag.Append($"<td style='width:100%'></td>"); break;
                     case ConsoleAlignment.RIGHT: if (!bottom) _tag.Append($"<td style='width:100%'></td>"); break;
                 }
+            }
+
+            void CreateRow(ConsoleRecord rec)
+            {
+                _tag.Append($"<td class='{rec.HTMLCssClass}' style='{rec.HTMLInlineStyles.ToEmpty()}'>{GetText(rec, true)}</td>");
             }
 
             return _tag.ToString();
