@@ -12,7 +12,6 @@ namespace Wrappers.Consoles
         public string Heading { get; set; }
         public string Value { get; set; }
         public ConsoleColor HeadingColor { get; set; } = ConsoleColor.DarkYellow;
-        public ConsoleColor ValueColor { get; set; } = ConsoleColor.DarkCyan;
-        public ConsoleAlignment Alignment { get; set; } = ConsoleAlignment.LEFT; //CENTER not allowed. If set, LEFT will be considered.
+        public override ConsoleColor Color { get; set; } = ConsoleColor.DarkCyan;        
     }
 }

@@ -106,7 +106,7 @@ namespace Wrappers
                 CreateGroupStyle(new HtmlStyles
                 {
                     Name = _name,
-                    Color = (title ? hf.HeadingColor : hf.ValueColor) .ToString(),
+                    Color = (title ? hf.HeadingColor : hf.Color) .ToString(),
                     BorderColor = _table.OtherOptions.BorderColor.ToString(),
                     Alignment = hf.Alignment.ToString(),
                     ExtraStyles = "padding: 2px;"
@@ -136,7 +136,7 @@ namespace Wrappers
             {
                 _table.Rows.Where(r => !r.IsAggregate).ToList().ForEach(r =>
                 {
-                    var col = r.Column.ElementAt(colIndex);
+                    var col = r.Column.ElementAt(colIndex); 
                     AssignCssStyle(col, cssClass, cssStyles);
                 });
             }

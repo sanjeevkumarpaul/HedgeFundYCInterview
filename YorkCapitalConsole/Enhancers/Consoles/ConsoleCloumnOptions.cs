@@ -8,10 +8,7 @@ using Wrappers.Consoles.Enums;
 namespace Wrappers.Consoles
 {
     public partial class ConsoleColumnOptions : _ConsoleItemBase
-    {
-        public int Width { get; set; }
-        public ConsoleAlignment Alignment { get; set; }
-        public ConsoleColor Color { get; set; }
+    {        
         public ConsoleAggregate Aggregate { get; set; } = ConsoleAggregate.NONE;
         public ConsoleWrapType Wrap { get; set; } = ConsoleWrapType.WRAP;
         public ConsoleGroupByOption Group { get; set; }
