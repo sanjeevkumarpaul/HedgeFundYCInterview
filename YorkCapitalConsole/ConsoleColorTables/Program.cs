@@ -29,13 +29,13 @@ namespace ConsoleColorTables
 
                     Headers = new List<ConsoleHeaderFooterRow>
                     {
-                        new ConsoleHeaderFooterRow { Heading = "Information", Value = "Test Naming", Alignment = ConsoleAlignment.RIGHT },
-                        new ConsoleHeaderFooterRow { Heading = "Sorting", Value = "Ascending" , Alignment = ConsoleAlignment.RIGHT },
-                        new ConsoleHeaderFooterRow { Heading = "Wrapping", Value = "Word Wrapping" }
+                        new ConsoleHeaderFooterRow { Heading = "Information", Text = "Test Naming", Alignment = ConsoleAlignment.RIGHT },
+                        new ConsoleHeaderFooterRow { Heading = "Sorting", Text = "Ascending" , Alignment = ConsoleAlignment.RIGHT },
+                        new ConsoleHeaderFooterRow { Heading = "Wrapping", Text = "Word Wrapping" }
                     },
                     Footers = new List<ConsoleHeaderFooterRow>
                     {
-                        new ConsoleHeaderFooterRow { Heading = "Signature", Value = "Machine" }                        
+                        new ConsoleHeaderFooterRow { Heading = "Signature", Text = "Machine" }                        
                     },
 
                     Rows = new List<ConsoleRow>

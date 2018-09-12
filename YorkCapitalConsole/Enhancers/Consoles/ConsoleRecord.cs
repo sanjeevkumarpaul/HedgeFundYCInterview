@@ -8,8 +8,7 @@ using Wrappers.Consoles.Enums;
 namespace Wrappers.Consoles
 {
     public partial class ConsoleRecord : _ConsoleItemBase
-    {
-        public string Text { get; set; }        
+    {       
         internal bool IsAggregate { get; set; } = false;
         internal int Lines { get; set; } = 1;
         internal List<string> MText { get; set; } = new List<string>();

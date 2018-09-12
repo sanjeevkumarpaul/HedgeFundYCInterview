@@ -9,8 +9,7 @@ namespace Wrappers.Consoles
 {
     public partial class ConsoleHeaderFooterRow : _ConsoleItemBase
     {
-        public string Heading { get; set; }
-        public string Value { get; set; }
+        public string Heading { get; set; }       
         public ConsoleColor HeadingColor { get; set; } = ConsoleColor.DarkYellow;
         public override ConsoleColor Color { get; set; } = ConsoleColor.DarkCyan;        
     }

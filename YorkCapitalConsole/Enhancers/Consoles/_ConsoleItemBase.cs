@@ -9,6 +9,7 @@ namespace Wrappers.Consoles
 {
     public partial class _ConsoleItemBase
     {
+        public string Text { get; set; }
         public int Width { get; set; }
         public virtual ConsoleAlignment Alignment { get; set; } = ConsoleAlignment.LEFT; //CENTER not allowed. If set, LEFT will be considered.
         public virtual ConsoleColor Color { get; set; }
