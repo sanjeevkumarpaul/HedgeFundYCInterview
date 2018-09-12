@@ -19,7 +19,7 @@ namespace ConsoleColorTables
             WrapConsole.WriteTable(new ConsoleTable
                 {
                     OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 },
-                                                             Output = new ConsoleOutput { Style = ConsoleOutputStyle.HTML } },
+                                                             Output = new ConsoleOutput { Style = ConsoleOutputType.HTML } },
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = ConsoleAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = ConsoleWrapType.WORDCHAR },

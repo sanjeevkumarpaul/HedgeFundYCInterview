@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Wrappers.Consoles.Enums
 {
-    public enum ConsoleOutputStyle
+    public enum ConsoleOutputType
     {
+        NONE,
         CONSOLE,
         HTML,
         TEXT,

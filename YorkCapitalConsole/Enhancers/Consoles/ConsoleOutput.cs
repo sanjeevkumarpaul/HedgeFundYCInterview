@@ -9,7 +9,7 @@ namespace Wrappers.Consoles
 {
     public class ConsoleOutput
     {
-        public ConsoleOutputStyle Style { get; set; } = ConsoleOutputStyle.CONSOLE;
+        public ConsoleOutputType Style { get; set; } = ConsoleOutputType.CONSOLE;
         public string Path { get; set; } = "Output";
     }
 }

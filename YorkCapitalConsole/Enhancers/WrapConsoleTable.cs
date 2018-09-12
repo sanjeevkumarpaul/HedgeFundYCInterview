@@ -102,10 +102,10 @@ namespace Wrappers
         {
             switch(table.OtherOptions.Output.Style)
             {
-                case ConsoleOutputStyle.CONSOLE: return false;
-                case ConsoleOutputStyle.HTML: new WrapHtmlTable(table).Draw(); break;
-                case ConsoleOutputStyle.EXCEL: break;
-                case ConsoleOutputStyle.TEXT: break;
+                case ConsoleOutputType.CONSOLE: return false;
+                case ConsoleOutputType.HTML: new WrapHtmlTable(table).Draw(); break;
+                case ConsoleOutputType.EXCEL: break;
+                case ConsoleOutputType.TEXT: break;
             }
 
             return true;
