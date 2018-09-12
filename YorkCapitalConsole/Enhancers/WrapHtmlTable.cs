@@ -275,6 +275,13 @@ namespace Wrappers
                     else if (align == ConsoleAlignment.LEFT)
                         _tag.Append($"<td style='width:100%'></td>");
                 }
+                
+                switch(align)
+                {
+                    case ConsoleAlignment.CENTER: _tag.Append($"<td style='width:50%'></td>"); break;
+                    case ConsoleAlignment.LEFT: if (bottom) _tag.Append($"<td style='width:100%'></td>"); break;
+                    case ConsoleAlignment.RIGHT: if (!bottom) _tag.Append($"<td style='width:100%'></td>"); break;
+                }
             }
 
             return _tag.ToString();
