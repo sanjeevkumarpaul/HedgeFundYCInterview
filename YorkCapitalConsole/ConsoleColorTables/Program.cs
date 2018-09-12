@@ -19,7 +19,7 @@ namespace ConsoleColorTables
             WrapConsole.WriteTable(new ConsoleTable
                 {
                     OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 },
-                                                             Output = new ConsoleOutput { Style = ConsoleOutputType.HTML } },
+                                                             Output = new ConsoleOutput { Style = ConsoleOutputType.CONSOLE } },
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = ConsoleAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = ConsoleWrapType.WORDCHAR },
@@ -29,13 +29,13 @@ namespace ConsoleColorTables
 
                     Headers = new List<ConsoleHeaderFooterRow>
                     {
-                        new ConsoleHeaderFooterRow { Heading = "Information", Text = "Test Naming", Alignment = ConsoleAlignment.RIGHT },
-                        new ConsoleHeaderFooterRow { Heading = "Sorting", Text = "Ascending" , Alignment = ConsoleAlignment.RIGHT },
-                        new ConsoleHeaderFooterRow { Heading = "Wrapping", Text = "Word Wrapping" }
+                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord{ Text = "Information" }, Value = new ConsoleRecord {Text = "Test Naming" }, Alignment = ConsoleAlignment.RIGHT  },
+                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Sorting" }, Value = new ConsoleRecord { Text = "Ascending" }, Alignment = ConsoleAlignment.RIGHT },
+                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Wrapping" }, Value = new ConsoleRecord { Text = "Word Wrapping" } }
                     },
                     Footers = new List<ConsoleHeaderFooterRow>
                     {
-                        new ConsoleHeaderFooterRow { Heading = "Signature", Text = "Machine" }                        
+                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Signature" }, Value = new ConsoleRecord { Text = "Machine" } }                        
                     },
 
                     Rows = new List<ConsoleRow>

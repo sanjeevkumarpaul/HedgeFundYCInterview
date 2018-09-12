@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Consoles\ConsoleCloumnOptions.cs" />
     <Compile Include="Consoles\ConsoleGroupByOption.cs" />
-    <Compile Include="Consoles\ConsoleHeaderRow.cs" />
+    <Compile Include="Consoles\ConsoleHeaderFooterRow.cs" />
     <Compile Include="Consoles\ConsoleOtherOptions.cs" />
     <Compile Include="Consoles\ConsoleOutput.cs" />
     <Compile Include="Consoles\ConsoleRecord.cs" />

@@ -116,13 +116,13 @@ namespace Wrappers
                 CreateGroupStyle(new HtmlStyles
                 {
                     Name = _name,
-                    Color = (title ? hf.HeadingColor : hf.Color) .ToString(),
+                    Color = (title ? hf.Heading.Color : hf.Value.Color) .ToString(),
                     BorderColor = _table.OtherOptions.BorderColor.ToString(),
                     Alignment = hf.Alignment.ToString(),
                     ExtraStyles = "padding: 2px;"
                 });
 
-                AssignCssStyle(hf, _name);
+                AssignCssStyle(title ? hf.Heading : hf.Value, _name);
             }
         }
 
@@ -169,7 +169,8 @@ namespace Wrappers
             string _body = "<body><table>{tab}</table></body>";
             StringBuilder _tab = new StringBuilder()
                                   .Append(CreateColumnHeaders())
-                                  .Append(CreateColumnData());
+                                  .Append(CreateColumnData())
+                                  .Append(CreateHeaderFooterRow());
 
             _html.Append( _body.Replace("{tab}", _tab.ToString()));
         }
@@ -203,6 +204,19 @@ namespace Wrappers
                 _tag.Append($"<{_tl} class=\"{col.HTMLCssClass}\" style=\"{col.HTMLInlineStyles.ToEmpty()}\">{GetText(col)}</{_tl}>");
             });
             _tag.Append("</tr>");
+            return _tag.ToString();
+        }
+
+        private string CreateHeaderFooterRow(bool header = true)
+        {
+            var rows = header ? _table.Headers : _table.Footers;
+            var _tag = new StringBuilder();
+            if (!rows.Null() && rows.Any())
+            {
+                _tag.Append($"<tr colspan=\"{_table.ColumnOptions.Count}\">");
+                //rows.ForEach(r => _tag.Append($"<td class=\"{r.HTMLCssClass}\" style=\"{r.HTMLInlineStyles.ToEmpty()}\" >{GetText(r)}</td>") );
+                _tag.Append("</tr>");
+            }
             return _tag.ToString();
         }
 
