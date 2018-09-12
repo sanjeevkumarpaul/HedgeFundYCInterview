@@ -12,17 +12,21 @@ namespace Wrappers
     {
         private ConsoleTable _table;
         private StringBuilder _css;
+        private StringBuilder _html;
 
         public WrapHtmlTable(ConsoleTable table)
         {
             _table = table;
             _css = new StringBuilder();
+            _html = new StringBuilder();
         }
 
         public void Draw()
         {
             CreateStyles();
+            CreateTags();
 
+            _html.Insert(0, _css);
         }
     }
 
@@ -61,14 +65,20 @@ namespace Wrappers
                 Width = "100",
                 ExtraStyles = "border-collapse: collapse; "
             });
-            CreateGroupStyle(new HtmlStyles
+            if (_table.OtherOptions.IsFirstRowAsHeader)
             {
-                Name = "consoleWrapColumHeaders",
-                Color = _table.OtherOptions.HeadingColor.ToString(),
-                BorderColor = _table.OtherOptions.BorderColor.ToString(),
-                BorderStyle = "solid",
-                ExtraStyles = "padding: 2px;"
-            });
+                var _name = "consoleWrapColumHeaders";
+                CreateGroupStyle(new HtmlStyles
+                {
+                    Name = _name,
+                    Color = _table.OtherOptions.HeadingColor.ToString(),
+                    BorderColor = _table.OtherOptions.BorderColor.ToString(),
+                    BorderStyle = "solid",
+                    ExtraStyles = "padding: 2px;"
+                });
+
+                AssignCssStyle(0, _name, colHeader: true);
+            }
             var totalWidth = _table.ColumnOptions.Sum(c => c.Width);
             int _colIndex = 0;
             _table.ColumnOptions.ForEach(col => {
@@ -84,7 +94,7 @@ namespace Wrappers
                         ExtraStyles = "padding: 2px;",                        
                     });
 
-                    AssignCssStyle(_colIndex++, _name);
+                    AssignCssStyle(_colIndex++, _name, colHeader: false);
                 });
             if (!_table.Headers.Null())
                 _table.Headers.ForEach(hd => CreateHeaderFooterStyle(hd));
@@ -129,17 +139,21 @@ namespace Wrappers
             _css.Append(styles.ExtraStyles);
             _css.Append(" } ");            
         }
-
-        private void AssignCssStyle(int colIndex, string cssClass, string cssStyles = null)
+        
+        private void AssignCssStyle(int colIndex, string cssClass, string cssStyles = null, bool colHeader = false)
         {
-            if (!(colIndex == 0 && _table.OtherOptions.IsFirstRowAsHeader) || colIndex > 0)
-            {
-                _table.Rows.Where(r => !r.IsAggregate).ToList().ForEach(r =>
-                {
-                    var col = r.Column.ElementAt(colIndex); 
-                    AssignCssStyle(col, cssClass, cssStyles);
-                });
-            }
+           var _count = _table.Rows.Count;
+           _table.Rows.Take(colHeader ? 1: _count)
+                      .Skip(_table.OtherOptions.IsFirstRowAsHeader && !colHeader ? 1 : 0)
+                      .Where(r => !r.IsAggregate)
+                      .ToList()
+                      .ForEach(r =>
+                      {
+                          if (colHeader)
+                              r.Column.ForEach(col => AssignCssStyle(col, cssClass, cssStyles));
+                          else
+                              AssignCssStyle(r.Column.ElementAt(colIndex), cssClass, cssStyles);
+                      });            
         }
 
         private void AssignCssStyle<T>(T record, string cssClass, string cssStyles = null) where T : _ConsoleItemBase
@@ -148,5 +162,62 @@ namespace Wrappers
             record.HTMLInlineStyles = cssStyles;
         }
         #endregion ~END OF Creating CSS Style Classes
+
+        #region ^Creating HTML Tags
+        private void CreateTags()
+        {
+            string _body = "<body><table>{tab}</table></body>";
+            StringBuilder _tab = new StringBuilder()
+                                  .Append(CreateColumnHeaders())
+                                  .Append(CreateColumnData());
+
+            _html.Append( _body.Replace("{tab}", _tab.ToString()));
+        }
+
+        private string CreateColumnHeaders()
+        {
+            var _tag = new StringBuilder();
+
+            if (_table.OtherOptions.IsFirstRowAsHeader)            
+                 _tag.Append(CreateRecordRow(_table.Rows.ElementAt(0), true));
+            
+            return _tag.ToString();
+        }
+
+        private string CreateColumnData()
+        {
+            var _tag = new StringBuilder();
+
+            _table.Rows.Skip(_table.OtherOptions.IsFirstRowAsHeader ? 1 : 0).ToList().ForEach(row => _tag.Append(CreateRecordRow(row)));
+            
+            return _tag.ToString();
+        }
+
+        private string CreateRecordRow(ConsoleRow rows, bool tableHeader = false)
+        {
+            var _tag = new StringBuilder();
+            var _tl = tableHeader ? "th" : "td";
+            _tag.Append("<tr>");
+            rows.Column.ForEach(col =>
+            {
+                _tag.Append($"<{_tl} class=\"{col.HTMLCssClass}\" style=\"{col.HTMLInlineStyles.ToEmpty()}\">{GetText(col)}</{_tl}>");
+            });
+            _tag.Append("</tr>");
+            return _tag.ToString();
+        }
+
+        private string GetText<T>(T record) where T : _ConsoleItemBase
+        {
+            var _break = "<br/>";
+            var _text = record.Text;
+            if (_text.Empty() && record.GetType() == typeof(ConsoleRecord) )
+            {
+                _text = (record as ConsoleRecord).MText.JoinExt(_break).TrimEx(_break);
+            }
+
+            return _text;
+        }
+
+        #endregion ^END of Creating HTML Tags
     }
 }
