@@ -19,7 +19,7 @@ namespace ConsoleColorTables
             WrapConsole.WriteTable(new ConsoleTable
                 {
                     OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 },
-                                                             Output = new ConsoleOutput { Style = ConsoleOutputType.CONSOLE } },
+                                                             Output = new ConsoleOutput { Style = ConsoleOutputType.HTML } },
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = ConsoleAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = ConsoleWrapType.WORDCHAR },
@@ -35,7 +35,7 @@ namespace ConsoleColorTables
                     },
                     Footers = new List<ConsoleHeaderFooterRow>
                     {
-                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Signature" }, Value = new ConsoleRecord { Text = "Machine" } }                        
+                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Signature" }, Value = new ConsoleRecord { Text = "Machine", Color = ConsoleColor.Red } }                        
                     },
 
                     Rows = new List<ConsoleRow>

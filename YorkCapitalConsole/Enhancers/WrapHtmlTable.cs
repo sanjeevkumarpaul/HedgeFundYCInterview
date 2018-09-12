@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Wrappers.Consoles;
 using Extensions;
-
+using Wrappers.Consoles.Enums;
 
 namespace Wrappers
 {
@@ -26,7 +26,7 @@ namespace Wrappers
             CreateStyles();
             CreateTags();
 
-            _html.Insert(0, _css);
+            _html = _html.Insert(0, _css).Replace("DarkYellow", "GoldenRod");
         }
     }
 
@@ -61,7 +61,7 @@ namespace Wrappers
             CreateGroupStyle(new HtmlStyles
             {
                 IsElement = true,
-                Name = "table",
+                Name = "table#master",
                 Width = "100",
                 ExtraStyles = "border-collapse: collapse; "
             });
@@ -100,7 +100,25 @@ namespace Wrappers
                 _table.Headers.ForEach(hd => CreateHeaderFooterStyle(hd));
             if (!_table.Footers.Null())
                 _table.Footers.ForEach(ft => CreateHeaderFooterStyle(ft, false));
-            
+            if (_table.Rows.Any(r => r.IsAggregate))
+            {
+                _table.ColumnOptions.Where(c => c.Aggregate != ConsoleAggregate.NONE).ToList().ForEach(col => {
+                    var _name = $"consoleWrapAggregate{col.GetHashCode()}";
+                    CreateGroupStyle(new HtmlStyles
+                    {
+                        Name = _name,
+                        Color = _table.OtherOptions.AggregateColor.ToString(),
+                        Alignment = col.Alignment.ToString(),                        
+                        BorderColor = _table.OtherOptions.AggregateBorderColor.ToString(),
+                        BorderStyle = "solid",
+                        ExtraStyles = "padding: 2px;",
+                    });
+
+                    AssignCssStyleAggregate(col, _name);
+                });
+            }
+
+
             _css.Append($"</style>");
         }
 
@@ -161,16 +179,22 @@ namespace Wrappers
             record.HTMLCssClass = cssClass;
             record.HTMLInlineStyles = cssStyles;
         }
+
+        private void AssignCssStyleAggregate(ConsoleColumnOptions opt, string cssClass, string cssStyles = null)
+        {
+            _table.Rows.Where(r => r.IsAggregate).ToList().ForEach(r => r.Column.ForEach(col => AssignCssStyle(col, cssClass, cssStyles)));
+        }
         #endregion ~END OF Creating CSS Style Classes
 
         #region ^Creating HTML Tags
         private void CreateTags()
         {
-            string _body = "<body><table>{tab}</table></body>";
+            string _body = "<body><table id='master'>{tab}</table></body>";
             StringBuilder _tab = new StringBuilder()
+                                  .Append(CreateHeaderFooterRow())
                                   .Append(CreateColumnHeaders())
                                   .Append(CreateColumnData())
-                                  .Append(CreateHeaderFooterRow());
+                                  .Append(CreateHeaderFooterRow(false));
 
             _html.Append( _body.Replace("{tab}", _tab.ToString()));
         }
@@ -209,18 +233,54 @@ namespace Wrappers
 
         private string CreateHeaderFooterRow(bool header = true)
         {
-            var rows = header ? _table.Headers : _table.Footers;
+            var rows = (header ? _table.Headers : _table.Footers);
             var _tag = new StringBuilder();
             if (!rows.Null() && rows.Any())
             {
-                _tag.Append($"<tr colspan=\"{_table.ColumnOptions.Count}\">");
-                //rows.ForEach(r => _tag.Append($"<td class=\"{r.HTMLCssClass}\" style=\"{r.HTMLInlineStyles.ToEmpty()}\" >{GetText(r)}</td>") );
-                _tag.Append("</tr>");
+                var _outerstyles = $"border-style:solid;border-width:1px;border-color:{_table.OtherOptions.HeadingColor}";
+                _tag.Append($"<tr><td colspan='{_table.ColumnOptions.Count}' style='{_outerstyles}' >");
+                rows.GroupBy(r => r.Alignment).ToList().ForEach(g =>
+                {                   
+                    _tag.Append($"<table id='{(header ? "headers" : "footers")}' style='width:100%;text-align:{g.Key.ToString()}'>");
+                    foreach (var align in g)
+                    {                        
+                        _tag.Append("<tr>");
+                        CreateColumn(g.Key);
+
+                        _tag.Append($"<td class='{align.Heading.HTMLCssClass}' style='{align.Heading.HTMLInlineStyles.ToEmpty()}'>{GetText(align.Heading, true)}</td>");
+                        _tag.Append("<td>:</td>");
+                        _tag.Append($"<td class='{align.Value.HTMLCssClass}' style='{align.Value.HTMLInlineStyles.ToEmpty()}'>{GetText(align.Value, true)}</td>");
+
+                        CreateColumn(g.Key, true);
+                        _tag.Append("</tr>");                        
+                    }
+                    _tag.Append("</table>");                    
+                });
+                _tag.Append("</td></tr>");
             }
+
+            void CreateColumn(ConsoleAlignment align, bool bottom = false)
+            {
+                if (!bottom)
+                {
+                    if (align == ConsoleAlignment.RIGHT)
+                        _tag.Append($"<td style='width:100%'></td>");
+                    else if (align == ConsoleAlignment.CENTER)
+                        _tag.Append($"<td style='width:50%'></td>");
+                }
+                else
+                {
+                    if (align == ConsoleAlignment.CENTER)
+                        _tag.Append($"<td style='width:50%'></td>");
+                    else if (align == ConsoleAlignment.LEFT)
+                        _tag.Append($"<td style='width:100%'></td>");
+                }
+            }
+
             return _tag.ToString();
         }
 
-        private string GetText<T>(T record) where T : _ConsoleItemBase
+        private string GetText<T>(T record, bool htmlspaces = false) where T : _ConsoleItemBase
         {
             var _break = "<br/>";
             var _text = record.Text;
@@ -229,7 +289,7 @@ namespace Wrappers
                 _text = (record as ConsoleRecord).MText.JoinExt(_break).TrimEx(_break);
             }
 
-            return _text;
+            return _text.Replace((htmlspaces ? " ": "~~~~~~~~"), "&nbsp;");
         }
 
         #endregion ^END of Creating HTML Tags
