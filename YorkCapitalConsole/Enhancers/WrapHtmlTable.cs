@@ -300,17 +300,23 @@ namespace Wrappers
         #region ^Save the HTML output to a file
         private void SaveToDisk()
         {
-            _html = _html.Insert(0, _css);
-
-            if (!_table.OtherOptions.Output.Path.Empty())
+            try
             {
-                var _path = _table.OtherOptions.Output.Path;
-                if (_path.Equals(Path.GetFileName(_path)))
-                    _path = $@"{WrapIOs.CurrentFolder}\{_path}.html";
-                if (Directory.Exists( Path.GetDirectoryName(_path) ))
+                _html = _html.Insert(0, _css);
+
+                if (!_table.OtherOptions.Output.Path.Empty())
                 {
-                    WrapIOs.AppendRecords(new string[] { _html.ToString() }, _path);
+                    var _path = _table.OtherOptions.Output.Path;
+                    if (_path.Equals(Path.GetFileName(_path)))
+                        _path = $@"{WrapIOs.CurrentFolder}\{_path}.html";
+                    if (Directory.Exists(Path.GetDirectoryName(_path)))
+                    {
+                        WrapIOs.AppendRecords(new string[] { _html.ToString() }, _path);
+                    }
                 }
+            }catch(Exception e)
+            {
+                throw e;
             }
         }
         #endregion ~END OF Save the HTML output to a file
