@@ -302,7 +302,7 @@ namespace Wrappers
         {
             try
             {
-                _html = _html.Insert(0, _css);
+                _html = _html.Insert(0, _css).Insert(0, Environment.NewLine).Insert(0, "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
 
                 if (!_table.OtherOptions.Output.Path.Empty())
                 {
