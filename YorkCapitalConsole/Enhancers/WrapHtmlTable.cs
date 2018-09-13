@@ -26,7 +26,7 @@ namespace Wrappers
             CreateStyles();
             CreateTags();
 
-            _html = _html.Insert(0, _css).Replace("DarkYellow", "GoldenRod");
+            _html = _html.Insert(0, _css);
         }
     }
 
@@ -34,16 +34,22 @@ namespace Wrappers
     {
         private class HtmlStyles
         {
+            private string _color;
+            private string _backgroundColor;
+            private string _borderColor;
+
             internal bool IsElement { get; set; } = false;
             internal string Width { get; set; }
             internal string WidthUnit { get; set; } = "%";
-            internal string Name { get; set; }
-            internal string Color { get; set; }
-            internal string BackgroundColor { get; set; }
-            internal string BorderColor { get; set; }
+            internal string Name { get; set; }            
             internal string BorderStyle { get; set; }
             internal string BorderWidth { get; set; } = "1";
             internal string Alignment { get; set; }
+
+            internal string Color { get { return _color; } set { _color = ConsoleWebColors.Get(value); } }
+            internal string BackgroundColor { get { return _backgroundColor; } set { _backgroundColor = ConsoleWebColors.Get(value); } }
+            internal string BorderColor { get { return _borderColor; } set { _borderColor = ConsoleWebColors.Get(value); } }
+
             internal string ExtraStyles { get; set; } = "";
         };
 
