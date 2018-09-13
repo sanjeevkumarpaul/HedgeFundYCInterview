@@ -105,7 +105,7 @@ namespace Wrappers
                 case ConsoleOutputType.CONSOLE: return false;
                 case ConsoleOutputType.HTML: new WrapHtmlTable(table).Draw(); break;
                 case ConsoleOutputType.EXCEL: break;
-                case ConsoleOutputType.TEXT: break;
+                case ConsoleOutputType.TEXT: new WrapTextTable(table).Draw(); break;
             }
 
             return true;

@@ -217,6 +217,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WrapAdo.cs" />
     <Compile Include="WrapConfigurations.cs" />
+    <Compile Include="WrapTextTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extensions\Extensions.csproj">
