@@ -147,21 +147,26 @@ namespace Wrappers
         private void WriteColumnHeaders()
         {
             if (!_table.OtherOptions.IsFirstRowAsHeader) return;
-            
-            for (int i = 0; i < 2; i++)
+
+            var _lines = _table.Rows.ElementAt(0).Column.Max(c => c.MText.Count);
+
+            for (int i = 0; i <= _lines; i++)
             {
                 int _colIndex = 0;                
                 _table.Rows.ElementAt(0).Column.ForEach(col =>
                 {
                     var opt = _table.ColumnOptions.ElementAt(_colIndex++);
 
-                    if (i == 0)
+                    if (i < _lines)
                     {
-                        if (col.Text.Empty()) col.Text = "Name";
-                        _stream.Write($" {col.Text.PadRight(opt.Width)} ");
+                        var _ctext = i == 0 ? col.Text : "";
+                        if (_ctext.Empty() && (col.MText != null && i < col.MText.Count ))
+                            _ctext = col.MText[i];
+                        if (!_ctext.Empty()) 
+                            _stream.Write($" {_ctext.PadRight(opt.Width)} ");
                     }
                     else
-                        _stream.Write($" {"=".Repeat(opt.Width)} ");
+                        _stream.Write($" {"=".Repeat(opt.Width + (_colIndex == _option.Columns ? 1 : 0))} ");
                 });
                 _stream.WriteLine();
             }
