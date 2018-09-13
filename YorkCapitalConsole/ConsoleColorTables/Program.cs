@@ -30,8 +30,8 @@ namespace ConsoleColorTables
                     Headers = new List<ConsoleHeaderFooterRow>
                     {
                         new ConsoleHeaderFooterRow { Heading = new ConsoleRecord{ Text = "Information" }, Value = new ConsoleRecord {Text = "Test Naming" }, Alignment = ConsoleAlignment.RIGHT  },
-                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Sorting" }, Value = new ConsoleRecord { Text = "Ascending" }, Alignment = ConsoleAlignment.CENTER },
-                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Wrapping" }, Value = new ConsoleRecord { Text = "Word Wrapping" } }
+                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Sorting" }, Value = new ConsoleRecord { Text = "Ascending" }, Alignment = ConsoleAlignment.LEFT },
+                        new ConsoleHeaderFooterRow { Heading = new ConsoleRecord { Text = "Wrapping" }, Value = new ConsoleRecord { Text = "Word Wrapping" } , Alignment = ConsoleAlignment.CENTER}
                     },
                     Footers = new List<ConsoleHeaderFooterRow>
                     {

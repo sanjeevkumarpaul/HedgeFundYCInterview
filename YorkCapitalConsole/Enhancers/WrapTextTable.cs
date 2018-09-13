@@ -28,7 +28,7 @@ namespace Wrappers
 
                 CalculateBasics();
                 WriteHeaderFooter();
-
+                WriteColumnHeaders();
                 WriteHeaderFooter(false);
                 Close();
             }
@@ -42,21 +42,28 @@ namespace Wrappers
             internal int Columns { get; set; }
             internal int TableWidth { get; set; }
 
-            internal List<ConsoleHeaderFooterRow> LeftHeaders { get; set; }
-            internal List<ConsoleHeaderFooterRow> RightHeaders { get; set; }
-            internal List<ConsoleHeaderFooterRow> CenterHeaders { get; set; }
-
-            internal List<ConsoleHeaderFooterRow> LeftFooters { get; set; }
-            internal List<ConsoleHeaderFooterRow> RightFooters { get; set; }
-            internal List<ConsoleHeaderFooterRow> CenterFooters { get; set; }
+            internal List<Widther> Headers { get; set; } = new List<Widther>();
+            internal List<Widther> Footers { get; set; } = new List<Widther>();
         }
 
-        internal class RowItems
+        internal class Widther
         {
-            internal List<ConsoleHeaderFooterRow> Rows { get; set; }
-            internal ConsoleAlignment Align { get; set; }
-        }
+            internal ConsoleAlignment Align { get; private set; }
+            internal int HeadingWidth { get; private set; }
+            internal int ValueWidth { get; private set; }
+            internal int LeftGapWidth { get; private set; }            
+            internal Widther(int hwidth, int vwidth, ConsoleAlignment align, Options option)
+            {
+                Align = align;
+                HeadingWidth = hwidth;
+                ValueWidth = vwidth;
 
+                if (align != ConsoleAlignment.LEFT)
+                {
+                    LeftGapWidth = ( option.TableWidth - (HeadingWidth + ValueWidth + 4) ) / ( align == ConsoleAlignment.CENTER ? 2 : 1 );                    
+                }
+            }
+        }
 
         private StreamWriter Create()
         {
@@ -82,52 +89,64 @@ namespace Wrappers
             _option.Columns = _table.ColumnOptions.Count;
             _option.TableWidth = _table.ColumnOptions.Sum(c => c.Width) + ( 2 * _option.Columns );
 
-            _option.LeftHeaders = _table.Headers?.FindAll(h => h.Alignment == ConsoleAlignment.LEFT);
-            _option.RightHeaders = _table.Headers?.FindAll(h => h.Alignment == ConsoleAlignment.RIGHT);
-            _option.CenterHeaders = _table.Headers?.FindAll(h => h.Alignment == ConsoleAlignment.CENTER);
+            CalculateHeaderFooterWidths();
+            CalculateHeaderFooterWidths(false);
 
-            _option.LeftFooters = _table.Footers?.FindAll(h => h.Alignment == ConsoleAlignment.LEFT);
-            _option.RightFooters = _table.Footers?.FindAll(h => h.Alignment == ConsoleAlignment.RIGHT);
-            _option.CenterFooters = _table.Footers?.FindAll(h => h.Alignment == ConsoleAlignment.CENTER);
+            void CalculateHeaderFooterWidths(bool header = true)
+            {               
+                var rows = header ? _table.Headers : _table.Footers;
+                if (rows != null)
+                {
+                   foreach(var maxs in  (from g in rows.GroupBy(g => g.Alignment)
+                                         select new
+                                         {
+                                           _hwidth = g.Max(m => m.Heading.Text.Length),
+                                           _vwidth = g.Max(m => m.Value.Text.Length),
+                                           _align = g.Key
+                                          }))
+                         AssignHeaderFooterWidths(maxs._hwidth, maxs._vwidth, maxs._align,  header);
+                }
+            }
+            void AssignHeaderFooterWidths(int hwidth, int vwidth, ConsoleAlignment align,  bool header = true)
+            {
+                if (header)                
+                    _option.Headers.Add(new Widther(hwidth, vwidth, align, _option));                                   
+                else                
+                    _option.Footers.Add(new Widther(hwidth, vwidth, align, _option));                
+            }
         }
 
         private void WriteHeaderFooter(bool header = true)
         {
-            var items = (new List<RowItems>
-            {
-                new RowItems { Rows = header ? _option.LeftHeaders : _option.LeftFooters, Align = ConsoleAlignment.LEFT },
-                new RowItems { Rows = header ? _option.RightHeaders : _option.RightFooters, Align = ConsoleAlignment.RIGHT },
-                new RowItems { Rows = header ? _option.CenterHeaders : _option.CenterFooters, Align = ConsoleAlignment.CENTER }
-            }).Where(r => r.Rows != null && r.Rows.Any()).ToList();
+            var items = header ? _table.Headers : _table.Footers;
 
             if (items.Any())
             {
                 var _separator = "=".Repeat(_option.TableWidth);
-
+               
                 if (header) _stream.WriteLine(_separator);
-                foreach (var it in items)
+                foreach (var r in items)
                 {
-                    var _headingWidth = it.Rows.Max(r => r.Heading.Text.Length);
-                    var _valueWidth = it.Rows.Max(r => r.Value.Text.Length);
-                    var _leftGapWidth = _option.TableWidth - (_headingWidth + _valueWidth + 4); //3 is for " : " 
-                    var _centerGapWidth = _leftGapWidth / 2;
-                    it.Rows.ForEach(r =>
+                    var _widther = header ? _option.Headers.Find(h => h.Align == r.Alignment) : _option.Footers.Find(h => h.Align == r.Alignment);
+                    switch (r.Alignment)
                     {
-                        switch (it.Align)
-                        {
-                            case ConsoleAlignment.LEFT:  _stream.WriteLine($" {r.Heading.Text.PadRight(_headingWidth)} : {r.Value.Text}"); break;
-                            case ConsoleAlignment.RIGHT:                                
-                                _stream.WriteLine($"{" ".PadLeft(_leftGapWidth)}{r.Heading.Text.PadRight(_headingWidth)} : {r.Value.Text}");
-                                break;
-                            case ConsoleAlignment.CENTER:
-                                _stream.WriteLine($"{" ".PadLeft(_centerGapWidth)}{r.Heading.Text.PadRight(_headingWidth)} : {r.Value.Text}");
-                                break;
-                        }
-
-                    });
+                        case ConsoleAlignment.LEFT: Write(_widther, r); break;
+                        case ConsoleAlignment.RIGHT: Write(_widther, r); break;                              
+                        case ConsoleAlignment.CENTER: Write(_widther, r); break;                              
+                    }
                 }
                 _stream.WriteLine(_separator);
             }
+
+            void Write(Widther wid, ConsoleHeaderFooterRow r)
+            {
+                _stream.WriteLine($"{" ".PadLeft(wid.LeftGapWidth)}{r.Heading.Text.PadRight(wid.HeadingWidth)} : {r.Value.Text}");
+            }
+        }
+
+        private void WriteColumnHeaders()
+        {
+
         }
     }
 }
