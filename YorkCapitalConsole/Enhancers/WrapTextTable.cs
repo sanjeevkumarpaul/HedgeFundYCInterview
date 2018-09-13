@@ -110,6 +110,7 @@ namespace Wrappers
                     var _headingWidth = it.Rows.Max(r => r.Heading.Text.Length);
                     var _valueWidth = it.Rows.Max(r => r.Value.Text.Length);
                     var _leftGapWidth = _option.TableWidth - (_headingWidth + _valueWidth + 4); //3 is for " : " 
+                    var _centerGapWidth = _leftGapWidth / 2;
                     it.Rows.ForEach(r =>
                     {
                         switch (it.Align)
@@ -117,6 +118,9 @@ namespace Wrappers
                             case ConsoleAlignment.LEFT:  _stream.WriteLine($" {r.Heading.Text.PadRight(_headingWidth)} : {r.Value.Text}"); break;
                             case ConsoleAlignment.RIGHT:                                
                                 _stream.WriteLine($"{" ".PadLeft(_leftGapWidth)}{r.Heading.Text.PadRight(_headingWidth)} : {r.Value.Text}");
+                                break;
+                            case ConsoleAlignment.CENTER:
+                                _stream.WriteLine($"{" ".PadLeft(_centerGapWidth)}{r.Heading.Text.PadRight(_headingWidth)} : {r.Value.Text}");
                                 break;
                         }
 
