@@ -285,14 +285,14 @@ namespace Wrappers
 
         private string GetText<T>(T record, bool htmlspaces = false) where T : _ConsoleItemBase
         {
-            var _break = "<br/>";
-            var _text = record.Text;
-            if (_text.Empty() && record.GetType() == typeof(ConsoleRecord) )
+            var _text = "";
+            if (record.Text.Empty() && record.GetType() == typeof(ConsoleRecord))
             {
-                _text = (record as ConsoleRecord).MText.JoinExt(_break).TrimEx(_break);
+                (record as ConsoleRecord).MText.ForEach(t => _text += $"<xmp>{t}</xmp>");
             }
-
-            return _text.Replace((htmlspaces ? " ": "~~~~~~~~"), "&nbsp;");
+            else _text = $"<xmp>{record.Text}</xmp>";
+            
+            return _text;
         }
 
         #endregion ^END of Creating HTML Tags

@@ -209,6 +209,11 @@ namespace Extensions
             return str.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&amp;", "&");
         }
 
+        public static string HTMLEscape(this string str)
+        {
+            return System.Net.WebUtility.HtmlEncode(str);
+        }
+
 
         public static Int32 ToInt(this string str)
         {
