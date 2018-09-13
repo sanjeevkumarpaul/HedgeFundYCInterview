@@ -146,7 +146,25 @@ namespace Wrappers
 
         private void WriteColumnHeaders()
         {
+            if (!_table.OtherOptions.IsFirstRowAsHeader) return;
+            
+            for (int i = 0; i < 2; i++)
+            {
+                int _colIndex = 0;                
+                _table.Rows.ElementAt(0).Column.ForEach(col =>
+                {
+                    var opt = _table.ColumnOptions.ElementAt(_colIndex++);
 
+                    if (i == 0)
+                    {
+                        if (col.Text.Empty()) col.Text = "Name";
+                        _stream.Write($" {col.Text.PadRight(opt.Width)} ");
+                    }
+                    else
+                        _stream.Write($" {"=".Repeat(opt.Width)} ");
+                });
+                _stream.WriteLine();
+            }
         }
     }
 }
