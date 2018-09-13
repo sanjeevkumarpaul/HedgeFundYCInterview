@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Wrappers.Consoles;
 using Extensions;
 using Wrappers.Consoles.Enums;
+using System.IO;
 
 namespace Wrappers
 {
@@ -25,8 +26,7 @@ namespace Wrappers
         {
             CreateStyles();
             CreateTags();
-
-            _html = _html.Insert(0, _css);
+            SaveToDisk();
         }
     }
 
@@ -296,5 +296,23 @@ namespace Wrappers
         }
 
         #endregion ^END of Creating HTML Tags
+
+        #region ^Save the HTML output to a file
+        private void SaveToDisk()
+        {
+            _html = _html.Insert(0, _css);
+
+            if (!_table.OtherOptions.Output.Path.Empty())
+            {
+                var _path = _table.OtherOptions.Output.Path;
+                if (_path.Equals(Path.GetFileName(_path)))
+                    _path = $@"{WrapIOs.CurrentFolder}\{_path}.html";
+                if (Directory.Exists( Path.GetDirectoryName(_path) ))
+                {
+                    WrapIOs.AppendRecords(new string[] { _html.ToString() }, _path);
+                }
+            }
+        }
+        #endregion ~END OF Save the HTML output to a file
     }
 }
