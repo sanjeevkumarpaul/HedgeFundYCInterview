@@ -38,6 +38,7 @@ namespace Wrappers
 
     partial class WrapTextTable
     {
+        #region ^Internal Classes
         internal class Options
         {
             internal int Columns { get; set; }
@@ -48,7 +49,6 @@ namespace Wrappers
             internal List<Widther> Headers { get; set; } = new List<Widther>();
             internal List<Widther> Footers { get; set; } = new List<Widther>();
         }
-
         internal class Widther
         {
             internal ConsoleAlignment Align { get; private set; }
@@ -67,7 +67,9 @@ namespace Wrappers
                 }
             }
         }
+        #endregion ~END OF Internal Classes
 
+        #region ^Handlign Stream
         private StreamWriter Create()
         {
             if (!_table.OtherOptions.Output.Path.Empty())
@@ -87,6 +89,9 @@ namespace Wrappers
                 _stream.Close();
             _stream = null;
         }
+        #endregion ~END OF Handlign Stream
+
+        #region ^Writing file with formating
         private void CalculateBasics()
         {
             _option.Columns = _table.ColumnOptions.Count;
@@ -101,25 +106,18 @@ namespace Wrappers
                 var rows = header ? _table.Headers : _table.Footers;
                 if (rows != null)
                 {
-                   foreach(var maxs in  (from g in rows.GroupBy(g => g.Alignment)
-                                         select new
-                                         {
-                                           _hwidth = g.Max(m => m.Heading.Text.Length),
-                                           _vwidth = g.Max(m => m.Value.Text.Length),
-                                           _align = g.Key
-                                          }))
-                         AssignHeaderFooterWidths(maxs._hwidth, maxs._vwidth, maxs._align,  header);
+                    foreach (var maxs in (from g in rows.GroupBy(g => g.Alignment)
+                                          select new
+                                          {
+                                              _hwidth = g.Max(m => m.Heading.Text.Length),
+                                              _vwidth = g.Max(m => m.Value.Text.Length),
+                                              _align = g.Key
+                                          }))                    
+                        (header ? _option.Headers : _option.Footers)
+                            .Add(new Widther(maxs._hwidth, maxs._vwidth, maxs._align, _option));                                            
                 }
-            }
-            void AssignHeaderFooterWidths(int hwidth, int vwidth, ConsoleAlignment align,  bool header = true)
-            {
-                if (header)                
-                    _option.Headers.Add(new Widther(hwidth, vwidth, align, _option));                                   
-                else                
-                    _option.Footers.Add(new Widther(hwidth, vwidth, align, _option));                
-            }
+            }            
         }
-
         private void WriteHeaderFooter(bool header = true)
         {
             var items = header ? _table.Headers : _table.Footers;
@@ -145,13 +143,11 @@ namespace Wrappers
                 _stream.WriteLine($"{" ".PadLeft(wid.LeftGapWidth)}{r.Heading.Text.PadRight(wid.HeadingWidth)} : {r.Value.Text}");
             }
         }
-
         private void WriteColumnHeaders()
         {
             if (!_table.OtherOptions.IsFirstRowAsHeader) return;           
             WriteData(true);
         }
-
         private void WriteData(bool onlyHeader = false)
         {
             foreach(var rw in _table.Rows.Take(onlyHeader? 1 : Int32.MaxValue).Skip(_table.OtherOptions.IsFirstRowAsHeader && !onlyHeader ? 1: 0))
@@ -159,7 +155,7 @@ namespace Wrappers
                 if (rw.IsAggregate) _stream.WriteLine(_option.Separator);
 
                  var _lines = rw.Column.Max(c => c.MText.Count);
-                _lines = (_lines <= 0 ? 1 : _lines) + ( onlyHeader ? 1 : 0 );
+                _lines = (_lines <= 0 ? 1 : _lines) + ( onlyHeader ? 1 : 0 ); //If there is no MText found always take Text which has to get to 1 as total lines.
 
                 for (int i = 0; i < _lines; i++)
                 {
@@ -197,5 +193,6 @@ namespace Wrappers
                 _stream.Write($"{"".PadLeft(_centerLeftPad)}{text}{"".PadRight(_centerRightPad)} ");
             }
         }
+        #endregion ~END OF Writing file with formating
     }
 }
