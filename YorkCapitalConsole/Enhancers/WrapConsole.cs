@@ -3,6 +3,7 @@
 using Wrappers.Consoles;
 using Wrappers.Consoles.Enums;
 using Wrappers.Outputers;
+using Extensions;
 
 namespace Wrappers
 {
@@ -70,7 +71,8 @@ namespace Wrappers
         
         public static void WriteTable(ConsoleTable table)
         {
-            WrapConsoleTable.PutTable(table);
+            WrapOutputerRadar.CalculateBoundaries(table);
+            new WrapConsoleTable().PutTable(table);
         }
         
     }
@@ -135,7 +137,7 @@ namespace Wrappers
             {
                 case ConsoleAlignment.LEFT: if (isfill) str = str.PadRight(Console.WindowWidth - 1); break;
                 case ConsoleAlignment.RIGHT: str = str.PadLeft(Console.WindowWidth - 1); break;
-                case ConsoleAlignment.CENTER: str = WrapConsoleTable.CenteredText(str, Console.WindowWidth - 1); break;
+                case ConsoleAlignment.CENTER: str = str.CenteredText(Console.WindowWidth - 1); break;
             }
             return str;
         }

@@ -405,5 +405,19 @@ namespace Extensions
         {
             return Regex.IsMatch(str, pattern);            
         }
+
+        /// <summary>
+        /// Aligns a text center to any width.
+        /// Obvious reason being Text should be less than the Width specified.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="width"></param>
+        /// <returns></returns>
+        public static string CenteredText(this string text, int width)
+        {
+            var len = width - text.Length;
+            var padlen = ((int)len / 2) + text.Length;
+            return text.PadLeft(padlen);
+        }
     }
 }

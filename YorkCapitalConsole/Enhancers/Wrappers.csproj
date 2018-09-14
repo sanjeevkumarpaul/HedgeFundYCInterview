@@ -208,6 +208,7 @@
     <Compile Include="Consoles\Enums\ConsoleSort.cs" />
     <Compile Include="Consoles\Enums\ConsoleWebColors.cs" />
     <Compile Include="Consoles\_ConsoleItemBase.cs" />
+    <Compile Include="Outputers\WrapOutputerRadar.cs" />
     <Compile Include="WrapConsole.cs" />
     <Compile Include="Outputers\WrapConsoleTable.cs" />
     <Compile Include="Outputers\WrapXmlTable.cs" />
