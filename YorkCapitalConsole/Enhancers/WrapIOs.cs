@@ -213,5 +213,22 @@ namespace Wrappers
             return string.Empty;
         }
 
+        public static StreamWriter CreateStreamWriterForAppend(string relativePath, string extension = "txt")
+        {
+            var _path = CreateAndCheckPath(relativePath, extension);
+            StreamWriter _stream = null;
+            if (!_path.Empty())
+            {
+                if (WrapIOs.Exists(_path))
+                {
+                    _stream = new StreamWriter(_path); _stream.Close(); //This creates a new file
+                }
+
+                _stream = new StreamWriter(_path, true);
+            }
+
+            return _stream;
+        }
+
     }
 }

@@ -43,18 +43,8 @@ namespace Wrappers
         #region ^Handlign Stream
         private StreamWriter Create()
         {
-            _table = _tables[0];
-            var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path, "xml");
-            if (!_path.Empty())
-            {
-                if (WrapIOs.Exists(_path))
-                {
-                    _stream = new StreamWriter(_path); _stream.Close(); //This creates a new file
-                }
-
-                _stream = new StreamWriter(_path, true);
-            }
-
+            _table = _tables[0]; //Always take the first one since this is the file all of the output will be saved.
+            _stream = WrapIOs.CreateStreamWriterForAppend(_table.OtherOptions.Output.Path, "xml");            
             return _stream;
         }
         private void Close()
