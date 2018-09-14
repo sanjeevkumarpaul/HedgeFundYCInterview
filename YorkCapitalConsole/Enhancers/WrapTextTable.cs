@@ -122,7 +122,7 @@ namespace Wrappers
         {
             var items = header ? _table.Headers : _table.Footers;
 
-            if (items.Any())
+            if (!items.Null() && items.Any())
             {
                 _stream.WriteLine(_option.Separator);
                 foreach (var r in items)
