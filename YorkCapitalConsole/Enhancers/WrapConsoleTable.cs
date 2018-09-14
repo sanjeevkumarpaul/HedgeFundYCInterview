@@ -112,7 +112,7 @@ namespace Wrappers
                 case ConsoleOutputType.TXT:
                 case ConsoleOutputType.TEXT: new WrapTextTable(table).Draw(); break;
                 case ConsoleOutputType.CSV: new WrapCSVTable(table).Draw(); break;
-                case ConsoleOutputType.JSON: break;
+                case ConsoleOutputType.JSON: new WrapJsonTable(table).Draw(); break;
                 case ConsoleOutputType.XML: break;
             }
 
