@@ -103,9 +103,17 @@ namespace Wrappers
             switch(table.OtherOptions.Output.Style)
             {
                 case ConsoleOutputType.CONSOLE: return false;
+                case ConsoleOutputType.HTM:
                 case ConsoleOutputType.HTML: new WrapHtmlTable(table).Draw(); break;
+                case ConsoleOutputType.XL:
+                case ConsoleOutputType.XLS:
+                case ConsoleOutputType.XSLX:
                 case ConsoleOutputType.EXCEL: break;
+                case ConsoleOutputType.TXT:
                 case ConsoleOutputType.TEXT: new WrapTextTable(table).Draw(); break;
+                case ConsoleOutputType.CSV: break;
+                case ConsoleOutputType.JSON: break;
+                case ConsoleOutputType.XML: break;
             }
 
             return true;

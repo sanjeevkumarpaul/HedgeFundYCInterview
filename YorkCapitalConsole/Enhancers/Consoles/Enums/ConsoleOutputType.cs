@@ -11,7 +11,16 @@ namespace Wrappers.Consoles.Enums
         NONE,
         CONSOLE,
         HTML,
+        HTM,
         TEXT,
-        EXCEL
+        TXT,
+        EXCEL,
+        XLS,
+        XSLX,
+        XL,
+        //do more
+        CSV,
+        JSON,
+        XML //this should generate XSLT and XML(data island)
     }
 }

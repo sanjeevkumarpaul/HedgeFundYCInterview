@@ -8,13 +8,13 @@ using Wrappers.Consoles.Enums;
 
 namespace Wrappers
 {
-    public partial class WrapTextTable
+    public partial class WrapCSVTable
     {
         private ConsoleTable _table;
         private StreamWriter _stream;
         private Options _option;
 
-        public WrapTextTable(ConsoleTable table)
+        public WrapCSVTable(ConsoleTable table)
         {
             this._table = table;
             this._option = new Options();
@@ -36,7 +36,7 @@ namespace Wrappers
         }
     }
 
-    partial class WrapTextTable
+    partial class WrapCSVTable
     {
         #region ^Internal Classes
         internal class Options

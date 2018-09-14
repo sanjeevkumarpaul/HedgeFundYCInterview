@@ -304,16 +304,9 @@ namespace Wrappers
             {
                 _html = _html.Insert(0, _css).Insert(0, Environment.NewLine).Insert(0, "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
 
-                if (!_table.OtherOptions.Output.Path.Empty())
-                {
-                    var _path = _table.OtherOptions.Output.Path;
-                    if (_path.Equals(Path.GetFileName(_path)))
-                        _path = $@"{WrapIOs.CurrentFolder}\{_path}.html";
-                    if (Directory.Exists(Path.GetDirectoryName(_path)))
-                    {
-                        WrapIOs.AppendRecords(new string[] { _html.ToString() }, _path);
-                    }
-                }
+                var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path);
+                if (!_path.Empty()) WrapIOs.AppendRecords(new string[] { _html.ToString() }, _path);
+                                
             }catch(Exception e)
             {
                 throw e;
