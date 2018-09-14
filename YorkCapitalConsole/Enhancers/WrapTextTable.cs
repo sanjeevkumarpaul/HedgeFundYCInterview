@@ -179,11 +179,11 @@ namespace Wrappers
                                 case ConsoleAlignment.CENTER: CenterAlign(opt, _ctext); break;
                             }
                         }                        
-                    });
+                    });//Column loop
                     _stream.WriteLine();                    
-                }
+                }//Inner loop
                 if (!onlyHeader)_stream.WriteLine();
-            }
+            }//Outer loop
 
             void CenterAlign(ConsoleColumnOptions opt, string text)
             {
