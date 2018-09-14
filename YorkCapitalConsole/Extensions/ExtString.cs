@@ -201,6 +201,13 @@ namespace Extensions
 
             return (!str.Empty() && (pos = str.LastIndexOf(delimter)) >= 0) ? str.Substring(pos + 1) : str;
         }
+        
+        public static string EscapeXmlNotations(this string str)
+        {
+            if (str.Empty()) return str;
+
+            return str.Replace("&", "&amp;");
+        }
 
         public static string UnescapeXmlNotations(this string str)
         {
