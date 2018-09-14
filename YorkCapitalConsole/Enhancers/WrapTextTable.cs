@@ -43,6 +43,7 @@ namespace Wrappers
             internal int Columns { get; set; }
             internal int TableWidth { get; set; }
             internal string Separator { get; set; }
+            internal string SeparatorChar { get; set; } = "=";
 
             internal List<Widther> Headers { get; set; } = new List<Widther>();
             internal List<Widther> Footers { get; set; } = new List<Widther>();
@@ -90,7 +91,7 @@ namespace Wrappers
         {
             _option.Columns = _table.ColumnOptions.Count;
             _option.TableWidth = _table.ColumnOptions.Sum(c => c.Width) + ( 2 * _option.Columns );
-            _option.Separator = "=".Repeat(_option.TableWidth);
+            _option.Separator = _option.SeparatorChar.Repeat(_option.TableWidth);
 
             CalculateHeaderFooterWidths();
             CalculateHeaderFooterWidths(false);
@@ -147,68 +148,52 @@ namespace Wrappers
 
         private void WriteColumnHeaders()
         {
-            if (!_table.OtherOptions.IsFirstRowAsHeader) return;
-
-            var _lines = _table.Rows.ElementAt(0).Column.Max(c => c.MText.Count);
-
-            for (int i = 0; i <= _lines; i++)
-            {
-                int _colIndex = 0;                
-                _table.Rows.ElementAt(0).Column.ForEach(col =>
-                {
-                    var opt = _table.ColumnOptions.ElementAt(_colIndex++);
-
-                    if (i < _lines)
-                    {
-                        var _ctext = i == 0 ? col.Text : "";
-                        if (_ctext.Empty() && (col.MText != null && i < col.MText.Count ))
-                            _ctext = col.MText[i];
-                        if (!_ctext.Empty()) 
-                            _stream.Write($" {_ctext.PadRight(opt.Width)} ");
-                    }
-                    else
-                        _stream.Write($" {"=".Repeat(opt.Width + (_colIndex == _option.Columns ? 1 : 0))} ");
-                });
-                _stream.WriteLine();
-            }
+            if (!_table.OtherOptions.IsFirstRowAsHeader) return;           
+            WriteData(true);
         }
 
-        private void WriteData()
+        private void WriteData(bool onlyHeader = false)
         {
-            foreach(var rw in _table.Rows.Skip(_table.OtherOptions.IsFirstRowAsHeader? 1: 0))
+            foreach(var rw in _table.Rows.Take(onlyHeader? 1 : Int32.MaxValue).Skip(_table.OtherOptions.IsFirstRowAsHeader && !onlyHeader ? 1: 0))
             {
                 if (rw.IsAggregate) _stream.WriteLine(_option.Separator);
 
                  var _lines = rw.Column.Max(c => c.MText.Count);
+                _lines = (_lines <= 0 ? 1 : _lines) + ( onlyHeader ? 1 : 0 );
 
-                for(int i = 0; i < (_lines <= 0 ? 1 : _lines); i++)
+                for (int i = 0; i < _lines; i++)
                 {
                     int _colIndex = 0;
                     rw.Column.ForEach(col => 
                     {
                         var opt = _table.ColumnOptions.ElementAt(_colIndex++);
-                        var _ctext = i == 0 ? col.Text : "";
-                        if (_ctext.Empty() && (col.MText != null && i < col.MText.Count))
-                            _ctext = col.MText[i];
-                        
-                        switch(opt.Alignment)
-                        {
-                            case ConsoleAlignment.LEFT: _stream.Write($" {_ctext.PadRight(opt.Width)} "); break;
-                            case ConsoleAlignment.RIGHT: _stream.Write($" {_ctext.PadLeft(opt.Width)} "); break;
-                            case ConsoleAlignment.CENTER: RightAlign(opt, _ctext); break;
-                        }
-                        
+
+                        if (onlyHeader && i == (_lines - 1) )
+                            _stream.Write($" {_option.SeparatorChar.Repeat(opt.Width + (_colIndex == _option.Columns ? 1 : 0))} ");
+                        else
+                        {                            
+                            var _ctext = i == 0 ? col.Text : "";
+                            if (_ctext.Empty() && (col.MText != null && i < col.MText.Count))
+                                _ctext = col.MText[i];
+
+                            switch (opt.Alignment)
+                            {
+                                case ConsoleAlignment.LEFT: _stream.Write($" {_ctext.PadRight(opt.Width)} "); break;
+                                case ConsoleAlignment.RIGHT: _stream.Write($" {_ctext.PadLeft(opt.Width)} "); break;
+                                case ConsoleAlignment.CENTER: CenterAlign(opt, _ctext); break;
+                            }
+                        }                        
                     });
                     _stream.WriteLine();                    
                 }
-                _stream.WriteLine();
+                if (!onlyHeader)_stream.WriteLine();
             }
 
-            void RightAlign(ConsoleColumnOptions opt, string text)
+            void CenterAlign(ConsoleColumnOptions opt, string text)
             {
                 double _centerPad = (opt.Width - text.Length) / 2.0;
-                int _centerLeftPad = (int)Math.Floor(_centerPad);
-                int _centerRightPad = (int)Math.Ceiling(_centerPad);
+                int _centerLeftPad = (int)Math.Floor(_centerPad); //Less of the value at left side Eg.,  if 7.5/7.1/7.9 => take 7
+                int _centerRightPad = (int)Math.Ceiling(_centerPad); //Greater of the value at right side Eg., if 7.5/7.1/7.9 => take 8
                 _stream.Write($"{"".PadLeft(_centerLeftPad)}{text}{"".PadRight(_centerRightPad)} ");
             }
         }
