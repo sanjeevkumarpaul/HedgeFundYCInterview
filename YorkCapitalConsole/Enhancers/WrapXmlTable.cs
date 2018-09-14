@@ -15,12 +15,7 @@ namespace Wrappers
         private StringBuilder _xml;
         private List<StringBuilder> _xmls;
 
-        public WrapXmlTable(ConsoleTable table)
-        {
-            this._tables = new List<ConsoleTable> { table };
-            this._xml = new StringBuilder();
-        }
-
+        public WrapXmlTable(ConsoleTable table) : this(new List<ConsoleTable> { table }) { }
         public WrapXmlTable(List<ConsoleTable> tables)
         {
             this._tables = tables;
@@ -50,8 +45,9 @@ namespace Wrappers
         private void Close()
         {
             if (!_stream.Null())
-            {                
-                _stream.WriteLine($"<?xml version='1.0' encoding='UTF-8' ?><Results>{_xmls.Select(x => x.ToString()).ToList().JoinExt()}</Results>");
+            {
+                var _results = _xmls.Select(x => x.ToString()).ToList().JoinExt();
+                _stream.WriteLine($"<?xml version='1.0' encoding='UTF-8' ?><Results>{_results}</Results>");
                 _stream.Close();
             }
             _stream = null;
