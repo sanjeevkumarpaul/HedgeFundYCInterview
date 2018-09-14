@@ -190,15 +190,12 @@ namespace Wrappers
                         var _ctext = i == 0 ? col.Text : "";
                         if (_ctext.Empty() && (col.MText != null && i < col.MText.Count))
                             _ctext = col.MText[i];
-
-                        double _centerPad = (opt.Width - _ctext.Length) / 2.0;
-                        int _centerLeftPad = (int)Math.Floor(_centerPad);
-                        int _centerRightPad = (int)Math.Ceiling(_centerPad);
+                        
                         switch(opt.Alignment)
                         {
                             case ConsoleAlignment.LEFT: _stream.Write($" {_ctext.PadRight(opt.Width)} "); break;
                             case ConsoleAlignment.RIGHT: _stream.Write($" {_ctext.PadLeft(opt.Width)} "); break;
-                            case ConsoleAlignment.CENTER: _stream.Write($"{"".PadLeft(_centerLeftPad)}{_ctext}{"".PadRight(_centerRightPad)} "); break;
+                            case ConsoleAlignment.CENTER: RightAlign(opt, _ctext); break;
                         }
                         
                     });
@@ -207,7 +204,13 @@ namespace Wrappers
                 _stream.WriteLine();
             }
 
-
+            void RightAlign(ConsoleColumnOptions opt, string text)
+            {
+                double _centerPad = (opt.Width - text.Length) / 2.0;
+                int _centerLeftPad = (int)Math.Floor(_centerPad);
+                int _centerRightPad = (int)Math.Ceiling(_centerPad);
+                _stream.Write($"{"".PadLeft(_centerLeftPad)}{text}{"".PadRight(_centerRightPad)} ");
+            }
         }
     }
 }
