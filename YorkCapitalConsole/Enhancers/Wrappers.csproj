@@ -210,6 +210,7 @@
     <Compile Include="Consoles\_ConsoleItemBase.cs" />
     <Compile Include="WrapConsole.cs" />
     <Compile Include="WrapConsoleTable.cs" />
+    <Compile Include="WrapXmlTable.cs" />
     <Compile Include="WrapJsonTable.cs" />
     <Compile Include="WrapEntityFramework.cs" />
     <Compile Include="WrapExpandos.cs" />
