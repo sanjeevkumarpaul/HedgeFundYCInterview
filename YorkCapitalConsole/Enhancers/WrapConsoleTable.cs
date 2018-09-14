@@ -100,6 +100,8 @@ namespace Wrappers
 
         private static bool ExternalOutput(ConsoleTable table)
         {
+            List<ConsoleTable> tabs = new List<ConsoleTable> { table, table };
+
             switch(table.OtherOptions.Output.Style)
             {
                 case ConsoleOutputType.CONSOLE: return false;
@@ -113,7 +115,7 @@ namespace Wrappers
                 case ConsoleOutputType.TEXT: new WrapTextTable(table).Draw(); break;
                 case ConsoleOutputType.CSV: new WrapCSVTable(table).Draw(); break;
                 case ConsoleOutputType.JSON: new WrapJsonTable(table).Draw(); break;
-                case ConsoleOutputType.XML: new WrapXmlTable(table).Draw(); break;
+                case ConsoleOutputType.XML: new WrapXmlTable(tabs).Draw(); break;
             }
 
             return true;

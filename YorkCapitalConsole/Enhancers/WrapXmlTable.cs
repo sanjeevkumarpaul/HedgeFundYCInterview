@@ -9,13 +9,21 @@ namespace Wrappers
 {
     public partial class WrapXmlTable
     {
+        private List<ConsoleTable> _tables;
         private ConsoleTable _table;
         private StreamWriter _stream;
         private StringBuilder _xml;
-        
+        private List<StringBuilder> _xmls;
+
         public WrapXmlTable(ConsoleTable table)
         {
-            this._table = table;
+            this._tables = new List<ConsoleTable> { table };
+            this._xml = new StringBuilder();
+        }
+
+        public WrapXmlTable(List<ConsoleTable> tables)
+        {
+            this._tables = tables;
             this._xml = new StringBuilder();
         }
 
@@ -24,9 +32,7 @@ namespace Wrappers
             using (Create())
             {
                 if (_stream.Null()) return;
-                WriteHeadersFooters();
-                WriteData();
-                WriteHeadersFooters(false);
+                Process();
                 Close();
             }
         }
@@ -37,8 +43,17 @@ namespace Wrappers
         #region ^Handlign Stream
         private StreamWriter Create()
         {
+            _table = _tables[0];
             var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path, "xml");
-            if (!_path.Empty()) _stream = new StreamWriter(_path);
+            if (!_path.Empty())
+            {
+                if (WrapIOs.Exists(_path))
+                {
+                    _stream = new StreamWriter(_path); _stream.Close(); //This creates a new file
+                }
+
+                _stream = new StreamWriter(_path, true);
+            }
 
             return _stream;
         }
@@ -46,14 +61,33 @@ namespace Wrappers
         {
             if (!_stream.Null())
             {                
-                _stream.WriteLine($"<?xml version='1.0' encoding='UTF-8' ?><Results>{_xml.ToString()}</Results>");
+                _stream.WriteLine($"<?xml version='1.0' encoding='UTF-8' ?><Results>{_xmls.Select(x => x.ToString()).ToList().JoinExt()}</Results>");
                 _stream.Close();
             }
             _stream = null;
         }
         #endregion ~END OF Handlign Stream
 
-        #region ^Writing file with formating      
+        #region ^Writing file with formating     
+        private void Process()
+        {
+            _xmls = new List<StringBuilder>();
+            _tables.ForEach(t => 
+            {
+                _table = t;
+                _xml = new StringBuilder();
+                WriteHeadersFooters();
+                WriteData();
+                WriteHeadersFooters(false);
+                WriteClosure();
+            });
+           
+        }
+
+        private void WriteClosure()
+        {
+            _xmls.Add( new StringBuilder($"<ResultSet>{_xml.ToString()}</ResultSet>") );
+        }
         private void WriteHeadersFooters(bool header = true)
         {
             var rows = header ? _table.Headers : _table.Footers;
@@ -63,8 +97,8 @@ namespace Wrappers
             {
                 rows.ForEach(rw =>
                 {
-                    var _htext = rw.Heading.Text.RemoveSpecialCharacters();
-                    var _vtext = rw.Value.Text.RemoveSpecialCharacters();
+                    var _htext = rw.Heading.Text.EscapeXmlNotations();
+                    var _vtext = rw.Value.Text.EscapeXmlNotations();
                     _head.Append($"<Row><Title>{_htext}</Title><Value>{_vtext}</Value></Row>");
                 });
                 _xml.Append($"<{_tag}>{_head.ToString()}</{_tag}>");
@@ -84,7 +118,6 @@ namespace Wrappers
             ExtractData(_heads);
             ExtractData(_heads, true);
         }
-
         private void ExtractData(List<string> colheaders, bool isAggregates = false)
         {
             var _body = new StringBuilder();
@@ -105,7 +138,7 @@ namespace Wrappers
 
         private string GetText(ConsoleRecord record)
         {
-            return $"{record.Text}{record.MText.JoinExt()}";
+            return $"{record.Text.EscapeXmlNotations()}{record.MText.JoinExt().EscapeXmlNotations()}";
         }
         #endregion ~END OF Writing file with formating
     }
