@@ -304,7 +304,7 @@ namespace Wrappers
             {
                 _html = _html.Insert(0, _css).Insert(0, Environment.NewLine).Insert(0, "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
 
-                var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path);
+                var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path, "html");
                 if (!_path.Empty()) WrapIOs.AppendRecords(new string[] { _html.ToString() }, _path);
                                 
             }catch(Exception e)

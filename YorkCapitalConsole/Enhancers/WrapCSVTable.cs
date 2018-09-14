@@ -72,7 +72,7 @@ namespace Wrappers
         #region ^Handlign Stream
         private StreamWriter Create()
         {
-            var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path);
+            var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path, "csv");
             if (!_path.Empty()) _stream = new StreamWriter(_path);
 
             return _stream;

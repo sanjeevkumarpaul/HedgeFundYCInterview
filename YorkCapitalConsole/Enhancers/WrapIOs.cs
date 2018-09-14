@@ -200,13 +200,13 @@ namespace Wrappers
             try { File.Move(oldfile, newfile); } catch { }
         }
 
-        public static string CreateAndCheckPath(string relativePath)
+        public static string CreateAndCheckPath(string relativePath, string extension = "txt")
         {
             if (!relativePath.Empty())
             {
                 var _path = relativePath;
                 if (_path.Equals(Path.GetFileName(_path)))
-                    _path = $@"{WrapIOs.CurrentFolder}\{_path}.txt";
+                    _path = $@"{WrapIOs.CurrentFolder}\{_path}.{extension}";
                 if (Directory.Exists(Path.GetDirectoryName(_path)))
                     return _path;
             }
