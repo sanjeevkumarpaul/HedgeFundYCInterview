@@ -71,7 +71,7 @@ namespace Wrappers
         {
             List<string> _heads = new List<string>();
             if (_table.OtherOptions.IsFirstRowAsHeader)
-                _heads = _table.Rows.ElementAt(0).Column.Select(c => GetText(c).Replace(" ","")).ToList();
+                _heads = _table.Rows.ElementAt(0).Column.Select(c => GetText(c).RemoveSpecialCharacters()).ToList();
             else
             {
                 int i = 0;
