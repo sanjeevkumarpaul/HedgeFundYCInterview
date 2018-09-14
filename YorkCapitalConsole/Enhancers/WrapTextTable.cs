@@ -137,6 +137,8 @@ namespace Wrappers
                 }
                 _stream.WriteLine(_option.Separator);
             }
+            else
+                _stream.WriteLine(_option.Separator);
 
             void Write(Widther wid, ConsoleHeaderFooterRow r)
             {
