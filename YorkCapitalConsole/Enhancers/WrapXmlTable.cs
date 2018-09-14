@@ -63,7 +63,9 @@ namespace Wrappers
             {
                 rows.ForEach(rw =>
                 {
-                    _head.Append($"<Row><Title>{rw.Heading.Text}</Title><Value>{rw.Value.Text}</Value></Row>");
+                    var _htext = rw.Heading.Text.RemoveSpecialCharacters();
+                    var _vtext = rw.Value.Text.RemoveSpecialCharacters();
+                    _head.Append($"<Row><Title>{_htext}</Title><Value>{_vtext}</Value></Row>");
                 });
                 _xml.Append($"<{_tag}>{_head.ToString()}</{_tag}>");
             }            
@@ -72,7 +74,7 @@ namespace Wrappers
         {
             List<string> _heads = new List<string>();
             if (_table.OtherOptions.IsFirstRowAsHeader)
-                _heads = _table.Rows.ElementAt(0).Column.Select(c => GetText(c).RemoveSpecialCharacters()).ToList();
+                _heads = _table.Rows.ElementAt(0).Column.Select(c => GetText(c).RemoveSpecialCharacters().ToEmpty("flag")).ToList();
             else
             {
                 int i = 0;
