@@ -6,7 +6,7 @@ using Extensions;
 using System;
 using Wrappers.Consoles.Enums;
 
-namespace Wrappers
+namespace Wrappers.Outputers
 {
     public partial class WrapTextTable
     {

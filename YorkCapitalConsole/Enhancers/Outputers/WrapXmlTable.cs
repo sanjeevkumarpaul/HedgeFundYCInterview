@@ -5,7 +5,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Wrappers
+namespace Wrappers.Outputers
 {
     public partial class WrapXmlTable
     {
@@ -121,7 +121,6 @@ namespace Wrappers
             }
             _xml.Append($"<{_tag}>{_body.ToString()}</{_tag}>");
         }
-
         private string GetText(ConsoleRecord record)
         {
             return $"{record.Text.EscapeXmlNotations()}{record.MText.JoinExt().EscapeXmlNotations()}";

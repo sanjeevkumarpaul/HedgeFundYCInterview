@@ -5,7 +5,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Wrappers
+namespace Wrappers.Outputers
 {
     public partial class WrapJsonTable
     {

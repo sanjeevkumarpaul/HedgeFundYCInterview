@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace Wrappers
+namespace Wrappers.Outputers
 {
     public class WrapConsoleSpinner : IDisposable
     {

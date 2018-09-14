@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
-using Extensions;
 using Wrappers.Consoles;
 using Wrappers.Consoles.Enums;
+using Wrappers.Outputers;
 
 namespace Wrappers
 {

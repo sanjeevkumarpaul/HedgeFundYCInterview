@@ -209,18 +209,18 @@
     <Compile Include="Consoles\Enums\ConsoleWebColors.cs" />
     <Compile Include="Consoles\_ConsoleItemBase.cs" />
     <Compile Include="WrapConsole.cs" />
-    <Compile Include="WrapConsoleTable.cs" />
-    <Compile Include="WrapXmlTable.cs" />
-    <Compile Include="WrapJsonTable.cs" />
+    <Compile Include="Outputers\WrapConsoleTable.cs" />
+    <Compile Include="Outputers\WrapXmlTable.cs" />
+    <Compile Include="Outputers\WrapJsonTable.cs" />
     <Compile Include="WrapEntityFramework.cs" />
     <Compile Include="WrapExpandos.cs" />
-    <Compile Include="WrapHtmlTable.cs" />
+    <Compile Include="Outputers\WrapHtmlTable.cs" />
     <Compile Include="WrapIOs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WrapAdo.cs" />
     <Compile Include="WrapConfigurations.cs" />
-    <Compile Include="WrapCSVTable.cs" />
-    <Compile Include="WrapTextTable.cs" />
+    <Compile Include="Outputers\WrapCSVTable.cs" />
+    <Compile Include="Outputers\WrapTextTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extensions\Extensions.csproj">
@@ -240,7 +240,7 @@
     <None Include="App.config" />
     <None Include="Resources\Options.json" />
     <None Include="packages.config" />
-    <Compile Include="WrapConsoleSpinner.cs" />
+    <Compile Include="Outputers\WrapConsoleSpinner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Options Classes.txt" />

@@ -7,7 +7,7 @@ using Extensions;
 using Wrappers.Consoles.Enums;
 using System.IO;
 
-namespace Wrappers
+namespace Wrappers.Outputers
 {
     public partial class WrapHtmlTable
     {

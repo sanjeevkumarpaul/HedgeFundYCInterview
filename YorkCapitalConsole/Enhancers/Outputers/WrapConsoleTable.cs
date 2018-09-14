@@ -6,7 +6,7 @@ using Wrappers.Consoles;
 using Wrappers.Consoles.Enums;
 using Extensions;
 
-namespace Wrappers
+namespace Wrappers.Outputers
 {
     public static class WrapConsoleTable
     {
