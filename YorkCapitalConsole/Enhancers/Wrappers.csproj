@@ -208,6 +208,8 @@
     <Compile Include="Consoles\Enums\ConsoleSort.cs" />
     <Compile Include="Consoles\Enums\ConsoleWebColors.cs" />
     <Compile Include="Consoles\_ConsoleItemBase.cs" />
+    <Compile Include="Outputers\Base\_BaseOutputTable.cs" />
+    <Compile Include="Outputers\Interface\IOutputTable.cs" />
     <Compile Include="Outputers\WrapOutputerOptions.cs" />
     <Compile Include="Outputers\WrapOutputerRadar.cs" />
     <Compile Include="WrapConsole.cs" />

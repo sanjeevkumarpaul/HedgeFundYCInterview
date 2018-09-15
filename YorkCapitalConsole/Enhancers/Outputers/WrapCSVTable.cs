@@ -5,22 +5,17 @@ using Wrappers.Consoles;
 using Extensions;
 using System;
 using Wrappers.Consoles.Enums;
+using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
-    public partial class WrapCSVTable
+    public partial class WrapCSVTable : _BaseOutputTable
     {
-        //Catch is CSV will not put HEADERS and FOOTERS.
+        public WrapCSVTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
+        public WrapCSVTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        private ConsoleTable _table;
-        private StreamWriter _stream;
-        
-        public WrapCSVTable(ConsoleTable table)
-        {
-            this._table = table;        
-        }
 
-        public void Draw()
+        public override void Draw()
         {
             using (Create())
             {
@@ -36,7 +31,7 @@ namespace Wrappers.Outputers
         #region ^Handlign Stream
         private StreamWriter Create()
         {
-            var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path, "csv");
+            var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path, "csv");
             if (!_path.Empty()) _stream = new StreamWriter(_path);
 
             return _stream;

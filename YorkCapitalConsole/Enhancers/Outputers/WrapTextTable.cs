@@ -5,22 +5,18 @@ using Wrappers.Consoles;
 using Extensions;
 using System;
 using Wrappers.Consoles.Enums;
+using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
-    public partial class WrapTextTable
+    public partial class WrapTextTable : _BaseOutputTable
     {
-        private ConsoleTable _table;
-        private StreamWriter _stream;
         private Options _option;
 
-        public WrapTextTable(ConsoleTable table)
-        {
-            this._table = table;
-            this._option = new Options();
-        }
+        public WrapTextTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { init(); }
+        public WrapTextTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { init(); }
 
-        public void Draw()
+        public override void Draw()
         {
             using (Create())
             {
@@ -33,6 +29,11 @@ namespace Wrappers.Outputers
                 WriteHeaderFooter(false);
                 Close();
             }
+        }
+
+        private void init()
+        {
+            _option = new Options();
         }
     }
 
@@ -72,7 +73,7 @@ namespace Wrappers.Outputers
         #region ^Handlign Stream
         private StreamWriter Create()
         {
-            var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path);
+            var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path);
             if (!_path.Empty()) _stream = new StreamWriter(_path);
 
             return _stream;

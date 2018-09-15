@@ -4,22 +4,16 @@ using Extensions;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
-    public partial class WrapJsonTable
+    public partial class WrapJsonTable : _BaseOutputTable
     {
-        private ConsoleTable _table;
-        private StreamWriter _stream;
-        private StringBuilder _json;
-        
-        public WrapJsonTable(ConsoleTable table)
-        {
-            this._table = table;
-            this._json = new StringBuilder();
-        }
+        public WrapJsonTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
+        public WrapJsonTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        public void Draw()
+        public override void Draw()
         {
             using (Create())
             {
@@ -37,7 +31,7 @@ namespace Wrappers.Outputers
         #region ^Handlign Stream
         private StreamWriter Create()
         {
-            var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path, "json");
+            var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path, "json");
             if (!_path.Empty()) _stream = new StreamWriter(_path);
 
             return _stream;
@@ -46,7 +40,7 @@ namespace Wrappers.Outputers
         {
             if (!_stream.Null())
             {
-                _stream.WriteLine($"{{{_json.ToString().TrimEx(",")}}}");
+                _stream.WriteLine($"{{{_out.ToString().TrimEx(",")}}}");
                 _stream.Close();
             }
             _stream = null;
@@ -64,7 +58,7 @@ namespace Wrappers.Outputers
                 {
                     _head.Append($"{{\"Title\" : \"{rw.Heading.Text}\", \"Value\" : \"{rw.Value.Text}\"}},");
                 });
-                _json.Append($"\"{(header? "Headers" : "Footers")}\" : [{_head.ToString().TrimEx(",")}],");
+                _out.Append($"\"{(header? "Headers" : "Footers")}\" : [{_head.ToString().TrimEx(",")}],");
             }            
         }
         private void WriteData()
@@ -96,7 +90,7 @@ namespace Wrappers.Outputers
                 });
                 _body.Append($"{{{_text.TrimEx(",")}}},");
             }
-            _json.Append($"\"{(isAggregates? "Aggregates" : "Data")}\" : [{_body.ToString().TrimEx(",")}],");
+            _out.Append($"\"{(isAggregates? "Aggregates" : "Data")}\" : [{_body.ToString().TrimEx(",")}],");
         }
 
         private string GetText(ConsoleRecord record)

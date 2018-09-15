@@ -69,10 +69,9 @@ namespace Wrappers
             PaintIt(str, bgColor, foreColor, 1, align);
         }
         
-        public static void WriteTable(ConsoleTable table)
+        public static void WriteTable(ConsoleTable table, WrapOutputerOptions options)
         {
-            WrapOutputerRadar.CalculateBoundaries(table);
-            new WrapConsoleTable().PutTable(table);
+            WrapOutputerRadar.Output(table, options);
         }
         
     }

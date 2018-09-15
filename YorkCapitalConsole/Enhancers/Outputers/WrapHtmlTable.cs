@@ -6,23 +6,17 @@ using Wrappers.Consoles;
 using Extensions;
 using Wrappers.Consoles.Enums;
 using System.IO;
+using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
-    public partial class WrapHtmlTable
+    public partial class WrapHtmlTable : _BaseOutputTable
     {
-        private ConsoleTable _table;
-        private StringBuilder _css;
-        private StringBuilder _html;
+        private StringBuilder _css = new StringBuilder();
+        public WrapHtmlTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
+        public WrapHtmlTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        public WrapHtmlTable(ConsoleTable table)
-        {
-            _table = table;
-            _css = new StringBuilder();
-            _html = new StringBuilder();
-        }
-
-        public void Draw()
+        public override void Draw()
         {
             CreateStyles();
             CreateTags();
@@ -202,7 +196,7 @@ namespace Wrappers.Outputers
                                   .Append(CreateColumnData())
                                   .Append(CreateHeaderFooterRow(false));
 
-            _html.Append( _body.Replace("{tab}", _tab.ToString()));
+            _out.Append( _body.Replace("{tab}", _tab.ToString()));
         }
 
         private string CreateColumnHeaders()
@@ -302,10 +296,10 @@ namespace Wrappers.Outputers
         {
             try
             {
-                _html = _html.Insert(0, _css).Insert(0, Environment.NewLine).Insert(0, "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
+                _out = _out.Insert(0, _css).Insert(0, Environment.NewLine).Insert(0, "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
 
-                var _path = WrapIOs.CreateAndCheckPath(_table.OtherOptions.Output.Path, "html");
-                if (!_path.Empty()) WrapIOs.AppendRecords(new string[] { _html.ToString() }, _path);
+                var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path, "html");
+                if (!_path.Empty()) WrapIOs.AppendRecords(new string[] { _out.ToString() }, _path);
                                 
             }catch(Exception e)
             {

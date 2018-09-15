@@ -7,8 +7,29 @@ using Extensions;
 
 namespace Wrappers.Outputers
 {
-    internal partial class WrapOutputerRadar
+    public partial class WrapOutputerRadar
     {
+        public static bool Output(ConsoleTable table, WrapOutputerOptions options)
+        {
+            switch (options.Output.Style)
+            {
+                case ConsoleOutputType.CONSOLE: return false;
+                case ConsoleOutputType.HTM:
+                case ConsoleOutputType.HTML: new WrapHtmlTable(table, options).Draw(); break;
+                case ConsoleOutputType.XL:
+                case ConsoleOutputType.XLS:
+                case ConsoleOutputType.XSLX:
+                case ConsoleOutputType.EXCEL: break;
+                case ConsoleOutputType.TXT:
+                case ConsoleOutputType.TEXT: new WrapTextTable(table, options).Draw(); break;
+                case ConsoleOutputType.CSV: new WrapCSVTable(table, options).Draw(); break;
+                case ConsoleOutputType.JSON: new WrapJsonTable(table, options).Draw(); break;
+                case ConsoleOutputType.XML: new WrapXmlTable(table, options).Draw(); break;
+            }
+
+            return true;
+        }
+
         internal static void CalculateBoundaries(ConsoleTable table)
         {
             table = Sort(table);

@@ -13,84 +13,58 @@ namespace Wrappers.Outputers
         public void PutTable(ConsoleTable table)
         {
             var max = table.ColumnOptions.Sum(c => c.Width);
-            if (!ExternalOutput(table))
+            var separator = table.OtherOptions.BorderChar.ToString().Repeat(max + (table.ColumnOptions.Count() * 2) + 1);
+
+            Console.WriteLine();
+            DrawHeaderFooter(table, separator);
+
+            int col = 0;
+            foreach (var rows in table.Rows)
             {
-                var separator = table.OtherOptions.BorderChar.ToString().Repeat(max + (table.ColumnOptions.Count() * 2) + 1);
+                var _borderColor = (rows.IsAggregate || (rows.IsLastRow && table.OtherOptions.IsAggregateRowExists)) ?
+                                            table.OtherOptions.AggregateBorderColor : table.OtherOptions.BorderColor;
+                var _borderBarColor = rows.IsAggregate ? _borderColor : table.OtherOptions.BorderColor;
 
-                Console.WriteLine();
-                DrawHeaderFooter(table, separator);
-
-                int col = 0;
-                foreach (var rows in table.Rows)
+                var mLines = rows.Column.Max(c => c.Lines) - 1;
+                for (int mindex = 0; mindex <= mLines; mindex++)
                 {
-                    var _borderColor = (rows.IsAggregate || (rows.IsLastRow && table.OtherOptions.IsAggregateRowExists)) ?
-                                                table.OtherOptions.AggregateBorderColor : table.OtherOptions.BorderColor;
-                    var _borderBarColor = rows.IsAggregate ? _borderColor : table.OtherOptions.BorderColor;
-
-                    var mLines = rows.Column.Max(c => c.Lines) - 1;
-                    for (int mindex = 0; mindex <= mLines; mindex++)
+                    int i = 0;
+                    WrapConsole.WriteColor("|", _borderBarColor);
+                    rows.Column.ForEach(C =>
                     {
-                        int i = 0;
-                        WrapConsole.WriteColor("|", _borderBarColor);
-                        rows.Column.ForEach(C =>
-                        {
-                            var _option = table.ColumnOptions[i++];
-                            var _alText = C.Text;
+                        var _option = table.ColumnOptions[i++];
+                        var _alText = C.Text;
 
-                        //Wrapping requirement.
-                        if ((_alText.Empty() || mindex > 0) && C.MText.Any() && C.MText.Count > mindex)
-                                _alText = C.MText.ElementAt(mindex);
-                            else if (!_alText.Empty() && mindex > 0)
-                                _alText = "";
+                    //Wrapping requirement.
+                    if ((_alText.Empty() || mindex > 0) && C.MText.Any() && C.MText.Count > mindex)
+                            _alText = C.MText.ElementAt(mindex);
+                        else if (!_alText.Empty() && mindex > 0)
+                            _alText = "";
 
-                        //Making sure of alignment
-                        _alText = _option.Alignment == ConsoleAlignment.LEFT ?
-                                                (_alText).PadRight(_option.Width) :
-                                                _option.Alignment == ConsoleAlignment.RIGHT ? (_alText).PadLeft(_option.Width) : _alText.CenteredText(_option.Width);
+                    //Making sure of alignment
+                    _alText = _option.Alignment == ConsoleAlignment.LEFT ?
+                                            (_alText).PadRight(_option.Width) :
+                                            _option.Alignment == ConsoleAlignment.RIGHT ? (_alText).PadLeft(_option.Width) : _alText.CenteredText(_option.Width);
 
-                            var _color = C.IsAggregate ? table.OtherOptions.AggregateColor :
-                                                (col == 0 && table.OtherOptions.IsFirstRowAsHeader ? table.OtherOptions.HeadingColor : _option.Color);
-                            var _prefix = _option.Alignment != ConsoleAlignment.RIGHT ? " " : ""; //Left space
-                        var _postfix = _option.Alignment == ConsoleAlignment.RIGHT ? " " : "";//Right space
+                        var _color = C.IsAggregate ? table.OtherOptions.AggregateColor :
+                                            (col == 0 && table.OtherOptions.IsFirstRowAsHeader ? table.OtherOptions.HeadingColor : _option.Color);
+                        var _prefix = _option.Alignment != ConsoleAlignment.RIGHT ? " " : ""; //Left space
+                    var _postfix = _option.Alignment == ConsoleAlignment.RIGHT ? " " : "";//Right space
 
-                        WrapConsole.WriteColor($"{_prefix}{ _alText }{_postfix}", _color);
+                    WrapConsole.WriteColor($"{_prefix}{ _alText }{_postfix}", _color);
 
-                            if (_option.Alignment == ConsoleAlignment.CENTER)
-                                WrapConsole.WriteColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor);
-                            else
-                                WrapConsole.WriteColor("|", _borderBarColor);
-                        });
-                        Console.WriteLine();
-                    }
-                    WrapConsole.WriteLineColor($"{separator}", _borderColor);
-                    col++;
+                        if (_option.Alignment == ConsoleAlignment.CENTER)
+                            WrapConsole.WriteColor($"{("|".PadLeft(_option.Width - _alText.Length + 1))}", _borderBarColor);
+                        else
+                            WrapConsole.WriteColor("|", _borderBarColor);
+                    });
+                    Console.WriteLine();
                 }
-
-                DrawHeaderFooter(table, separator, false);
-            }
-        }
-
-        private bool ExternalOutput(ConsoleTable table)
-        {
-            List<ConsoleTable> tabs = new List<ConsoleTable> { table, table };
-
-            switch(table.OtherOptions.Output.Style)
-            {
-                case ConsoleOutputType.CONSOLE: return false;
-                case ConsoleOutputType.HTM:
-                case ConsoleOutputType.HTML: new WrapHtmlTable(table).Draw(); break;
-                case ConsoleOutputType.XL:
-                case ConsoleOutputType.XLS:
-                case ConsoleOutputType.XSLX:
-                case ConsoleOutputType.EXCEL: break;
-                case ConsoleOutputType.TXT:
-                case ConsoleOutputType.TEXT: new WrapTextTable(table).Draw(); break;
-                case ConsoleOutputType.CSV: new WrapCSVTable(table).Draw(); break;
-                case ConsoleOutputType.JSON: new WrapJsonTable(table).Draw(); break;
-                case ConsoleOutputType.XML: new WrapXmlTable(tabs).Draw(); break;
+                WrapConsole.WriteLineColor($"{separator}", _borderColor);
+                col++;
             }
 
-            return true;
+            DrawHeaderFooter(table, separator, false);
         }
 
         /// <summary>

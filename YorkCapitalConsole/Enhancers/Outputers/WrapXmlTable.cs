@@ -4,25 +4,16 @@ using Extensions;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
-    public partial class WrapXmlTable
+    public partial class WrapXmlTable : _BaseOutputTable
     {
-        private List<ConsoleTable> _tables;
-        private ConsoleTable _table;
-        private StreamWriter _stream;
-        private StringBuilder _xml;
-        private List<StringBuilder> _xmls;
+        public WrapXmlTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
+        public WrapXmlTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        public WrapXmlTable(ConsoleTable table) : this(new List<ConsoleTable> { table }) { }
-        public WrapXmlTable(List<ConsoleTable> tables)
-        {
-            this._tables = tables;
-            this._xml = new StringBuilder();
-        }
-
-        public void Draw()
+        public override void Draw()
         {
             using (Create())
             {
@@ -38,15 +29,14 @@ namespace Wrappers.Outputers
         #region ^Handlign Stream
         private StreamWriter Create()
         {
-            _table = _tables[0]; //Always take the first one since this is the file all of the output will be saved.
-            _stream = WrapIOs.CreateStreamWriterForAppend(_table.OtherOptions.Output.Path, "xml");            
+            _stream = WrapIOs.CreateStreamWriterForAppend(OutOption.Output.Path, "xml");            
             return _stream;
         }
         private void Close()
         {
             if (!_stream.Null())
             {
-                var _results = _xmls.Select(x => x.ToString()).ToList().JoinExt();
+                var _results = _outs.Select(x => x.ToString()).ToList().JoinExt();
                 _stream.WriteLine($"<?xml version='1.0' encoding='UTF-8' ?><Results>{_results}</Results>");
                 _stream.Close();
             }
@@ -57,11 +47,11 @@ namespace Wrappers.Outputers
         #region ^Writing file with formating     
         private void Process()
         {
-            _xmls = new List<StringBuilder>();
+            _outs = new List<StringBuilder>();
             _tables.ForEach(t => 
             {
                 _table = t;
-                _xml = new StringBuilder();
+                _out = new StringBuilder();
                 WriteHeadersFooters();
                 WriteData();
                 WriteHeadersFooters(false);
@@ -69,10 +59,9 @@ namespace Wrappers.Outputers
             });
            
         }
-
         private void WriteClosure()
         {
-            _xmls.Add( new StringBuilder($"<ResultSet>{_xml.ToString()}</ResultSet>") );
+            _outs.Add( new StringBuilder($"<ResultSet>{_out.ToString()}</ResultSet>") );
         }
         private void WriteHeadersFooters(bool header = true)
         {
@@ -87,7 +76,7 @@ namespace Wrappers.Outputers
                     var _vtext = rw.Value.Text.EscapeXmlNotations();
                     _head.Append($"<Row><Title>{_htext}</Title><Value>{_vtext}</Value></Row>");
                 });
-                _xml.Append($"<{_tag}>{_head.ToString()}</{_tag}>");
+                _out.Append($"<{_tag}>{_head.ToString()}</{_tag}>");
             }            
         }
         private void WriteData()
@@ -119,7 +108,7 @@ namespace Wrappers.Outputers
                 });
                 _body.Append($"<Row>{_text}</Row>");
             }
-            _xml.Append($"<{_tag}>{_body.ToString()}</{_tag}>");
+            _out.Append($"<{_tag}>{_body.ToString()}</{_tag}>");
         }
         private string GetText(ConsoleRecord record)
         {

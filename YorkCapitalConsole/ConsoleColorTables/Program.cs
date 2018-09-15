@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Wrappers;
 using Wrappers.Consoles;
 using Wrappers.Consoles.Enums;
+using Wrappers.Outputers;
 
 namespace ConsoleColorTables
 {
@@ -18,8 +19,7 @@ namespace ConsoleColorTables
         {
             WrapConsole.WriteTable(new ConsoleTable
                 {
-                    OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 },
-                                                             Output = new ConsoleOutput { Style = ConsoleOutputType.XML } }, /*ConsoleOutputType.HTML will give html output*/
+                    OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 }}, /*ConsoleOutputType.HTML will give html output*/
                     ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = ConsoleAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = ConsoleWrapType.WORDCHAR },
@@ -77,7 +77,7 @@ namespace ConsoleColorTables
                              }
                          }
                     }
-                });        
+                }, new WrapOutputerOptions {Output = new ConsoleOutput { Style = ConsoleOutputType.XML } });        
         }
     }
 }
