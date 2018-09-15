@@ -77,7 +77,7 @@ namespace ConsoleColorTables
                              }
                          }
                     }
-                }, new WrapOutputerOptions {Output = new ConsoleOutput { Style = ConsoleOutputType.XML } });        
+                }, new WrapOutputerOptions {Output = new ConsoleOutput { Style = ConsoleOutputType.JSON } });        
         }
     }
 }

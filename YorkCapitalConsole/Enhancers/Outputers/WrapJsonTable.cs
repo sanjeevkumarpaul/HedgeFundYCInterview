@@ -21,11 +21,14 @@ namespace Wrappers.Outputers
             WriteHeadersFooters();
             WriteData();
             WriteHeadersFooters(false);
+            Closure();
         }
 
         protected override void Finish()
         {
-            _stream.WriteLine($"{{{_out.ToString().TrimEx(",")}}}");
+            string _all = "";
+            _outs.ForEach(o => _all += $"{o.ToString()}," );
+            _stream.WriteLine($"{{\"Resultset\" : [{_all.TrimEx(",")}]}}");
         }
     }
 
@@ -59,7 +62,6 @@ namespace Wrappers.Outputers
             ExtractData(_heads);
             ExtractData(_heads, true);
         }
-
         private void ExtractData(List<string> colheaders, bool isAggregates = false)
         {
             var _body = new StringBuilder();
@@ -76,7 +78,10 @@ namespace Wrappers.Outputers
             }
             _out.Append($"\"{(isAggregates? "Aggregates" : "Data")}\" : [{_body.ToString().TrimEx(",")}],");
         }
-
+        private void Closure()
+        {
+            _outs.Add(new StringBuilder($"{{{_out.ToString().TrimEx(",")}}}"));
+        }
         private string GetText(ConsoleRecord record)
         {
             return $"{record.Text}{record.MText.JoinExt()}";
