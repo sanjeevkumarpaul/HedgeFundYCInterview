@@ -8,6 +8,5 @@ namespace Wrappers.Outputers.Interface
 {
     public interface IOutputTable
     {
-        void Draw();
     }
 }

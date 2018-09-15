@@ -10,44 +10,28 @@ namespace Wrappers.Outputers
 {
     public partial class WrapJsonTable : _BaseOutputTable
     {
+        public WrapJsonTable(WrapOutputerOptions options) : base(options) { }
         public WrapJsonTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
         public WrapJsonTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        public override void Draw()
+        protected override void Init() { }
+        protected override void Start() { }
+        protected override void PutTable()
         {
-            using (Create())
-            {
-                if (_stream.Null()) return;
-                WriteHeadersFooters();
-                WriteData();
-                WriteHeadersFooters(false);
-                Close();
-            }
+            WriteHeadersFooters();
+            WriteData();
+            WriteHeadersFooters(false);
+        }
+
+        protected override void Finish()
+        {
+            _stream.WriteLine($"{{{_out.ToString().TrimEx(",")}}}");
         }
     }
 
     partial class WrapJsonTable
     {
-        #region ^Handlign Stream
-        private StreamWriter Create()
-        {
-            var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path, "json");
-            if (!_path.Empty()) _stream = new StreamWriter(_path);
-
-            return _stream;
-        }
-        private void Close()
-        {
-            if (!_stream.Null())
-            {
-                _stream.WriteLine($"{{{_out.ToString().TrimEx(",")}}}");
-                _stream.Close();
-            }
-            _stream = null;
-        }
-        #endregion ~END OF Handlign Stream
-
-        #region ^Writing file with formating      
+       #region ^Writing file with formating      
         private void WriteHeadersFooters(bool header = true)
         {
             var rows = header ? _table.Headers : _table.Footers;

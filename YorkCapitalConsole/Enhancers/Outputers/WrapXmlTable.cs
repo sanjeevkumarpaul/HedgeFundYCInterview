@@ -10,54 +10,34 @@ namespace Wrappers.Outputers
 {
     public partial class WrapXmlTable : _BaseOutputTable
     {
+        public WrapXmlTable(WrapOutputerOptions options) : base(options) { }
         public WrapXmlTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
         public WrapXmlTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        public override void Draw()
+        protected override void Init() { }
+        protected override void Start() { }
+        protected override void PutTable()
         {
-            using (Create())
-            {
-                if (_stream.Null()) return;
-                Process();
-                Close();
-            }
+            if (_stream.Null()) return;
+            Process();
+        }
+        protected override void Finish()
+        {
+            var _results = _outs.Select(x => x.ToString()).ToList().JoinExt();
+            _stream.WriteLine($"<?xml version='1.0' encoding='UTF-8' ?><Results>{_results}</Results>");
         }
     }
 
     partial class WrapXmlTable
     {
-        #region ^Handlign Stream
-        private StreamWriter Create()
-        {
-            _stream = WrapIOs.CreateStreamWriterForAppend(OutOption.Output.Path, "xml");            
-            return _stream;
-        }
-        private void Close()
-        {
-            if (!_stream.Null())
-            {
-                var _results = _outs.Select(x => x.ToString()).ToList().JoinExt();
-                _stream.WriteLine($"<?xml version='1.0' encoding='UTF-8' ?><Results>{_results}</Results>");
-                _stream.Close();
-            }
-            _stream = null;
-        }
-        #endregion ~END OF Handlign Stream
-
         #region ^Writing file with formating     
         private void Process()
-        {
-            _outs = new List<StringBuilder>();
-            _tables.ForEach(t => 
-            {
-                _table = t;
-                _out = new StringBuilder();
-                WriteHeadersFooters();
-                WriteData();
-                WriteHeadersFooters(false);
-                WriteClosure();
-            });
-           
+        {            
+            _out = new StringBuilder();
+            WriteHeadersFooters();
+            WriteData();
+            WriteHeadersFooters(false);
+            WriteClosure();            
         }
         private void WriteClosure()
         {

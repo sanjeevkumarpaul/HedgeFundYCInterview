@@ -11,18 +11,16 @@ namespace Wrappers.Outputers
 {
     public partial class WrapCSVTable : _BaseOutputTable
     {
+        public WrapCSVTable( WrapOutputerOptions options) : base(options) { }
         public WrapCSVTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
         public WrapCSVTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-
-        public override void Draw()
+        protected override void Init() { }
+        protected override void Start() { }
+        protected override void Finish() { }
+        protected override void PutTable()
         {
-            using (Create())
-            {
-                if (_stream.Null()) return;                 
-                WriteData();
-                Close();
-            }
+            WriteData();
         }
     }
 

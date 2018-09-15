@@ -13,15 +13,26 @@ namespace Wrappers.Outputers
     public partial class WrapHtmlTable : _BaseOutputTable
     {
         private StringBuilder _css = new StringBuilder();
+
+        public WrapHtmlTable(WrapOutputerOptions options) : base(options) { }
         public WrapHtmlTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
         public WrapHtmlTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        public override void Draw()
+        protected override void Init() { }
+       
+        protected override void Start()
+        {
+            _stream.WriteLine("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
+        }
+
+        protected override void PutTable()
         {
             CreateStyles();
             CreateTags();
-            SaveToDisk();
+            Closure();
         }
+
+        protected override void Finish() { }
     }
 
     partial class WrapHtmlTable
@@ -292,19 +303,10 @@ namespace Wrappers.Outputers
         #endregion ^END of Creating HTML Tags
 
         #region ^Save the HTML output to a file
-        private void SaveToDisk()
+        private void Closure()
         {
-            try
-            {
-                _out = _out.Insert(0, _css).Insert(0, Environment.NewLine).Insert(0, "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
-
-                var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path, "html");
-                if (!_path.Empty()) WrapIOs.AppendRecords(new string[] { _out.ToString() }, _path);
-                                
-            }catch(Exception e)
-            {
-                throw e;
-            }
+            _out = _out.Insert(0, _css).Insert(0, Environment.NewLine);
+            _stream.WriteLine(_out);            
         }
         #endregion ~END OF Save the HTML output to a file
     }

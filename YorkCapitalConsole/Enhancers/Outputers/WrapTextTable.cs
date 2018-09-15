@@ -13,28 +13,26 @@ namespace Wrappers.Outputers
     {
         private Options _option;
 
-        public WrapTextTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { init(); }
-        public WrapTextTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { init(); }
+        public WrapTextTable(WrapOutputerOptions options) : base(options) { }
+        public WrapTextTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
+        public WrapTextTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) {  }
 
-        public override void Draw()
-        {
-            using (Create())
-            {
-                if (_stream.Null()) return;
-
-                CalculateBasics();
-                WriteHeaderFooter();
-                WriteColumnHeaders();
-                WriteData();
-                WriteHeaderFooter(false);
-                Close();
-            }
-        }
-
-        private void init()
+        protected override void Init()
         {
             _option = new Options();
         }
+        protected override void Start() { }
+        protected override void PutTable()
+        {
+            CalculateBasics();
+            WriteHeaderFooter();
+            WriteColumnHeaders();
+            WriteData();
+            WriteHeaderFooter(false);
+        }
+
+        protected override void Finish() { }
+
     }
 
     partial class WrapTextTable
@@ -69,22 +67,6 @@ namespace Wrappers.Outputers
             }
         }
         #endregion ~END OF Internal Classes
-
-        #region ^Handlign Stream
-        private StreamWriter Create()
-        {
-            var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path);
-            if (!_path.Empty()) _stream = new StreamWriter(_path);
-
-            return _stream;
-        }
-        private void Close()
-        {
-            if (!_stream.Null())
-                _stream.Close();
-            _stream = null;
-        }
-        #endregion ~END OF Handlign Stream
 
         #region ^Writing file with formating
         private void CalculateBasics()

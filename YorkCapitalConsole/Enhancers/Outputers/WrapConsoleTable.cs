@@ -5,11 +5,24 @@ using System.Linq;
 using Wrappers.Consoles;
 using Wrappers.Consoles.Enums;
 using Extensions;
+using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
-    public class WrapConsoleTable
+    public class WrapConsoleTable : _BaseOutputTable
     {
+        public WrapConsoleTable(WrapOutputerOptions options) : base(options) { }
+        public WrapConsoleTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
+        public WrapConsoleTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
+
+        protected override void Init() { }
+        protected override void Start() { }
+        protected override void Finish() { }
+        protected override void PutTable()
+        {
+
+        }
+
         public void PutTable(ConsoleTable table)
         {
             var max = table.ColumnOptions.Sum(c => c.Width);
