@@ -13,5 +13,7 @@ namespace Wrappers.Consoles
         public List<ConsoleRow> Rows { get; set; }                
         public List<ConsoleHeaderFooterRow> Headers { get; set; }
         public List<ConsoleHeaderFooterRow> Footers { get; set; }
+
+        internal bool BoundariesCalculate { get; set; } = false;
     }    
 }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace Extensions
 {
@@ -241,7 +244,20 @@ namespace Extensions
             }
             else
                 return !obj.Null();            
-        }              
-       
+        }
+
+        public static T DeepClone<T>(ref T object2Copy, T objectCopy)
+        {
+            using (var stream = new MemoryStream())
+            {
+                var serializer = new XmlSerializer(typeof(T));
+
+                serializer.Serialize(stream, object2Copy);
+                stream.Position = 0;
+                objectCopy = (T)serializer.Deserialize(stream);
+            }
+            return objectCopy;
+        }
+
     }
 }

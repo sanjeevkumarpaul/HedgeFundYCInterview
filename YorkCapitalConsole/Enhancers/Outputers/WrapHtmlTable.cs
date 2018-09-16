@@ -27,6 +27,7 @@ namespace Wrappers.Outputers
 
         protected override void PutTable()
         {
+            Clean();
             CreateStyles();
             CreateTags();
             Closure();
@@ -59,6 +60,11 @@ namespace Wrappers.Outputers
         };
 
         #region ^Creating CSS Style Classes
+        private void Clean()
+        {
+            _css = new StringBuilder();
+            _out = new StringBuilder();
+        }
         private void CreateStyles()
         {
             _css.Append( $"<style>" );            
@@ -78,7 +84,7 @@ namespace Wrappers.Outputers
             });
             if (_table.OtherOptions.IsFirstRowAsHeader)
             {
-                var _name = "consoleWrapColumHeaders";
+                var _name = $"consoleWrapColumHeaders{_table.GetHashCode()}";
                 CreateGroupStyle(new HtmlStyles
                 {
                     Name = _name,

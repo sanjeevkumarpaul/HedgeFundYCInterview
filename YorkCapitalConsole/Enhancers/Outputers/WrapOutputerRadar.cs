@@ -4,6 +4,7 @@ using System.Linq;
 using Wrappers.Consoles;
 using Wrappers.Consoles.Enums;
 using Extensions;
+using Wrappers.Outputers.Interface;
 
 namespace Wrappers.Outputers
 {
@@ -11,39 +12,61 @@ namespace Wrappers.Outputers
     {
         public static bool Output(ConsoleTable table, WrapOutputerOptions options)
         {
+            return Output(new List<ConsoleTable> { table }, options);
+        }
+        public static bool Output(List<ConsoleTable> tables, WrapOutputerOptions options)
+        {
+            var _output = OutputFactory(tables, options);
+            Func<IOutputTable, bool> _func = (IOut) => { IOut.Draw(); return true; };
+
+            return _output == null ? false : _func(_output);
+        }
+
+
+        public static IOutputTable OutputFactory(ConsoleTable table, WrapOutputerOptions options)
+        {
+            return OutputFactory(new List<ConsoleTable> { table }, options);
+        }
+
+        public static IOutputTable OutputFactory(List<ConsoleTable> tables, WrapOutputerOptions options)
+        {
             switch (options.Output.Style)
             {
-                case ConsoleOutputType.CONSOLE: return false;
+                case ConsoleOutputType.CONSOLE: return new WrapConsoleTable(tables, options);
                 case ConsoleOutputType.HTM:
-                case ConsoleOutputType.HTML: new WrapHtmlTable(table, options).Draw(); break;
+                case ConsoleOutputType.HTML: return new WrapHtmlTable(tables, options);
                 case ConsoleOutputType.XL:
                 case ConsoleOutputType.XLS:
                 case ConsoleOutputType.XSLX:
                 case ConsoleOutputType.EXCEL: break;
                 case ConsoleOutputType.TXT:
-                case ConsoleOutputType.TEXT: new WrapTextTable(table, options).Draw(); break;
-                case ConsoleOutputType.CSV: new WrapCSVTable(table, options).Draw(); break;
-                case ConsoleOutputType.JSON: new WrapJsonTable(table, options).Draw(); break;
-                case ConsoleOutputType.XML: new WrapXmlTable(table, options).Draw(); break;
+                case ConsoleOutputType.TEXT: return new WrapTextTable(tables, options);
+                case ConsoleOutputType.CSV: return new WrapCSVTable(tables, options);
+                case ConsoleOutputType.JSON: return new WrapJsonTable(tables, options);
+                case ConsoleOutputType.XML: return new WrapXmlTable(tables, options);
             }
 
-            return true;
+            return null;
         }
 
         internal static void CalculateBoundaries(ConsoleTable table)
         {
-            table = Sort(table);
-            table = CalculateAggregation(table);
-
-            #region ^Finding Column Width
-            var max = table.ColumnOptions.Count();
-            for (int i = 0; i < max; i++)
+            if (!table.BoundariesCalculate)
             {
-                Wrap(table, i);
+                table = Sort(table);
+                table = CalculateAggregation(table);
 
-                var _len = table.Rows.Select(R => R.Column[i]).Max(R => (R.Text.Empty() ? R.Lines : R.Text.Length));
-                if (table.ColumnOptions[i].Width <= _len) table.ColumnOptions[i].Width = _len;
-            }           
+                #region ^Finding Column Width
+                var max = table.ColumnOptions.Count();
+                for (int i = 0; i < max; i++)
+                {
+                    Wrap(table, i);
+
+                    var _len = table.Rows.Select(R => R.Column[i]).Max(R => (R.Text.Empty() ? R.Lines : R.Text.Length));
+                    if (table.ColumnOptions[i].Width <= _len) table.ColumnOptions[i].Width = _len;
+                }
+                table.BoundariesCalculate = true;
+            }
             #endregion ~Finding Column Width
         }
 
