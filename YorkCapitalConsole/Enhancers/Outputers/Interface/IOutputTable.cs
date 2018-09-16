@@ -9,9 +9,9 @@ namespace Wrappers.Outputers.Interface
 {
     public interface IOutputTable
     {
-        void Add(ConsoleTable table);
-        void Remove(ConsoleTable table);
-        void Remove(int index);
+        IOutputTable Add(ConsoleTable table);
+        IOutputTable Remove(ConsoleTable table);
+        IOutputTable Remove(int index);
         void Draw();
     }
 }

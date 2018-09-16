@@ -13,6 +13,7 @@ namespace Wrappers.Outputers
     public partial class WrapHtmlTable : _BaseOutputTable
     {
         private StringBuilder _css = new StringBuilder();
+        private List<string> _styles = new List<string>();
 
         public WrapHtmlTable(WrapOutputerOptions options) : base(options) { }
         public WrapHtmlTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
@@ -33,7 +34,7 @@ namespace Wrappers.Outputers
             Closure();
         }
 
-        protected override void Finish() { }
+        protected override void Finish() { _styles = new List<string>(); }
     }
 
     partial class WrapHtmlTable
@@ -62,12 +63,20 @@ namespace Wrappers.Outputers
         #region ^Creating CSS Style Classes
         private void Clean()
         {
+            _styles.Add(_css.ToString());
             _css = new StringBuilder();
             _out = new StringBuilder();
         }
+
+        private bool PreviousStyle(string name)
+        {
+            return _styles.Any(s => s.Contains($"{name} {{"));
+        }
+
         private void CreateStyles()
         {
-            _css.Append( $"<style>" );            
+            _css.Append( $"<style>" );                  
+
             CreateGroupStyle(new HtmlStyles
             {
                 IsElement = true,
@@ -75,6 +84,7 @@ namespace Wrappers.Outputers
                 Color = Console.ForegroundColor.ToString(),
                 BackgroundColor = Console.BackgroundColor.ToString()
             });
+          
             CreateGroupStyle(new HtmlStyles
             {
                 IsElement = true,
@@ -84,7 +94,7 @@ namespace Wrappers.Outputers
             });
             if (_table.OtherOptions.IsFirstRowAsHeader)
             {
-                var _name = $"consoleWrapColumHeaders{_table.GetHashCode()}";
+                var _name = $"consoleWrapColumHeaders{_table.GetHashCode()}";               
                 CreateGroupStyle(new HtmlStyles
                 {
                     Name = _name,
@@ -94,24 +104,24 @@ namespace Wrappers.Outputers
                     ExtraStyles = "padding: 2px;"
                 });
 
-                AssignCssStyle(0, _name, colHeader: true);
+                AssignCssStyle(0, _name, colHeader: true);                
             }
             var totalWidth = _table.ColumnOptions.Sum(c => c.Width);
             int _colIndex = 0;
             _table.ColumnOptions.ForEach(col => {
-                    var _name = $"consoleWrapColumHeader{col.GetHashCode()}";
-                    CreateGroupStyle(new HtmlStyles
+                   var _name = $"consoleWrapColumHeader{col.GetHashCode()}";
+                   CreateGroupStyle(new HtmlStyles
                     {
                         Name = _name,
                         Color = col.Color.ToString(),
                         Alignment = col.Alignment.ToString(),
-                        Width = ( (col.Width * 100)/totalWidth ).ToString(),
+                        Width = ((col.Width * 100) / totalWidth).ToString(),
                         BorderColor = _table.OtherOptions.BorderColor.ToString(),
                         BorderStyle = "solid",
-                        ExtraStyles = "padding: 2px;",                        
+                        ExtraStyles = "padding: 2px;",
                     });
 
-                    AssignCssStyle(_colIndex++, _name, colHeader: false);
+                    AssignCssStyle(_colIndex++, _name, colHeader: false);                    
                 });
             if (!_table.Headers.Null())
                 _table.Headers.ForEach(hd => CreateHeaderFooterStyle(hd));
@@ -120,23 +130,21 @@ namespace Wrappers.Outputers
             if (_table.Rows.Any(r => r.IsAggregate))
             {
                 _table.ColumnOptions.Where(c => c.Aggregate != ConsoleAggregate.NONE).ToList().ForEach(col => {
-                    var _name = $"consoleWrapAggregate{col.GetHashCode()}";
+                    var _name = $"consoleWrapAggregate{col.GetHashCode()}";                   
                     CreateGroupStyle(new HtmlStyles
                     {
                         Name = _name,
                         Color = _table.OtherOptions.AggregateColor.ToString(),
-                        Alignment = col.Alignment.ToString(),                        
+                        Alignment = col.Alignment.ToString(),
                         BorderColor = _table.OtherOptions.AggregateBorderColor.ToString(),
                         BorderStyle = "solid",
                         ExtraStyles = "padding: 2px;",
                     });
 
-                    AssignCssStyleAggregate(col, _name);
+                    AssignCssStyleAggregate(col, _name);                   
                 });
             }
-
-
-            _css.Append($"</style>");
+            _css.Append($"</style>");  
         }
 
         private void CreateHeaderFooterStyle(ConsoleHeaderFooterRow hf, bool header = true)
@@ -151,28 +159,31 @@ namespace Wrappers.Outputers
                 CreateGroupStyle(new HtmlStyles
                 {
                     Name = _name,
-                    Color = (title ? hf.Heading.Color : hf.Value.Color) .ToString(),
+                    Color = (title ? hf.Heading.Color : hf.Value.Color).ToString(),
                     BorderColor = _table.OtherOptions.BorderColor.ToString(),
                     Alignment = hf.Alignment.ToString(),
                     ExtraStyles = "padding: 2px;"
                 });
 
-                AssignCssStyle(title ? hf.Heading : hf.Value, _name);
+                AssignCssStyle(title ? hf.Heading : hf.Value, _name);                
             }
         }
 
         private void CreateGroupStyle(HtmlStyles styles)
         {
-            _css.Append($"{ (styles.IsElement ? "": ".") }{styles.Name} {{ ");
-            if (!styles.Color.Empty()) _css.Append($"color: {styles.Color}; ");
-            if (!styles.BackgroundColor.Empty()) _css.Append($"background-color: {styles.BackgroundColor}; ");
-            if (!styles.BorderColor.Empty()) _css.Append($"border-color: {styles.BorderColor}; ");
-            if (!styles.BorderStyle.Empty()) _css.Append($"border-style: {styles.BorderStyle}; ");
-            if (!styles.Alignment.Empty()) _css.Append($"text-align: {styles.Alignment.ToLower()}; ");
-            _css.Append($"border-width: {styles.BorderWidth}px; ");
-            if (!styles.Width.Empty()) _css.Append($"Width: {styles.Width}{styles.WidthUnit}; ");
-            _css.Append(styles.ExtraStyles);
-            _css.Append(" } ");            
+            if (!PreviousStyle(styles.Name))
+            {
+                _css.Append($"{ (styles.IsElement ? "" : ".") }{styles.Name} {{ ");
+                if (!styles.Color.Empty()) _css.Append($"color: {styles.Color}; ");
+                if (!styles.BackgroundColor.Empty()) _css.Append($"background-color: {styles.BackgroundColor}; ");
+                if (!styles.BorderColor.Empty()) _css.Append($"border-color: {styles.BorderColor}; ");
+                if (!styles.BorderStyle.Empty()) _css.Append($"border-style: {styles.BorderStyle}; ");
+                if (!styles.Alignment.Empty()) _css.Append($"text-align: {styles.Alignment.ToLower()}; ");
+                _css.Append($"border-width: {styles.BorderWidth}px; ");
+                if (!styles.Width.Empty()) _css.Append($"Width: {styles.Width}{styles.WidthUnit}; ");
+                _css.Append(styles.ExtraStyles);
+                _css.Append(" } ");
+            }
         }
         
         private void AssignCssStyle(int colIndex, string cssClass, string cssStyles = null, bool colHeader = false)
@@ -311,8 +322,8 @@ namespace Wrappers.Outputers
         #region ^Save the HTML output to a file
         private void Closure()
         {
-            _out = _out.Insert(0, _css).Insert(0, Environment.NewLine);
-            _stream.WriteLine(_out);            
+            _out = _out.Insert(0, _css.Replace("<style></style>","")).Insert(0, Environment.NewLine);
+            _stream.WriteLine(_out);               
         }
         #endregion ~END OF Save the HTML output to a file
     }

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Extensions;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Wrappers.Consoles;
 using Wrappers.Consoles.Enums;
@@ -15,10 +17,11 @@ namespace Wrappers.Outputers.Base
         protected StreamWriter _stream;
         protected List<StringBuilder> _outs;
         protected StringBuilder _out;
+        protected bool _InProgress = false;
         #endregion  ~Protected member variables
 
         #region ^Properties
-        protected WrapOutputerOptions OutOption { get; private set; }
+        protected WrapOutputerOptions OutOption { get; private set; }        
         #endregion ~Properties
 
         #region ^Constructor
@@ -46,22 +49,24 @@ namespace Wrappers.Outputers.Base
         #endregion ~Abstract Methods
 
         #region ^Public Methods
-        public void Add(ConsoleTable table)
+        public IOutputTable Add(ConsoleTable table)
         {
             WrapOutputerRadar.CalculateBoundaries(table);
             _tables.Add(table);
+            return this;
         }
 
-        public void Remove(ConsoleTable table)
+        public IOutputTable Remove(ConsoleTable table)
         {
             try
             {
-                _tables.Remove(table);
+                _tables.Remove(table);                
             }
             catch { }
+            return this;
         }
 
-        public void Remove(int index = -1)
+        public IOutputTable Remove(int index = -1)
         {
             try
             {
@@ -71,23 +76,32 @@ namespace Wrappers.Outputers.Base
                     _tables.RemoveAt(index);
             }
             catch { }
+            return this;
         }
 
         public void Draw()
         {
-            using (OpenStream())
+            try
             {
-                Start();
-                foreach (var tab in _tables)
+                _InProgress = true;
+                using (OpenStream())
                 {
-                    _table = tab;
-                    PutTable();
+                    Start();
+                    foreach (var tab in _tables)
+                    {
+                        _table = tab;
+                        PutTable();
+                    }
+                    Finish();
+                    Close();
                 }
-                Finish();
-                Close();
             }
+            finally { _InProgress = false; }
         }
         #endregion ~Public Methods
+
+        #region ^Protected Methods        
+        #endregion ~Protected Methods
 
         #region ^Private Methods
         private StreamWriter OpenStream()

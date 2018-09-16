@@ -81,14 +81,10 @@ namespace ConsoleColorTables
             };
             var _option = new WrapOutputerOptions { Output = new ConsoleOutput
                                                         { Style = ConsoleOutputType.HTML } };
-            //WrapConsole.WriteTable(_table, _option );
-
-            var t1 = ExtObject.DeepClone(ref _table, new ConsoleTable());
-            var t2 = ExtObject.DeepClone(ref _table, new ConsoleTable());
-            var outputs = WrapOutputerRadar.OutputFactory(new List<ConsoleTable> { _table, t1, t2 }, _option);
-            //outputs.Add(t1);
-            //outputs.Add(t2);
-
+            //var t1 = ExtObject.DeepClone(ref _table, new ConsoleTable());
+            //var t2 = ExtObject.DeepClone(ref _table, new ConsoleTable());
+            var outputs = WrapOutputerRadar.OutputFactory(_table, _option).Add(_table).Add(_table);
+            
             outputs.Draw();
         }
     }
