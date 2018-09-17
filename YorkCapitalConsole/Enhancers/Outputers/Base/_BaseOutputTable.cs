@@ -141,6 +141,9 @@ namespace Wrappers.Outputers.Base
             return _stream;
         }
 
+        private void Process() => _tables.ForEach(t => { _table = t; PutTable(); });
+        
+
         private void Close()
         {
             if (_stream != null) _stream.Close();
