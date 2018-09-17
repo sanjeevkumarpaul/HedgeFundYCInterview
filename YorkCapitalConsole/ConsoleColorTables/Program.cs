@@ -80,7 +80,7 @@ namespace ConsoleColorTables
                     }
             };
             var _option = new WrapOutputerOptions { Output = new ConsoleOutput
-                                                        { Style = ConsoleOutputType.CONSOLE } };            
+                                                        { Style = ConsoleOutputType.JSON } };            
             var outputs = WrapOutputerRadar.OutputFactory(_table, _option).Add(_table).Add(_table);
             
             outputs.Draw();

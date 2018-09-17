@@ -24,12 +24,7 @@ namespace Wrappers.Outputers
             Closure();
         }
 
-        protected override void Finish()
-        {
-            string _all = "";
-            _outs.ForEach(o => _all += $"{o.ToString()}," );
-            _stream.WriteLine($"{{\"Resultset\" : [{_all.TrimEx(",")}]}}");
-        }
+        protected override void Finish() => _stream.WriteLine($"{{\"Resultset\" : [{_outs.JoinExt(",").TrimEx(",")}]}}");
     }
 
     partial class WrapJsonTable
@@ -78,14 +73,8 @@ namespace Wrappers.Outputers
             }
             _out.Append($"\"{(isAggregates? "Aggregates" : "Data")}\" : [{_body.ToString().TrimEx(",")}],");
         }
-        private void Closure()
-        {
-            _outs.Add(new StringBuilder($"{{{_out.ToString().TrimEx(",")}}}"));
-        }
-        private string GetText(ConsoleRecord record)
-        {
-            return $"{record.Text}{record.MText.JoinExt()}";
-        }
+        private void Closure() => _outs.Add(new StringBuilder($"{{{_out.ToString().TrimEx(",")}}}"));
+        private string GetText(ConsoleRecord record) => $"{record.Text}{record.MText.JoinExt()}";
         #endregion ~END OF Writing file with formating
     }
 }
