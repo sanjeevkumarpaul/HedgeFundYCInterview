@@ -80,9 +80,7 @@ namespace ConsoleColorTables
                     }
             };
             var _option = new WrapOutputerOptions { Output = new ConsoleOutput
-                                                        { Style = ConsoleOutputType.HTML } };
-            //var t1 = ExtObject.DeepClone(ref _table, new ConsoleTable());
-            //var t2 = ExtObject.DeepClone(ref _table, new ConsoleTable());
+                                                        { Style = ConsoleOutputType.CSV } };            
             var outputs = WrapOutputerRadar.OutputFactory(_table, _option).Add(_table).Add(_table);
             
             outputs.Draw();

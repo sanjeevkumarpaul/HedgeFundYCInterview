@@ -11,6 +11,8 @@ namespace Wrappers.Outputers
 {
     public partial class WrapCSVTable : _BaseOutputTable
     {
+        private List<string> _header = new List<string>();
+
         public WrapCSVTable( WrapOutputerOptions options) : base(options) { }
         public WrapCSVTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
         public WrapCSVTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
@@ -25,36 +27,33 @@ namespace Wrappers.Outputers
     }
 
     partial class WrapCSVTable
-    {
-        #region ^Handlign Stream
-        private StreamWriter Create()
-        {
-            var _path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path, "csv");
-            if (!_path.Empty()) _stream = new StreamWriter(_path);
-
-            return _stream;
-        }
-        private void Close()
-        {
-            if (!_stream.Null())
-                _stream.Close();
-            _stream = null;
-        }
-        #endregion ~END OF Handlign Stream
-
+    {       
         #region ^Writing file with formating      
         private void WriteData()
         {
-            _table.Rows.ForEach(rw => 
+            _table.Rows.ForEach(rw =>
+                WriteDelimitedData(rw, ( _table.OtherOptions.IsFirstRowAsHeader && _table.Rows.First().Equals(rw)) ));
+            
+            void WriteDelimitedData(ConsoleRow row, bool isHeader = false)
             {
                 var _text = "";
-                rw.Column.ForEach(col =>
+                row.Column.ForEach(col =>  _text += $"{col.Text}{col.MText.JoinExt()}`");
+                if (isHeader)
                 {
-                    //Make sure all MText are taken care of.
-                    _text += $"{col.Text}{col.MText.JoinExt()}`";
-                });
-                _stream.WriteLine(_text.TrimEnd(new char[] { '`'}));
-            });
+                    if (!_header.Any(h => h.Equals(_text)))
+                    {
+                        _header.Add(_text);
+                        WriteToStream(_text);
+                    }
+                }
+                else
+                    WriteToStream(_text);
+            }
+
+            void WriteToStream(string text)
+            {
+                _stream.WriteLine(text.TrimEnd(new char[] { '`' }));
+            }
         }
         #endregion ~END OF Writing file with formating
     }
