@@ -20,10 +20,7 @@ namespace Wrappers.Outputers
         protected override void Init() { }
         protected override void Start() { }
         protected override void Finish() { }
-        protected override void PutTable()
-        {
-            WriteData();
-        }
+        protected override void PutTable() => WriteData();
     }
 
     partial class WrapCSVTable
@@ -50,10 +47,8 @@ namespace Wrappers.Outputers
                     WriteToStream(_text);
             }
 
-            void WriteToStream(string text)
-            {
-                _stream.WriteLine(text.TrimEnd(new char[] { '`' }));
-            }
+            //Internal method as Expression lambda.
+            void WriteToStream(string text) => _stream.WriteLine(text.TrimEnd(new char[] { '`' }));            
         }
         #endregion ~END OF Writing file with formating
     }
