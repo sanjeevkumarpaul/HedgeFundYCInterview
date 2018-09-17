@@ -10,5 +10,6 @@ namespace Wrappers.Outputers
     public class WrapOutputerOptions
     {
         public ConsoleOutput Output { get; set; } = new ConsoleOutput();
+        public string Name { get; set; } = "Command";
     }
 }

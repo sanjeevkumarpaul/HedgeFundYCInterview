@@ -1,18 +1,25 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wrappers.Consoles;
+using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
     public partial class WrapExcelTable : _BaseOutputTable
     {
+        private Excel xl;
         public WrapExcelTable(WrapOutputerOptions options) : base(options) { }
         public WrapExcelTable(ConsoleTable table, WrapOutputerOptions options) : base(table, options) { }
         public WrapExcelTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
-        protected override void Init() { }
+        protected override void Init() { xl = new Excel(); }
         protected override void Start() { }
         protected override void PutTable()
         {
@@ -26,8 +33,7 @@ namespace Wrappers.Outputers
             xl.Document.SaveAs(_path);
 
             xl.DisposeOff();
-        }
-        protected override void Finish() { }
+        }        
     }
 
     partial class WrapExcelTable

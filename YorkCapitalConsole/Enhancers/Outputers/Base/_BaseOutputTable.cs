@@ -18,6 +18,7 @@ namespace Wrappers.Outputers.Base
         protected List<StringBuilder> _outs;
         protected StringBuilder _out;
         protected bool _InProgress = false;
+        protected string _path = string.Empty;
         #endregion  ~Protected member variables
 
         #region ^Properties
