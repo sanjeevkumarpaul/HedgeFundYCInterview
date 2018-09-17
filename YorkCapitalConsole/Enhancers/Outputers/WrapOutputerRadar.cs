@@ -36,7 +36,7 @@ namespace Wrappers.Outputers
                 case ConsoleOutputType.XL:
                 case ConsoleOutputType.XLS:
                 case ConsoleOutputType.XSLX:
-                case ConsoleOutputType.EXCEL: break;
+                case ConsoleOutputType.EXCEL: return new WrapExcelTable(tables, options);
                 case ConsoleOutputType.TXT:
                 case ConsoleOutputType.TEXT: return new WrapTextTable(tables, options);
                 case ConsoleOutputType.CSV: return new WrapCSVTable(tables, options);
