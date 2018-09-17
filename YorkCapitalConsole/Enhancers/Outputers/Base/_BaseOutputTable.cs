@@ -85,19 +85,24 @@ namespace Wrappers.Outputers.Base
             try
             {
                 _InProgress = true;
-                using (OpenStream())
+                if (!IsOpenXml())
                 {
-                    Start();
-                    foreach (var tab in _tables)
+                    using (OpenStream())
                     {
-                        _table = tab;
-                        PutTable();
+                        Run();
                     }
-                    Finish();
-                    Close();
                 }
+                else Run();
             }
             finally { _InProgress = false; }
+
+            void Run()
+            {
+                Start();
+                Process();
+                Finish();
+                Close();
+            }
         }
         #endregion ~Public Methods
 
@@ -105,6 +110,19 @@ namespace Wrappers.Outputers.Base
         #endregion ~Protected Methods
 
         #region ^Private Methods
+        private bool IsOpenXml()
+        {
+            switch (OutOption.Output.Style)
+            {
+                case ConsoleOutputType.EXCEL:
+                case ConsoleOutputType.XL:
+                case ConsoleOutputType.XLS:
+                case ConsoleOutputType.XSLX:
+                    return !(_path = WrapIOs.CreateAndCheckPath(OutOption.Output.Path, OutOption.Output.Extension)).Empty();                    
+            }
+
+            return false;
+        }        
         private StreamWriter OpenStream()
         {
             switch (OutOption.Output.Style)
