@@ -20,11 +20,9 @@ namespace Wrappers.Outputers
         public WrapHtmlTable(List<ConsoleTable> tables, WrapOutputerOptions options) : base(tables, options) { }
 
         protected override void Init() { }
-       
-        protected override void Start()
-        {
+
+        protected override void Start() => 
             _stream.WriteLine("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
-        }
 
         protected override void PutTable()
         {
@@ -34,7 +32,7 @@ namespace Wrappers.Outputers
             Closure();
         }
 
-        protected override void Finish() { _styles = new List<string>(); }
+        protected override void Finish() => _styles = new List<string>();
     }
 
     partial class WrapHtmlTable
@@ -68,10 +66,7 @@ namespace Wrappers.Outputers
             _out = new StringBuilder();
         }
 
-        private bool PreviousStyle(string name)
-        {
-            return _styles.Any(s => s.Contains($"{name} {{"));
-        }
+        private bool PreviousStyle(string name) => _styles.Any(s => s.Contains($"{name} {{"));
 
         private void CreateStyles()
         {
@@ -208,10 +203,9 @@ namespace Wrappers.Outputers
             record.HTMLInlineStyles = cssStyles;
         }
 
-        private void AssignCssStyleAggregate(ConsoleColumnOptions opt, string cssClass, string cssStyles = null)
-        {
+        private void AssignCssStyleAggregate(ConsoleColumnOptions opt, string cssClass, string cssStyles = null) => 
             _table.Rows.Where(r => r.IsAggregate).ToList().ForEach(r => r.Column.ForEach(col => AssignCssStyle(col, cssClass, cssStyles)));
-        }
+
         #endregion ~END OF Creating CSS Style Classes
 
         #region ^Creating HTML Tags
@@ -320,11 +314,9 @@ namespace Wrappers.Outputers
         #endregion ^END of Creating HTML Tags
 
         #region ^Save the HTML output to a file
-        private void Closure()
-        {
-            _out = _out.Insert(0, _css.Replace("<style></style>","")).Insert(0, Environment.NewLine);
-            _stream.WriteLine(_out);               
-        }
+        private void Closure() => 
+            _stream.WriteLine(_out.Insert(0, _css.Replace("<style></style>", "")).Insert(0, Environment.NewLine));
+
         #endregion ~END OF Save the HTML output to a file
     }
 }
