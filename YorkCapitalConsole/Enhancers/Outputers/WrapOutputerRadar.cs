@@ -10,6 +10,7 @@ namespace Wrappers.Outputers
 {
     public partial class WrapOutputerRadar
     {
+        #region ^Public Methods
         public static bool Output(ConsoleTable table, WrapOutputerOptions options)
         {
             return Output(new List<ConsoleTable> { table }, options);
@@ -20,14 +21,11 @@ namespace Wrappers.Outputers
             Func<IOutputTable, bool> _func = (IOut) => { IOut.Draw(); return true; };
 
             return _output == null ? false : _func(_output);
-        }
-
-
+        }        
         public static IOutputTable OutputFactory(ConsoleTable table, WrapOutputerOptions options)
         {
             return OutputFactory(new List<ConsoleTable> { table }, options);
         }
-
         public static IOutputTable OutputFactory(List<ConsoleTable> tables, WrapOutputerOptions options)
         {
             switch (options.Output.Style)
@@ -48,7 +46,9 @@ namespace Wrappers.Outputers
 
             return null;
         }
+        #endregion ~Public Methods
 
+        #region ^Internal Methods
         internal static void CalculateBoundaries(ConsoleTable table)
         {
             if (!table.BoundariesCalculate)
@@ -69,6 +69,7 @@ namespace Wrappers.Outputers
             }
             #endregion ~Finding Column Width
         }
+        #endregion ~Internal Methods
 
         /// <summary>
         /// sorting the whole table before presenting
