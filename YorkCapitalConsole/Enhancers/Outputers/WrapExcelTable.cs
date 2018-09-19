@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Extensions;
 using Wrappers.Consoles;
+using Wrappers.Consoles.Enums;
 using Wrappers.Outputers.Base;
 
 namespace Wrappers.Outputers
 {
-     public partial class WrapExcelTable : _BaseOutputTable
+    public partial class WrapExcelTable : _BaseOutputTable
     {
         private Excel _xl;
         private Options _option;
@@ -158,26 +158,47 @@ namespace Wrappers.Outputers
 
         private void CreateExcelStyles()
         {
-            var _colIndex = 1U;
+            var _styleIndex = 1U;
+            //1. For all columns
             _table.ColumnOptions.ForEach(col => 
             {
                 //Bold = new Bold { Val = new BooleanValue(true) } 
-                _xl.Styles.Fonts.AppendChild(new Font { Color = new Color { Rgb = new HexBinaryValue( ConsoleWebColors.Get(col.Color.ToString()) ) } });    //1U
-                _xl.Styles.Fonts.Count = _colIndex+1;
-                
-                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _colIndex  }); //1U
-                cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment) };
-                _xl.Styles.CellFormats.Count = _colIndex+1;
+                CreateFont(col, _styleIndex + 1);
+                CreateCellFormat(col, _styleIndex + 1);
                 
                 _xl.Styles.Save();
-                _xl.Columns.Append(new Column {Min = _colIndex, Max = _colIndex,  Width = col.Width, CustomWidth = true });
+                _xl.Columns.Append(new Column {Min = _styleIndex, Max = _styleIndex,  Width = col.Width, CustomWidth = true });
 
-                col.XLStyleIndex = _colIndex; //Set it up.
+                col.XLStyleIndex = _styleIndex; //Set it up.
 
-                _colIndex++;
+                _styleIndex++;
             });
+            //2. For Headers and Footers
+            if (!_table.Headers.Null() && _table.Headers.Any())
+            {
+                _table.Headers.ForEach(row => {
+
+                    //CreateFont(col, _styleIndex + 1);
+                    //CreateCellFormat(col, _styleIndex + 1);
+
+                    _xl.Styles.Save();
+                });
+            }
 
             _xl.SheetPart.Worksheet.InsertAfter(_xl.Columns, _xl.SheetPart.Worksheet.GetFirstChild<SheetFormatProperties>());
+
+            void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
+            {
+                _xl.Styles.Fonts.AppendChild(new Font { Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.Get(col.Color.ToString())) } });    //1U
+                _xl.Styles.Fonts.Count = xlStyleIndex;
+            }
+
+            void CreateCellFormat(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
+            {
+                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex }); //1U
+                cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment) };
+                _xl.Styles.CellFormats.Count = xlStyleIndex;
+            }
 
             HorizontalAlignmentValues GetAlignment(ConsoleAlignment align)
             {

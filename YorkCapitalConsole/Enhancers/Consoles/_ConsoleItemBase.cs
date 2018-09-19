@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DocumentFormat.OpenXml;
+using System;
 using Wrappers.Consoles.Enums;
 
 namespace Wrappers.Consoles
@@ -18,5 +15,6 @@ namespace Wrappers.Consoles
     {
         internal string HTMLCssClass { get; set; }
         internal string HTMLInlineStyles { get; set; }
+        internal UInt32Value XLStyleIndex { get; set; }
     }
 }
