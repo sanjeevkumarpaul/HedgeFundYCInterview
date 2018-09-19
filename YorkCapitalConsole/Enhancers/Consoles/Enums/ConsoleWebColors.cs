@@ -1,4 +1,5 @@
 ﻿using Extensions;
+using System;
 
 namespace Wrappers.Consoles.Enums
 {

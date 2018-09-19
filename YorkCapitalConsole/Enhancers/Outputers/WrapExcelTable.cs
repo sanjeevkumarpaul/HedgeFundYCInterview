@@ -213,7 +213,7 @@ namespace Wrappers.Outputers
 
             void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
             {
-                _xl.Styles.Fonts.AppendChild(new Font { Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.Get(col.Color.ToString())) } });    //1U
+                _xl.Styles.Fonts.AppendChild(new Font { Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.GetExcel(col.Color)) } });    //1U
                 _xl.Styles.Fonts.Count = xlStyleIndex;
             }
 

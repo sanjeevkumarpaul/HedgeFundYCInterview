@@ -40,16 +40,7 @@ namespace ConsoleColorTables
                     },
 
                 Rows = new List<ConsoleRow>
-                    {
-                         //new ConsoleRow
-                         //{
-                         //      Column = new List<ConsoleRecord>
-                         //    {
-                         //        new ConsoleRecord { Text = "Name" },
-                         //        new ConsoleRecord { Text = "Display Name"},
-                         //        new ConsoleRecord { Text = "Some Numbers"},
-                         //    }
-                         //},
+                    {                         
                          new ConsoleRow
                          {
                              Column = new List<ConsoleRecord>
