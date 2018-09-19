@@ -34,7 +34,7 @@ namespace Wrappers.Outputers.Base
 
         public _BaseOutputTable(List<ConsoleTable> tables, WrapOutputerOptions options)
         {
-            (this._tables = tables).ForEach(t => WrapOutputerRadar.CalculateBoundaries(t));
+            _tables = tables; //).ForEach(t => WrapOutputerRadar.CalculateBoundaries(t));
             _outs = new List<StringBuilder>();
             _out = new StringBuilder();
             OutOption = options;
@@ -52,7 +52,7 @@ namespace Wrappers.Outputers.Base
         #region ^Public Methods
         public IOutputTable Add(ConsoleTable table)
         {
-            WrapOutputerRadar.CalculateBoundaries(table);
+            //WrapOutputerRadar.CalculateBoundaries(table);
             _tables.Add(table);
             return this;
         }
@@ -97,7 +97,7 @@ namespace Wrappers.Outputers.Base
             finally { _InProgress = false; }
 
             void Run()
-            {
+            {                
                 Start();
                 Process();
                 Finish();
@@ -109,7 +109,7 @@ namespace Wrappers.Outputers.Base
         #region ^Protected Methods        
         #endregion ~Protected Methods
 
-        #region ^Private Methods
+        #region ^Private Methods       
         private bool IsOpenXml()
         {
             switch (OutOption.Output.Style)
@@ -141,13 +141,36 @@ namespace Wrappers.Outputers.Base
             return _stream;
         }
 
-        private void Process() => _tables.ForEach(t => { _table = t; PutTable(); });
+        private void Process() => _tables.ForEach(t => 
+        {
+            AddColumnHeaders(t);
+            WrapOutputerRadar.CalculateBoundaries(t);
+            _table = t;
+            PutTable();
+            RemoveColumnHeader(t);
+        });
         
-
         private void Close()
         {
             if (_stream != null) _stream.Close();
             _stream = null;
+        }
+
+        private void AddColumnHeaders(ConsoleTable table)
+        {
+            var row = new ConsoleRow
+            {
+                Column = new List<ConsoleRecord>()
+            };
+            table.ColumnOptions.ForEach(c => row.Column.Add(new ConsoleRecord { Text = c.Text }));
+            table.Rows.Insert(0, row);
+            table.OtherOptions.IsFirstRowAsHeader = true;
+        }
+
+        private void RemoveColumnHeader(ConsoleTable table)
+        {
+            table.Rows.RemoveAt(0);
+            table.OtherOptions.IsFirstRowAsHeader = false;
         }
         #endregion ~Private Methods
     }

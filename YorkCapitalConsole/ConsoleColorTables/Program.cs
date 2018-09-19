@@ -23,9 +23,9 @@ namespace ConsoleColorTables
                 OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 } }, /*ConsoleOutputType.HTML will give html output*/
                 ColumnOptions = new List<ConsoleColumnOptions>
                     {
-                        new ConsoleColumnOptions {Width = 35, Alignment = ConsoleAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = ConsoleWrapType.WORDCHAR },
-                        new ConsoleColumnOptions {Width = 30, Alignment = ConsoleAlignment.CENTER , Color = ConsoleColor.Green },
-                        new ConsoleColumnOptions {Width = 20, Alignment = ConsoleAlignment.RIGHT , Color = ConsoleColor.Cyan, Aggregate = ConsoleAggregate.MEDIAN },
+                        new ConsoleColumnOptions {Width = 35, Alignment = ConsoleAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = ConsoleWrapType.WORDCHAR , Text = "Name"},
+                        new ConsoleColumnOptions {Width = 30, Alignment = ConsoleAlignment.CENTER , Color = ConsoleColor.Green, Text = "Display Name" },
+                        new ConsoleColumnOptions {Width = 20, Alignment = ConsoleAlignment.RIGHT , Color = ConsoleColor.Cyan, Aggregate = ConsoleAggregate.MEDIAN, Text = "Some Numbers" },
                     },
 
                 Headers = new List<ConsoleHeaderFooterRow>
@@ -41,15 +41,15 @@ namespace ConsoleColorTables
 
                 Rows = new List<ConsoleRow>
                     {
-                         new ConsoleRow
-                         {
-                             Column = new List<ConsoleRecord>
-                             {
-                                 new ConsoleRecord { Text = "Name" },
-                                 new ConsoleRecord { Text = "Display Name"},
-                                 new ConsoleRecord { Text = "Some Numbers"},
-                             }
-                         },
+                         //new ConsoleRow
+                         //{
+                         //      Column = new List<ConsoleRecord>
+                         //    {
+                         //        new ConsoleRecord { Text = "Name" },
+                         //        new ConsoleRecord { Text = "Display Name"},
+                         //        new ConsoleRecord { Text = "Some Numbers"},
+                         //    }
+                         //},
                          new ConsoleRow
                          {
                              Column = new List<ConsoleRecord>
