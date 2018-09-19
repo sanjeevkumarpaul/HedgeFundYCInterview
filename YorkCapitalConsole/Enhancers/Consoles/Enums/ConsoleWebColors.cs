@@ -45,6 +45,16 @@ namespace Wrappers.Consoles.Enums
 
             return color;
         }
+        
+        public static string Get(ConsoleColor color)
+        {
+            return Get(color.ToString());
+        }
+
+        public static string GetExcel(ConsoleColor color)
+        {
+            return Get(color).Replace("#", "");
+        }
 
     }
 }
