@@ -202,8 +202,14 @@ namespace Wrappers.Outputers
                     _xl.Columns.Append(new Column { Min = _styleIndex - 1, Max = _styleIndex - 1, Width = col.Width, CustomWidth = true });
                 else
                 {
-                    //var column = _xl.Columns[_styleIndex - 1];
-                    //column.Width = col.Width;
+
+                    //var columns = cs.Elements<DocumentFormat.OpenXml.Spreadsheet.Column>().Where(r => r.Min == Index)
+                    //ic = cs.Elements<DocumentFormat.OpenXml.Spreadsheet.Column>().Where(r => r.Min == Index).Where(r => r.Max == Index);
+                    //if (ic.Count() > 0)
+                    //{
+                    //    DocumentFormat.OpenXml.Spreadsheet.Column c = ic.First();
+                    //  column.Width = col.Width;
+                    //}
                 }
             }
 
