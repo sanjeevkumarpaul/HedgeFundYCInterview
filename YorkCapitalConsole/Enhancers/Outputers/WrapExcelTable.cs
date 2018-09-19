@@ -202,7 +202,7 @@ namespace Wrappers.Outputers
                     _xl.Columns.Append(new Column { Min = _styleIndex - 1, Max = _styleIndex - 1, Width = col.Width, CustomWidth = true });
                 else
                 {
-                    var column = _xl.Columns.Elements<Column>().FirstOrDefault(r => r.Min == col.XLStyleIndex.Value);                    
+                    var column = _xl.Columns.Elements<Column>().FirstOrDefault(r => r.Min == col.XLStyleIndex);                    
                     if (!column.Null() && column.Width < col.Width)
                     {
                         //    DocumentFormat.OpenXml.Spreadsheet.Column c = ic.First();

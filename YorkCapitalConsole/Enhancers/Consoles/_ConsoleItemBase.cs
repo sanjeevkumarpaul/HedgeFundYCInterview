@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml;
-using System;
+﻿using System;
 using Wrappers.Consoles.Enums;
 
 namespace Wrappers.Consoles
@@ -15,6 +14,6 @@ namespace Wrappers.Consoles
     {
         internal string HTMLCssClass { get; set; }
         internal string HTMLInlineStyles { get; set; }
-        internal UInt32Value XLStyleIndex { get; set; }
+        internal uint XLStyleIndex { get; set; }
     }
 }
