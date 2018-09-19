@@ -38,6 +38,7 @@ namespace Wrappers.Outputers
         }
         protected override void Finish()
         {
+            _xl.SheetPart.Worksheet.InsertAfter(_xl.Columns, _xl.SheetPart.Worksheet.GetFirstChild<SheetFormatProperties>());
             _xl.SheetPart.Worksheet.InsertAfter(_xl.MergeCells, _xl.SheetPart.Worksheet.Elements<SheetData>().First());
             _xl.Document.SaveAs(_path);
             _xl.Document.Close();
@@ -167,17 +168,17 @@ namespace Wrappers.Outputers
                 CreateCellFormat(col, _styleIndex + 1);
                 
                 _xl.Styles.Save();
-                _xl.Columns.Append(new Column {Min = _styleIndex, Max = _styleIndex,  Width = col.Width, CustomWidth = true });
+                if (_table == _tables.ElementAt(0) )
+                    _xl.Columns.Append(new Column {Min = _styleIndex, Max = _styleIndex,  Width = col.Width, CustomWidth = true });
 
                 col.XLStyleIndex = _styleIndex; //Set it up.
 
                 _styleIndex++;
-            });
+            });            
+            
             //2. For Headers and Footers
             HeaderFooterStyles();
             HeaderFooterStyles(false);
-
-            _xl.SheetPart.Worksheet.InsertAfter(_xl.Columns, _xl.SheetPart.Worksheet.GetFirstChild<SheetFormatProperties>());
 
             void HeaderFooterStyles(bool header = true)
             {
@@ -197,6 +198,8 @@ namespace Wrappers.Outputers
                         CreateCellFormat(_col, _styleIndex + 1);
 
                         _xl.Styles.Save();
+                        row.XLStyleIndex = _col.XLStyleIndex;
+
                         _styleIndex++;
                     });
                 }
@@ -225,7 +228,6 @@ namespace Wrappers.Outputers
                     default: return HorizontalAlignmentValues.Left;
                 }
             }
-
         }
 
         private void CreateHeadersFooters(bool header = true)
@@ -240,7 +242,7 @@ namespace Wrappers.Outputers
                     _xl.Data.AppendChild(xRow);
 
                     var _txtRec = new ConsoleRecord { Text = $"{r.Heading.Text} : {r.Value.Text}", Alignment = r.Alignment, Color = r.Value.Color };
-                    xRow.AppendChild(CreateTextCell( _txtRec, 1 ,_rowIndex, 0 ));
+                    xRow.AppendChild(CreateTextCell( _txtRec, 1 ,_rowIndex, r.XLStyleIndex ));
                     var _ref = _option.HeaderFooterMergeCellReference.Replace("::RINDEX::", $"{_rowIndex}");
                     
                     _xl.MergeCells.Append(new MergeCell() { Reference = new StringValue(_ref) });                    
