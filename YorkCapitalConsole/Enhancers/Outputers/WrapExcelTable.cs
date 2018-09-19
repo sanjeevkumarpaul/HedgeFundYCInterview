@@ -178,10 +178,18 @@ namespace Wrappers.Outputers
             {
                 _table.Headers.ForEach(row => {
 
-                    //CreateFont(col, _styleIndex + 1);
-                    //CreateCellFormat(col, _styleIndex + 1);
+                    var _col = new ConsoleColumnOptions
+                    {
+                        Color = row.Heading.Color,
+                        Alignment = row.Alignment,
+                        XLStyleIndex = _styleIndex
+                    };
+                    
+                    CreateFont(_col, _styleIndex + 1);
+                    CreateCellFormat(_col, _styleIndex + 1);
 
                     _xl.Styles.Save();
+                    _styleIndex++;
                 });
             }
 
