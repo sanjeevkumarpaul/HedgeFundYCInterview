@@ -163,9 +163,8 @@ namespace Wrappers.Outputers
             //1. For all columns
             _table.ColumnOptions.ForEach(col => 
             {
-                CreateIndividualStyle(col);
-                if (_table == _tables.ElementAt(0) )
-                    _xl.Columns.Append(new Column {Min = _styleIndex - 1, Max = _styleIndex - 1,  Width = col.Width, CustomWidth = true });
+                CreateIndividualStyle(col);                
+                CreateColum(col);
             });            
             
             //2. For Headers and Footers
@@ -195,6 +194,17 @@ namespace Wrappers.Outputers
                 col.XLStyleIndex = _styleIndex;
                 if (item != null) item.XLStyleIndex = _styleIndex;
                 _styleIndex++;
+            }
+
+            void CreateColum(ConsoleColumnOptions col)
+            {
+                if (_xl.Columns.Count() < (_styleIndex - 1))
+                    _xl.Columns.Append(new Column { Min = _styleIndex - 1, Max = _styleIndex - 1, Width = col.Width, CustomWidth = true });
+                else
+                {
+                    //var column = _xl.Columns[_styleIndex - 1];
+                    //column.Width = col.Width;
+                }
             }
 
             void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
