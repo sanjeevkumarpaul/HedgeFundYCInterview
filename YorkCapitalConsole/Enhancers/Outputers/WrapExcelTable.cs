@@ -163,17 +163,9 @@ namespace Wrappers.Outputers
             //1. For all columns
             _table.ColumnOptions.ForEach(col => 
             {
-                //Bold = new Bold { Val = new BooleanValue(true) } 
-                CreateFont(col, _styleIndex + 1);
-                CreateCellFormat(col, _styleIndex + 1);
-                
-                _xl.Styles.Save();
+                CreateIndividualStyle(col);
                 if (_table == _tables.ElementAt(0) )
-                    _xl.Columns.Append(new Column {Min = _styleIndex, Max = _styleIndex,  Width = col.Width, CustomWidth = true });
-
-                col.XLStyleIndex = _styleIndex; //Set it up.
-
-                _styleIndex++;
+                    _xl.Columns.Append(new Column {Min = _styleIndex - 1, Max = _styleIndex - 1,  Width = col.Width, CustomWidth = true });
             });            
             
             //2. For Headers and Footers
@@ -185,24 +177,24 @@ namespace Wrappers.Outputers
                 var rows = header ? _table.Headers : _table.Footers;
                 if (!rows.Null() && rows.Any())
                 {
-                    rows.ForEach(row => {
-
-                        var _col = new ConsoleColumnOptions
-                        {
-                            Color = row.Heading.Color,
-                            Alignment = row.Alignment,
-                            XLStyleIndex = _styleIndex
-                        };
-
-                        CreateFont(_col, _styleIndex + 1);
-                        CreateCellFormat(_col, _styleIndex + 1);
-
-                        _xl.Styles.Save();
-                        row.XLStyleIndex = _col.XLStyleIndex;
-
-                        _styleIndex++;
-                    });
+                    rows.ForEach(row => CreateIndividualStyle(new ConsoleColumnOptions
+                                        {
+                                            Color = row.Heading.Color,
+                                            Alignment = row.Alignment,
+                                        }, row)                        
+                    );
                 }
+            }
+
+            void CreateIndividualStyle(ConsoleColumnOptions col, _ConsoleItemBase item = null)
+            {
+                CreateFont(col, _styleIndex + 1);
+                CreateCellFormat(col, _styleIndex + 1);
+
+                _xl.Styles.Save();
+                col.XLStyleIndex = _styleIndex;
+                if (item != null) item.XLStyleIndex = _styleIndex;
+                _styleIndex++;
             }
 
             void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
