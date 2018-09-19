@@ -174,26 +174,33 @@ namespace Wrappers.Outputers
                 _styleIndex++;
             });
             //2. For Headers and Footers
-            if (!_table.Headers.Null() && _table.Headers.Any())
-            {
-                _table.Headers.ForEach(row => {
-
-                    var _col = new ConsoleColumnOptions
-                    {
-                        Color = row.Heading.Color,
-                        Alignment = row.Alignment,
-                        XLStyleIndex = _styleIndex
-                    };
-                    
-                    CreateFont(_col, _styleIndex + 1);
-                    CreateCellFormat(_col, _styleIndex + 1);
-
-                    _xl.Styles.Save();
-                    _styleIndex++;
-                });
-            }
+            HeaderFooterStyles();
+            HeaderFooterStyles(false);
 
             _xl.SheetPart.Worksheet.InsertAfter(_xl.Columns, _xl.SheetPart.Worksheet.GetFirstChild<SheetFormatProperties>());
+
+            void HeaderFooterStyles(bool header = true)
+            {
+                var rows = header ? _table.Headers : _table.Footers;
+                if (!rows.Null() && rows.Any())
+                {
+                    rows.ForEach(row => {
+
+                        var _col = new ConsoleColumnOptions
+                        {
+                            Color = row.Heading.Color,
+                            Alignment = row.Alignment,
+                            XLStyleIndex = _styleIndex
+                        };
+
+                        CreateFont(_col, _styleIndex + 1);
+                        CreateCellFormat(_col, _styleIndex + 1);
+
+                        _xl.Styles.Save();
+                        _styleIndex++;
+                    });
+                }
+            }
 
             void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
             {
