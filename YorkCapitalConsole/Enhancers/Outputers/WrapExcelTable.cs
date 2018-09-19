@@ -161,12 +161,12 @@ namespace Wrappers.Outputers
         {
             var _styleIndex = 1U;
             //1. For all columns
-            _table.ColumnOptions.ForEach(col => 
+            _table.ColumnOptions.ForEach(col =>
             {
-                CreateIndividualStyle(col);                
+                CreateIndividualStyle(col);
                 CreateColum(col);
-            });            
-            
+            });
+
             //2. For Headers and Footers
             HeaderFooterStyles();
             HeaderFooterStyles(false);
@@ -177,10 +177,10 @@ namespace Wrappers.Outputers
                 if (!rows.Null() && rows.Any())
                 {
                     rows.ForEach(row => CreateIndividualStyle(new ConsoleColumnOptions
-                                        {
-                                            Color = row.Heading.Color,
-                                            Alignment = row.Alignment,
-                                        }, row)                        
+                    {
+                        Color = row.Heading.Color,
+                        Alignment = row.Alignment,                        
+                    }, row)
                     );
                 }
             }
@@ -188,7 +188,8 @@ namespace Wrappers.Outputers
             void CreateIndividualStyle(ConsoleColumnOptions col, _ConsoleItemBase item = null)
             {
                 CreateFont(col, _styleIndex + 1);
-                CreateCellFormat(col, _styleIndex + 1);
+                CreateBorders(col, _styleIndex + 1);
+                CreateCellFormat(col, _styleIndex + 1);                
 
                 _xl.Styles.Save();
                 col.XLStyleIndex = _styleIndex;
@@ -202,10 +203,9 @@ namespace Wrappers.Outputers
                     _xl.Columns.Append(new Column { Min = _styleIndex - 1, Max = _styleIndex - 1, Width = col.Width, CustomWidth = true });
                 else
                 {
-                    var column = _xl.Columns.Elements<Column>().FirstOrDefault(r => r.Min == col.XLStyleIndex);                    
+                    var column = _xl.Columns.Elements<Column>().FirstOrDefault(r => r.Min == col.XLStyleIndex);
                     if (!column.Null() && column.Width < col.Width)
-                    {
-                        //    DocumentFormat.OpenXml.Spreadsheet.Column c = ic.First();
+                    {                        
                         column.Width = col.Width;
                     }
                 }
@@ -217,9 +217,23 @@ namespace Wrappers.Outputers
                 _xl.Styles.Fonts.Count = xlStyleIndex;
             }
 
+            void CreateBorders(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
+            {
+                Border br = new Border
+                {
+                    TopBorder = CreateBorderType<TopBorder>(_table.OtherOptions.BorderColor),
+                    RightBorder = CreateBorderType<RightBorder>(_table.OtherOptions.BorderColor),
+                    LeftBorder = CreateBorderType<LeftBorder>(_table.OtherOptions.BorderColor),
+                    BottomBorder = CreateBorderType<BottomBorder>(_table.OtherOptions.BorderColor),                    
+                };
+
+                _xl.Styles.Borders.AppendChild(br);
+                _xl.Styles.Borders.Count = xlStyleIndex;
+            }
+
             void CreateCellFormat(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
             {
-                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex }); //1U
+                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex, BorderId = _styleIndex }); //1U
                 cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment) };
                 _xl.Styles.CellFormats.Count = xlStyleIndex;
             }
@@ -233,6 +247,16 @@ namespace Wrappers.Outputers
                     case ConsoleAlignment.CENTER: return HorizontalAlignmentValues.Center;
                     default: return HorizontalAlignmentValues.Left;
                 }
+            }
+
+            T CreateBorderType<T>(ConsoleColor color) where T : BorderPropertiesType
+            {
+                var _bType = Activator.CreateInstance<T>();
+
+                _bType.Style = BorderStyleValues.Dashed;
+                _bType.Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.GetExcel(color)) };
+
+                return _bType;
             }
         }
 
@@ -248,10 +272,12 @@ namespace Wrappers.Outputers
                     _xl.Data.AppendChild(xRow);
 
                     var _txtRec = new ConsoleRecord { Text = $"{r.Heading.Text} : {r.Value.Text}", Alignment = r.Alignment, Color = r.Value.Color };
-                    xRow.AppendChild(CreateTextCell( _txtRec, 1 ,_rowIndex, r.XLStyleIndex ));
                     var _ref = _option.HeaderFooterMergeCellReference.Replace("::RINDEX::", $"{_rowIndex}");
-                    
-                    _xl.MergeCells.Append(new MergeCell() { Reference = new StringValue(_ref) });                    
+                    xRow.AppendChild(CreateTextCell(_txtRec, 1, _rowIndex, r.XLStyleIndex));                    
+                    _xl.MergeCells.Append(new MergeCell() { Reference = new StringValue(_ref) });
+
+                    for (int cind = 2; cind <= _option.Columns; cind++)
+                        xRow.AppendChild(CreateTextCell(new ConsoleRecord { Text = "" }, cind, _rowIndex, r.XLStyleIndex));
                 });
             }
         }
