@@ -89,6 +89,8 @@ namespace Wrappers.Outputers
             internal bool Underline { get; set; }
             internal string FontFamily { get; set; }
             internal HexBinaryValue Color { get; set; }
+            internal bool Fill { get; set; }
+            internal HexBinaryValue FillColor { get; set; }
         }
 
         private void CalculateBasics()
