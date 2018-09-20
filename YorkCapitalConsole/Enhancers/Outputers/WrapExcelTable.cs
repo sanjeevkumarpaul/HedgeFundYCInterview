@@ -361,11 +361,7 @@ namespace Wrappers.Outputers
 
             Int32 _cindex = 1;
             if (_table.OtherOptions.IsFirstRowAsHeader)
-                _table.Rows.ElementAt(0).Column.ForEach(c => 
-                {
-                    var _col = _table.ColumnOptions.ElementAt(_cindex - 1);
-                    row.AppendChild(CreateTextCell(c, _cindex++, _rowIndex, _col.XLStyleIndex));
-                });
+                _table.Rows.ElementAt(0).Column.ForEach(c => row.AppendChild(CreateTextCell(c, _cindex++, _rowIndex, 1U)) );
         }
 
         private void CreateData()
