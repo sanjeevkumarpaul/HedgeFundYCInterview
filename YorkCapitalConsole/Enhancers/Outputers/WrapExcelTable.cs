@@ -82,6 +82,14 @@ namespace Wrappers.Outputers
             internal string HeaderFooterMergeCellReference { get; set; }
         }
 
+        private class TextStyle
+        {
+            internal bool Bold { get; set; }
+            internal bool Underline { get; set; }
+            internal string FontFamily { get; set; }
+            internal HexBinaryValue Color { get; set; }
+        }
+
         private void CalculateBasics()
         {
             _option.Columns = _table.ColumnOptions.Count;
@@ -233,7 +241,11 @@ namespace Wrappers.Outputers
 
             void CreateCellFormat(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
             {
-                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex, BorderId = _styleIndex }); //1U
+                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex,
+                                                                                  BorderId = _styleIndex,
+                                                                                  ApplyBorder = true,
+                                                                                  ApplyFill = true,
+                                                                                }); //1U
                 cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment) };
                 _xl.Styles.CellFormats.Count = xlStyleIndex;
             }
@@ -253,7 +265,7 @@ namespace Wrappers.Outputers
             {
                 var _bType = Activator.CreateInstance<T>();
 
-                _bType.Style = BorderStyleValues.Dashed;
+                _bType.Style = BorderStyleValues.Thin;
                 _bType.Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.GetExcel(color)) };
 
                 return _bType;
@@ -271,6 +283,9 @@ namespace Wrappers.Outputers
                     var xRow = new Row { RowIndex = ++_rowIndex };
                     _xl.Data.AppendChild(xRow);
 
+                    var _txts = CreateTexts(r);
+                    var _cell = CreateSharedCell(_txts, 1, _rowIndex, r.XLStyleIndex);
+
                     var _txtRec = new ConsoleRecord { Text = $"{r.Heading.Text} : {r.Value.Text}", Alignment = r.Alignment, Color = r.Value.Color };
                     var _ref = _option.HeaderFooterMergeCellReference.Replace("::RINDEX::", $"{_rowIndex}");
                     xRow.AppendChild(CreateTextCell(_txtRec, 1, _rowIndex, r.XLStyleIndex));                    
@@ -279,6 +294,16 @@ namespace Wrappers.Outputers
                     for (int cind = 2; cind <= _option.Columns; cind++)
                         xRow.AppendChild(CreateTextCell(new ConsoleRecord { Text = "" }, cind, _rowIndex, r.XLStyleIndex));
                 });
+            }
+
+            List<ConsoleRecord> CreateTexts(ConsoleHeaderFooterRow row)
+            {
+                return new List<ConsoleRecord>
+                {
+                    new ConsoleRecord { Text = row.Heading.Text, Color = row.Heading.Color },
+                    new ConsoleRecord { Text = ":", Color = row.Heading.Color },                //separator.
+                    new ConsoleRecord { Text = row.Value.Text, Color = row.Value.Color },
+                };
             }
         }
 
@@ -289,7 +314,11 @@ namespace Wrappers.Outputers
 
             Int32 _cindex = 1;
             if (_table.OtherOptions.IsFirstRowAsHeader)
-                _table.Rows.ElementAt(0).Column.ForEach(c => row.AppendChild(CreateTextCell(c, _cindex++, _rowIndex, 0) ));
+                _table.Rows.ElementAt(0).Column.ForEach(c => 
+                {
+                    var _col = _table.ColumnOptions.ElementAt(_cindex - 1);
+                    row.AppendChild(CreateTextCell(c, _cindex++, _rowIndex, _col.XLStyleIndex));
+                });
         }
 
         private void CreateData()
@@ -308,21 +337,60 @@ namespace Wrappers.Outputers
             }
         }
 
-        private Cell CreateTextCell(ConsoleRecord rec, Int32 colIndex, UInt32Value rowIndex, UInt32Value styleIndex)
+        private Cell CreateTextCell(ConsoleRecord rec, int colIndex, UInt32Value rowIndex, UInt32Value styleIndex)
         {
-            var cell = new Cell
-            {
-                DataType = CellValues.InlineString,
-                CellReference = $"{GetColumnAplha(colIndex)}{rowIndex}",  
-                StyleIndex = styleIndex
-            };
-
-            var istring = new InlineString();
-            var t = new Text { Text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)}" };
-            istring.AppendChild(t);
-            cell.AppendChild(istring);
+            var cell = CreateCell(CellValues.InlineString, colIndex, rowIndex, styleIndex);
+            InsertCellType<InlineString>(rec, cell, null);
+            
             return cell;
         }
+
+        private Cell CreateSharedCell(List<ConsoleRecord> recs, int colIndex, UInt32Value rowIndex, UInt32Value styleIndex)
+        {
+            var cell = CreateCell(CellValues.SharedString, colIndex, rowIndex, styleIndex);
+            return cell;
+        }
+
+        private Cell CreateCell(CellValues cellType, int colIndex, UInt32Value rowIndex, uint styleIndex = 0U)
+        {
+            return new Cell
+            {
+                DataType = cellType,
+                CellReference = $"{GetColumnAplha(colIndex)}{rowIndex}",
+                StyleIndex = styleIndex
+            };
+        }
+
+        private void InsertCellType<T>(ConsoleRecord rec, Cell cell, TextStyle style) where T : RstType
+        {
+            var strCellType = (T)Activator.CreateInstance<T>();
+            var t = new Text { Text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)}" };
+
+            if (strCellType is InlineString)
+                strCellType.AppendChild(t);
+            else if (strCellType is SharedStringItem)
+                PutFont();
+
+            cell.AppendChild(strCellType);
+
+            void PutFont()
+            {
+                if (style == null) return;
+
+                var _shared = strCellType as SharedStringItem;
+                Run run = new Run();
+                RunProperties props= new RunProperties();
+                if (style.Bold) props.Append(new Bold());
+                if (style.Underline) props.Append(new Underline { Val = UnderlineValues.Single });
+                props.Append(new Color { Rgb = style.Color });
+
+                run.Append(props);
+                run.Append(t);
+                
+                _shared.Append(run);
+            }
+        }
+
 
         private string GetColumnAplha(Int32 colIndex)
         {
@@ -341,3 +409,17 @@ namespace Wrappers.Outputers
 
     }
 }
+
+
+/*
+ * RUN PROPERTIES
+ * RunProperties runProperties1 = new RunProperties();
+                Bold bold1 = new Bold();
+                Underline underline1 = new Underline();
+                FontSize fontSize1 = new FontSize() { Val = 11D };
+                Color color1 = new Color() { Theme = (UInt32Value)1U };
+
+                RunFont runFont1 = new RunFont() { Val = "Calibri" };
+                FontFamily fontFamily1 = new FontFamily() { Val = 2 };
+                FontScheme fontScheme1 = new FontScheme() { Val = FontSchemeValues.Minor };
+ */

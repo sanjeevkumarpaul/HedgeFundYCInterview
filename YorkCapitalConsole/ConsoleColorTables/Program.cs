@@ -20,7 +20,7 @@ namespace ConsoleColorTables
         {
             var _table = new ConsoleTable
             {
-                OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 } }, /*ConsoleOutputType.HTML will give html output*/
+                OtherOptions = new ConsoleOtherOptions { Sort = new Wrappers.Consoles.ConsoleSort { SortColumnIndex = 0 }, BorderColor = ConsoleColor.Black }, /*ConsoleOutputType.HTML will give html output*/
                 ColumnOptions = new List<ConsoleColumnOptions>
                     {
                         new ConsoleColumnOptions {Width = 35, Alignment = ConsoleAlignment.LEFT , Color = ConsoleColor.Yellow, Wrap = ConsoleWrapType.WORDCHAR , Text = "Name"},
