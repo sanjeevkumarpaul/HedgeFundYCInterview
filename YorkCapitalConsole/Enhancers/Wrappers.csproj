@@ -226,6 +226,7 @@
     <Compile Include="WrapConfigurations.cs" />
     <Compile Include="Outputers\WrapCSVTable.cs" />
     <Compile Include="Outputers\WrapTextTable.cs" />
+    <Compile Include="WrapOpenXml.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extensions\Extensions.csproj">
