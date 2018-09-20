@@ -291,7 +291,7 @@ namespace Wrappers.Outputers
                     ApplyBorder = true,
                     ApplyFill = true
                 }); //1U
-                cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment) };
+                cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment), WrapText = true, Vertical = VerticalAlignmentValues.Center };
                 _xl.Styles.CellFormats.Count = xlStyleIndex;
             }
 
