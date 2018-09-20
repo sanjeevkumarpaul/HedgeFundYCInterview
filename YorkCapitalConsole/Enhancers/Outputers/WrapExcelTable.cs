@@ -361,7 +361,7 @@ namespace Wrappers.Outputers
             };
         }
 
-        private void InsertCellType<T>(ConsoleRecord rec, Cell cell, TextStyle style) where T : RstType
+        private T InsertCellType<T>(ConsoleRecord rec, Cell cell, T cellType = null) where T : RstType
         {
             var strCellType = (T)Activator.CreateInstance<T>();
             var t = new Text { Text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)}" };
@@ -375,20 +375,22 @@ namespace Wrappers.Outputers
 
             void PutFont()
             {
-                if (style == null) return;
+                //if (style == null) return;
 
-                var _shared = strCellType as SharedStringItem;
-                Run run = new Run();
-                RunProperties props= new RunProperties();
-                if (style.Bold) props.Append(new Bold());
-                if (style.Underline) props.Append(new Underline { Val = UnderlineValues.Single });
-                props.Append(new Color { Rgb = style.Color });
+                //var _shared = strCellType as SharedStringItem;
+                //Run run = new Run();
+                //RunProperties props= new RunProperties();
+                //if (style.Bold) props.Append(new Bold());
+                //if (style.Underline) props.Append(new Underline { Val = UnderlineValues.Single });
+                //props.Append(new Color { Rgb = style.Color });
 
-                run.Append(props);
-                run.Append(t);
+                //run.Append(props);
+                //run.Append(t);
                 
-                _shared.Append(run);
+                //_shared.Append(run);
             }
+
+            return strCellType;
         }
 
 
