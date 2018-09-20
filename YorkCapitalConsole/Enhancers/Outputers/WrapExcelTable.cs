@@ -62,6 +62,7 @@ namespace Wrappers.Outputers
             internal MergeCells MergeCells { get; set; }
             internal Stylesheet Styles { get; set; }
             internal Columns Columns { get; set; }
+            internal SharedStringTablePart SharedStringPart { get; set; }
 
             public void Dispose()
             {
@@ -127,6 +128,8 @@ namespace Wrappers.Outputers
                 _xl.Sheets.AppendChild(_xl.Current);
                 _xl.MergeCells = new MergeCells();
                 _xl.Columns = new Columns();
+                _xl.SharedStringPart = _xl.Document.WorkbookPart.AddNewPart<SharedStringTablePart>();
+                _xl.SharedStringPart.SharedStringTable = new SharedStringTable();
 
                 InitiateExcelRequiredStyles();                
             }
@@ -286,13 +289,15 @@ namespace Wrappers.Outputers
                     var _txts = CreateTexts(r);
                     var _cell = CreateSharedCell(_txts, 1, _rowIndex, r.XLStyleIndex);
 
-                    var _txtRec = new ConsoleRecord { Text = $"{r.Heading.Text} : {r.Value.Text}", Alignment = r.Alignment, Color = r.Value.Color };
-                    var _ref = _option.HeaderFooterMergeCellReference.Replace("::RINDEX::", $"{_rowIndex}");
-                    xRow.AppendChild(CreateTextCell(_txtRec, 1, _rowIndex, r.XLStyleIndex));                    
-                    _xl.MergeCells.Append(new MergeCell() { Reference = new StringValue(_ref) });
+                    //var _txtRec = new ConsoleRecord { Text = $"{r.Heading.Text} : {r.Value.Text}", Alignment = r.Alignment, Color = r.Value.Color };                    
+                    //xRow.AppendChild(CreateTextCell(_txtRec, 1, _rowIndex, r.XLStyleIndex));                    
+                    xRow.AppendChild(_cell);
 
                     for (int cind = 2; cind <= _option.Columns; cind++)
                         xRow.AppendChild(CreateTextCell(new ConsoleRecord { Text = "" }, cind, _rowIndex, r.XLStyleIndex));
+
+                    var _ref = _option.HeaderFooterMergeCellReference.Replace("::RINDEX::", $"{_rowIndex}");
+                    _xl.MergeCells.Append(new MergeCell() { Reference = new StringValue(_ref) });
                 });
             }
 
@@ -348,6 +353,12 @@ namespace Wrappers.Outputers
         private Cell CreateSharedCell(List<ConsoleRecord> recs, int colIndex, UInt32Value rowIndex, UInt32Value styleIndex)
         {
             var cell = CreateCell(CellValues.SharedString, colIndex, rowIndex, styleIndex);
+            SharedStringItem sharedStr = null;
+            recs.ForEach(r => 
+            {
+                sharedStr = InsertCellType<SharedStringItem>(r, cell, sharedStr, new TextStyle { Color = ConsoleWebColors.GetExcel( r.Color ) });
+            });
+            //if(!sharedStr.Null()) cell.AppendChild(sharedStr);
             return cell;
         }
 
@@ -361,33 +372,44 @@ namespace Wrappers.Outputers
             };
         }
 
-        private T InsertCellType<T>(ConsoleRecord rec, Cell cell, T cellType = null) where T : RstType
+        private T InsertCellType<T>(ConsoleRecord rec, Cell cell, T cellType = null, TextStyle style =  null) where T : RstType
         {
-            var strCellType = (T)Activator.CreateInstance<T>();
-            var t = new Text { Text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)}" };
+            bool appendToCell = true;
+            var strCellType = cellType ?? (T)Activator.CreateInstance<T>();
+            var t = new Text { Text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)} " };
 
             if (strCellType is InlineString)
                 strCellType.AppendChild(t);
             else if (strCellType is SharedStringItem)
+            {
+                appendToCell = false;
+                if (cellType.Null())
+                {
+                    _xl.SharedStringPart.SharedStringTable.Append(strCellType);
+                    _xl.SharedStringPart.SharedStringTable.Save();
+                    cell.CellValue = new CellValue((_xl.SharedStringPart.SharedStringTable.Elements<SharedStringItem>().Count() - 1).ToString());
+                }
                 PutFont();
+            }
 
-            cell.AppendChild(strCellType);
+            if (appendToCell) cell.AppendChild(strCellType);
 
             void PutFont()
             {
-                //if (style == null) return;
+                if (!style.Null())
+                {
+                    var _shared = strCellType as SharedStringItem;
+                    Run run = new Run();
+                    RunProperties props = new RunProperties();
+                    if (style.Bold) props.Append(new Bold());
+                    if (style.Underline) props.Append(new Underline { Val = UnderlineValues.Single });
+                    props.Append(new Color { Rgb = style.Color });
 
-                //var _shared = strCellType as SharedStringItem;
-                //Run run = new Run();
-                //RunProperties props= new RunProperties();
-                //if (style.Bold) props.Append(new Bold());
-                //if (style.Underline) props.Append(new Underline { Val = UnderlineValues.Single });
-                //props.Append(new Color { Rgb = style.Color });
+                    run.Append(props);
+                    run.Append(t);
 
-                //run.Append(props);
-                //run.Append(t);
-                
-                //_shared.Append(run);
+                    _shared.Append(run);
+                }
             }
 
             return strCellType;
