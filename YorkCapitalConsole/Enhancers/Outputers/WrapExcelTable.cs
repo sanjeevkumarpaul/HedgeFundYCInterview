@@ -179,7 +179,9 @@ namespace Wrappers.Outputers
             },
             fontStyle: new TextStyle
             {
-                Bold = true                
+                Bold = true,
+                Fill = true,
+                FillColor = ConsoleWebColors.GetExcel(ConsoleColor.Yellow)
             });
 
             //2. For all columns
@@ -211,6 +213,7 @@ namespace Wrappers.Outputers
             {
                 CreateFont(col, _styleIndex + 1, fontStyle);
                 CreateBorders(col, _styleIndex + 1);
+                CreateFill(_styleIndex + 1, fontStyle);
                 CreateCellFormat(col, _styleIndex + 1);                
 
                 _xl.Styles.Save();
@@ -221,19 +224,25 @@ namespace Wrappers.Outputers
 
             void CreateColum(ConsoleColumnOptions col)
             {
-                if (_xl.Columns.Count() < (_styleIndex - 1))
-                    _xl.Columns.Append(new Column { Min = _styleIndex - 1, Max = _styleIndex - 1, Width = col.Width, CustomWidth = true });
+                var column = _xl.Columns.Elements<Column>().FirstOrDefault(r => r.Min == col.XLStyleIndex - 1);
+                if (!column.Null() && column.Width < col.Width)                
+                    column.Width = col.Width;                
                 else
-                {
-                    var column = _xl.Columns.Elements<Column>().FirstOrDefault(r => r.Min == col.XLStyleIndex);
-                    if (!column.Null() && column.Width < col.Width)
-                    {                        
-                        column.Width = col.Width;
-                    }
-                }
+                    _xl.Columns.Append(new Column { Min = col.XLStyleIndex - 1, Max = col.XLStyleIndex - 1, Width = col.Width, CustomWidth = true });
+
+                //if (_xl.Columns.Count() < (_styleIndex - 1))
+                //    _xl.Columns.Append(new Column { Min = _styleIndex - 1, Max = _styleIndex - 1, Width = col.Width, CustomWidth = true });
+                //else
+                //{
+                //    var column = _xl.Columns.Elements<Column>().FirstOrDefault(r => r.Min == col.XLStyleIndex);
+                //    if (!column.Null() && column.Width < col.Width)
+                //    {                        
+                //        column.Width = col.Width;
+                //    }
+                //}
             }
 
-            void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex, TextStyle fontStyle = null)
+            void CreateFont(ConsoleColumnOptions col, uint xlStyleIndex, TextStyle fontStyle = null)
             {
                 _xl.Styles.Fonts.AppendChild(new Font
                     {
@@ -243,7 +252,20 @@ namespace Wrappers.Outputers
                 _xl.Styles.Fonts.Count = xlStyleIndex;
             }
 
-            void CreateBorders(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
+            void CreateFill(uint xlStyleIndex, TextStyle fontStyle = null)
+            {
+                var _fill = new Fill( new PatternFill
+                                      {
+                                        ForegroundColor = new ForegroundColor { Rgb = fontStyle?.FillColor ?? ConsoleWebColors.GetExcel(ConsoleColor.DarkGray) },
+                                        PatternType = PatternValues.Solid
+                                      });
+
+
+                _xl.Styles.Fills.AppendChild(_fill); 
+                _xl.Styles.Fills.Count = xlStyleIndex + 1; //(+1) : Since excel default fill already has 2 fill object.
+            }
+
+            void CreateBorders(ConsoleColumnOptions col, uint xlStyleIndex)
             {
                 Border br = new Border
                 {
@@ -257,9 +279,16 @@ namespace Wrappers.Outputers
                 _xl.Styles.Borders.Count = xlStyleIndex;
             }
 
-            void CreateCellFormat(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
+            void CreateCellFormat(ConsoleColumnOptions col, uint xlStyleIndex)
             {
-                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex, BorderId = _styleIndex, ApplyBorder = true, ApplyFill = true }); //1U
+                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat
+                {
+                    FontId = _styleIndex,
+                    BorderId = _styleIndex,
+                    FillId = _styleIndex + 1,
+                    ApplyBorder = true,
+                    ApplyFill = true
+                }); //1U
                 cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment) };
                 _xl.Styles.CellFormats.Count = xlStyleIndex;
             }
