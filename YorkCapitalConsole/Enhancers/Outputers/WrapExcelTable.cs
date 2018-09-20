@@ -289,7 +289,9 @@ namespace Wrappers.Outputers
                     BorderId = _styleIndex,
                     FillId = _styleIndex + 1,
                     ApplyBorder = true,
-                    ApplyFill = true
+                    ApplyFill = true,
+                    ApplyNumberFormat = (col.Aggregate == ConsoleAggregate.NONE),
+                    NumberFormatId = col.Aggregate == ConsoleAggregate.NONE ? 0U : 40U
                 }); //1U
                 cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment), WrapText = true, Vertical = VerticalAlignmentValues.Center };
                 _xl.Styles.CellFormats.Count = xlStyleIndex;
