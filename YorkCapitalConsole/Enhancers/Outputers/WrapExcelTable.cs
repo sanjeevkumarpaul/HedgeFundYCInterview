@@ -171,14 +171,25 @@ namespace Wrappers.Outputers
         private void CreateExcelStyles()
         {
             var _styleIndex = 1U;
-            //1. For all columns
+            //1. Column Headers first
+            CreateIndividualStyle(new ConsoleColumnOptions
+            {
+                Color = ConsoleColor.Black,
+                Alignment = ConsoleAlignment.CENTER                
+            },
+            fontStyle: new TextStyle
+            {
+                Bold = true                
+            });
+
+            //2. For all columns
             _table.ColumnOptions.ForEach(col =>
             {
                 CreateIndividualStyle(col);
                 CreateColum(col);
             });
 
-            //2. For Headers and Footers
+            //3. For Headers and Footers
             HeaderFooterStyles();
             HeaderFooterStyles(false);
 
@@ -196,9 +207,9 @@ namespace Wrappers.Outputers
                 }
             }
 
-            void CreateIndividualStyle(ConsoleColumnOptions col, _ConsoleItemBase item = null)
+            void CreateIndividualStyle(ConsoleColumnOptions col, _ConsoleItemBase item = null, TextStyle fontStyle = null)
             {
-                CreateFont(col, _styleIndex + 1);
+                CreateFont(col, _styleIndex + 1, fontStyle);
                 CreateBorders(col, _styleIndex + 1);
                 CreateCellFormat(col, _styleIndex + 1);                
 
@@ -222,9 +233,13 @@ namespace Wrappers.Outputers
                 }
             }
 
-            void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
+            void CreateFont(ConsoleColumnOptions col, UInt32Value xlStyleIndex, TextStyle fontStyle = null)
             {
-                _xl.Styles.Fonts.AppendChild(new Font { Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.GetExcel(col.Color)) } });    //1U
+                _xl.Styles.Fonts.AppendChild(new Font
+                    {
+                        Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.GetExcel(col.Color)) },
+                        Bold = new Bold { Val = new BooleanValue(fontStyle?.Bold ?? false) }
+                    });    //1U
                 _xl.Styles.Fonts.Count = xlStyleIndex;
             }
 
@@ -244,11 +259,7 @@ namespace Wrappers.Outputers
 
             void CreateCellFormat(ConsoleColumnOptions col, UInt32Value xlStyleIndex)
             {
-                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex,
-                                                                                  BorderId = _styleIndex,
-                                                                                  ApplyBorder = true,
-                                                                                  ApplyFill = true,
-                                                                                }); //1U
+                var cformat = _xl.Styles.CellFormats.AppendChild(new CellFormat { FontId = _styleIndex, BorderId = _styleIndex, ApplyBorder = true, ApplyFill = true }); //1U
                 cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment) };
                 _xl.Styles.CellFormats.Count = xlStyleIndex;
             }
@@ -270,7 +281,7 @@ namespace Wrappers.Outputers
 
                 _bType.Style = BorderStyleValues.Thin;
                 _bType.Color = new Color { Rgb = new HexBinaryValue(ConsoleWebColors.GetExcel(color)) };
-
+                
                 return _bType;
             }
         }
