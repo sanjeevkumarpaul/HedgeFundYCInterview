@@ -27,6 +27,31 @@ namespace Wrappers
             return formatMappings;
         }
         
+        public static string Validate(SpreadsheetDocument document)
+        {
+            var er = string.Empty;
+
+            try
+            {
+                var validator = new OpenXmlValidator();
+                int count = 0;
+                foreach (ValidationErrorInfo error in validator.Validate(document))
+                {
+                    count++;
+                    er += $"Error Count : {count}{Environment.NewLine}";
+                    er += $"Description : {error.Description}{Environment.NewLine}";
+                    er += $"Path: {error.Path.XPath}{Environment.NewLine}";
+                    er += $"Part: {error.Part.Uri}{Environment.NewLine}";
+                }                
+            }
+            catch (Exception ex)
+            {
+                er += ex.Message;
+            }
+
+            return er;
+        }
+        
         public static void GetFormatId()
         {
             /*
