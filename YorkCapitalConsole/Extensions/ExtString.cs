@@ -53,6 +53,18 @@ namespace Extensions
             return string.IsNullOrWhiteSpace(str);
         }
         
+        /// <summary>
+        /// will test if the string is Numeric
+        /// Note: Numeric Values eg:  -23, -23.0, -23., 23. 23.0, 23.0000
+        /// Note: Non Numeric eg: -23.0-, j34.99
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsNumeric(this string str)
+        {
+            return Regex.IsMatch(str, @"^[-]?\d+([.](\d+)?)?$");  
+        }
+        
         public static string ToBoolText(this string str, string YesVal = "YES", string NoVal = "NO"  )
         {
             bool yesno = (YesVal.ToEmpty() == "YES" && NoVal.ToEmpty() == "NO");
