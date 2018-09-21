@@ -426,32 +426,32 @@ namespace Wrappers.Outputers
 
         private T InsertCellType<T>(ConsoleRecord rec, Cell cell, T cellType = null, TextStyle style =  null, bool Numeric = false) where T : RstType
         {
-            bool appendToCell = true;
+           bool appendToCell = false;
             var strCellType = cellType ?? (T)Activator.CreateInstance<T>();
             var _text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)} ";
             var t = new Text { Text = _text };
 
             if (strCellType is InlineString)
             {
-                //if (Numeric && _text.is)
-                strCellType.AppendChild(t);
+                if (Numeric && _text.Trim().IsNumeric())                    
+                    cell.CellValue = new CellValue(_text.Trim());
+                else
+                { strCellType.AppendChild(t); appendToCell = true; }
             }
-            else if (strCellType is SharedStringItem)
+            else if (strCellType is SharedStringItem) PutFont();
+
+
+            if (appendToCell) cell.AppendChild(strCellType);
+
+            void PutFont()
             {
-                appendToCell = false;
                 if (cellType.Null())
                 {
                     _xl.SharedStringPart.SharedStringTable.Append(strCellType);
                     _xl.SharedStringPart.SharedStringTable.Save();
                     cell.CellValue = new CellValue((_xl.SharedStringPart.SharedStringTable.Elements<SharedStringItem>().Count() - 1).ToString());
                 }
-                PutFont();
-            }
 
-            if (appendToCell) cell.AppendChild(strCellType);
-
-            void PutFont()
-            {
                 if (!style.Null())
                 {
                     var _shared = strCellType as SharedStringItem;
@@ -468,7 +468,7 @@ namespace Wrappers.Outputers
                 }
             }
 
-            return strCellType;
+            return strCellType;        
         }
 
 
