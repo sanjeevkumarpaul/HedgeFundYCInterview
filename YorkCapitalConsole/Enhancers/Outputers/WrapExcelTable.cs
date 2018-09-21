@@ -291,7 +291,7 @@ namespace Wrappers.Outputers
                     ApplyBorder = true,
                     ApplyFill = true,
                     ApplyNumberFormat = (col.Aggregate == ConsoleAggregate.NONE),
-                    NumberFormatId = col.Aggregate == ConsoleAggregate.NONE ? 0U : 40U
+                    NumberFormatId = col.Aggregate == ConsoleAggregate.NONE ? 0U : 39U
                 }); //1U
                 cformat.Alignment = new Alignment { Horizontal = GetAlignment(col.Alignment), WrapText = true, Vertical = VerticalAlignmentValues.Center };
                 _xl.Styles.CellFormats.Count = xlStyleIndex;
@@ -374,11 +374,16 @@ namespace Wrappers.Outputers
                 var _row = new Row { RowIndex = ++_rowIndex };
                 _xl.Data.AppendChild(_row);
 
-                row.Column.ForEach(c => 
-                {
-                    var _opt = _table.ColumnOptions.ElementAt(_cindex - 1);
-                    _row.AppendChild(CreateTextCell(c, _cindex++, _rowIndex, _opt.XLStyleIndex));
-                });
+                row.Column.ForEach(c => _row.AppendChild(CreateCell(c, _cindex++, _rowIndex)) );
+            }
+
+            Cell CreateCell(ConsoleRecord rec, int colIndex, uint rowIndex)
+            {
+                var _opt = _table.ColumnOptions.ElementAt(colIndex - 1);
+                return _opt.Aggregate == ConsoleAggregate.NONE ?
+                        CreateTextCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex) :
+                        CreateNumericCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex);
+                //return CreateTextCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex);
             }
         }
 
@@ -387,6 +392,13 @@ namespace Wrappers.Outputers
             var cell = CreateCell(CellValues.InlineString, colIndex, rowIndex, styleIndex);
             InsertCellType<InlineString>(rec, cell, null);
             
+            return cell;
+        }
+
+        private Cell CreateNumericCell(ConsoleRecord rec, int colIndex, UInt32Value rowIndex, UInt32Value styleIndex)
+        {
+            var cell = CreateCell(CellValues.Number, colIndex, rowIndex, styleIndex);
+            InsertCellType<InlineString>(rec, cell, null,null, true);            
             return cell;
         }
 
@@ -412,14 +424,18 @@ namespace Wrappers.Outputers
             };
         }
 
-        private T InsertCellType<T>(ConsoleRecord rec, Cell cell, T cellType = null, TextStyle style =  null) where T : RstType
+        private T InsertCellType<T>(ConsoleRecord rec, Cell cell, T cellType = null, TextStyle style =  null, bool Numeric = false) where T : RstType
         {
             bool appendToCell = true;
             var strCellType = cellType ?? (T)Activator.CreateInstance<T>();
-            var t = new Text { Text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)} " };
+            var _text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)} ";
+            var t = new Text { Text = _text };
 
             if (strCellType is InlineString)
+            {
+                //if (Numeric && _text.is)
                 strCellType.AppendChild(t);
+            }
             else if (strCellType is SharedStringItem)
             {
                 appendToCell = false;

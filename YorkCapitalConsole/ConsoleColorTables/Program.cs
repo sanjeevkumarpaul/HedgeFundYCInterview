@@ -56,7 +56,7 @@ namespace ConsoleColorTables
                              {
                                  new ConsoleRecord { Text = "Rajendra, Patil"},
                                  new ConsoleRecord { Text = "65 million History" },
-                                 new ConsoleRecord { Text = "90.00" },
+                                 new ConsoleRecord { Text = "-90.00" },
                              }
                          },
                          new ConsoleRow
