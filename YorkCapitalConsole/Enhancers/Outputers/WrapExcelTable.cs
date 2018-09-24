@@ -380,10 +380,10 @@ namespace Wrappers.Outputers
             Cell CreateCell(ConsoleRecord rec, int colIndex, uint rowIndex)
             {
                 var _opt = _table.ColumnOptions.ElementAt(colIndex - 1);
-                return _opt.Aggregate == ConsoleAggregate.NONE ?
-                        CreateTextCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex) :
-                        CreateNumericCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex);
-                //return CreateTextCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex);
+                //return _opt.Aggregate == ConsoleAggregate.NONE ?
+                //        CreateTextCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex) :
+                //        CreateNumericCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex);
+                return CreateTextCell(rec, colIndex, _rowIndex, _opt.XLStyleIndex);
             }
         }
 
@@ -418,7 +418,7 @@ namespace Wrappers.Outputers
         {
             return new Cell
             {
-                DataType = cellType,
+                DataType = cellType,                
                 CellReference = $"{GetColumnAplha(colIndex)}{rowIndex}",
                 StyleIndex = styleIndex
             };
@@ -428,19 +428,18 @@ namespace Wrappers.Outputers
         {
            bool appendToCell = false;
             var strCellType = cellType ?? (T)Activator.CreateInstance<T>();
-            var _text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)} ";
+            var _text = $"{rec.Text}{rec.MText.JoinExt(Environment.NewLine)}";
             var t = new Text { Text = _text };
 
             if (strCellType is InlineString)
             {
-                if (Numeric && _text.Trim().IsNumeric())                    
-                    cell.CellValue = new CellValue(_text.Trim());
+                if (Numeric && _text.IsNumeric())                
+                    cell.CellValue = new CellValue(_text);                                    
                 else
                 { strCellType.AppendChild(t); appendToCell = true; }
             }
             else if (strCellType is SharedStringItem) PutFont();
-
-
+            
             if (appendToCell) cell.AppendChild(strCellType);
 
             void PutFont()
