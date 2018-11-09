@@ -16,11 +16,11 @@ namespace Extensions
             }
         }
         
-        public static void SetProperties<T>(this T obj, params string[] values) where T : class
+        public static void SetProperties<T>(this T obj, char separator='=', params string[] values) where T : class
         {
             values.ToList().ForEach(vl =>
             {
-                var items = vl.SplitEx("=");
+                var items = vl.SplitEx(separator);
                 if (items.Length == 2)
                 {
                     var _prop = items[0];
