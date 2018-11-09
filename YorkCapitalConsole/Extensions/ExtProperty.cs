@@ -15,6 +15,25 @@ namespace Extensions
                 propertyInfo.SetValue(obj, propertyvalue, null);
             }
         }
+        
+        public static void SetProperties<T>(this T obj, params string[] values) where T : class
+        {
+            values.ToList().ForEach(vl =>
+            {
+                var items = vl.SplitEx("=");
+                if (items.Length == 2)
+                {
+                    var _prop = items[0];
+                    var _val = string.Join("", items.Skip(1));
+
+                    try
+                    {
+                        SetProperty(obj, _prop, _val);
+                    }
+                    catch { }
+                }
+            });
+        }
 
         public static void SetProperties<T>(this T obj, object dynvalues)
         {
