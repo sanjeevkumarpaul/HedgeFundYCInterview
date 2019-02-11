@@ -155,7 +155,7 @@ namespace Wrappers.Outputers
             {
                 var vals = table.Rows.Select(r => r.Column[colIndex]).Select(c => c.Text.ToDouble());
                 double cal = 0.0d;
-
+                
                 switch (option.Aggregate)
                 {
                     case ConsoleAggregate.NONE: break;
@@ -195,12 +195,13 @@ namespace Wrappers.Outputers
             table.Rows.ForEach(r =>
             {
                 var _col = r.Column.ElementAt(colIndex);
-                if ((_col.Text.Length > _option.Width && _option.Wrap != ConsoleWrapType.NOWRAP) || (_option.Wrap == ConsoleWrapType.WORDCHAR))
+                var _txt = _col.Text.ToEmpty();
+                if ((_txt.Length > _option.Width && _option.Wrap != ConsoleWrapType.NOWRAP) || (_option.Wrap == ConsoleWrapType.WORDCHAR))
                 {
                     switch (_option.Wrap)
                     {
-                        case ConsoleWrapType.ELLIPSES: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}..."; break;
-                        case ConsoleWrapType.REMOVE: _col.Text = $"{_col.Text.Substring(0, _option.Width - 3)}"; break;
+                        case ConsoleWrapType.ELLIPSES: _col.Text = $"{_txt.Substring(0, _option.Width - 3)}..."; break;
+                        case ConsoleWrapType.REMOVE: _col.Text = $"{_txt.Substring(0, _option.Width - 3)}"; break;
                         case ConsoleWrapType.WRAP: WrapAround(_col); break;
                         case ConsoleWrapType.WORDWRAP: WrapWordAround(_col); break;
                         case ConsoleWrapType.WORDCHAR: WrapChar(_col); break;
@@ -219,7 +220,7 @@ namespace Wrappers.Outputers
 
             void WrapAround(ConsoleRecord col, string text = null)
             {
-                text = (text ?? col.Text);
+                text = (text ?? col.Text).ToEmpty();
                 var _lines = (int)Math.Ceiling(text.Length / (_option.Width * 1d));
                 int _total = text.Length;
                 for (int i = 1; i <= _lines; i++)
@@ -240,7 +241,7 @@ namespace Wrappers.Outputers
 
             void WrapWordAround(ConsoleRecord col)
             {
-                var _words = col.Text.SplitEx(' ').Where(s => !s.Trim().Empty()).ToArray();
+                var _words = col.Text.ToEmpty().SplitEx(' ').Where(s => !s.Trim().Empty()).ToArray();
                 if (_words.Count() == 1) WrapAround(col);
                 else
                 {
@@ -264,7 +265,7 @@ namespace Wrappers.Outputers
 
             void WrapChar(ConsoleRecord col)
             {
-                var _sentence = col.Text.SplitEx(_option.WrapCharCharacter);
+                var _sentence = col.Text.ToEmpty().SplitEx(_option.WrapCharCharacter);
                 foreach (var sen in _sentence)
                 {
                     if (sen.Length >= _option.Width)

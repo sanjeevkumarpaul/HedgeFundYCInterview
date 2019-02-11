@@ -23,6 +23,7 @@ private class APIProspectResults : IAPIResult
         void Error<T>(T exception, APIConfiguration config, params object[] others) where T : APIException;        
     }
 
+    //This will give the same result but will also hae an event for the progress.
     public interface IAPIParallelResult : IAPIResult
     {
         object[] ParallelStart();  //If required any paramters to be taken into consideration.

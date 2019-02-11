@@ -214,7 +214,7 @@ namespace EvaluateExpression.Helpers
 
             return equation;
 
-            //Local function to check on hte switch.
+            //Local function to check on the switch.
             Expression SwitchExpressions(Expression left, Expression right)
             {
                 return rightToLeft ? right : left;

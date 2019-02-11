@@ -10,7 +10,6 @@ using System.Xml.Linq;
 #endregion ~System Namespaces
 
 #region ^Custom Namespaces
-using APICalls.Entities;
 using APICalls.Entities.Interfaces;
 using Extensions;
 using Wrappers;
@@ -477,7 +476,7 @@ namespace APICalls.Configurations
                     PostSubscription(res);                    
                 });
             });
-            #region ^example of exxception handlin via tasks.
+            #region ^example of exceptiong handlin via tasks.
             //To catch any exeception within Tasks we need to do like below
             /*
                   try { var results = await Task.WhenAll(taskProspects); }

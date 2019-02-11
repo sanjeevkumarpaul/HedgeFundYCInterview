@@ -10,7 +10,7 @@ namespace EvaluateExpression.Helpers
             ParameterExpression paramRes = Expression.Parameter(typeof(T), "result");
             BlockExpression block = Expression.Block
             (
-                new[] { paramRes }, //crating local var.
+                new[] { paramRes }, //creating local var.
                 Expression.Assign(paramRes, mathematicEquation)
             );
             T exprResult = Expression.Lambda<Func<T>>(block).Compile()();
