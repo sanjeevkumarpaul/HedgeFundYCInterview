@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Extensions
 {
@@ -40,5 +42,22 @@ namespace Extensions
             }
         }
         #endregion ~Chunk Reading
+    }
+
+    partial class ExtIQueryable
+    {
+        public static IQueryable<T> Order<T>(this IQueryable<T> query, string sortorder, string sortField, params object[] values)
+        {
+            var type = typeof(T);
+            var property = type.GetProperty(sortField);
+            var parameter = Expression.Parameter(type, "p");
+            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+            var orderByExp = Expression.Lambda(propertyAccess, parameter);
+            var typeArguments = new Type[] { type, property.PropertyType };
+            var methodName = sortorder.ToLower().Equals("asc") ? "OrderBy" : "OrderByDescending";
+            var resultExp = Expression.Call(typeof(Queryable), methodName, typeArguments, query.Expression, Expression.Quote(orderByExp));
+
+            return query.Provider.CreateQuery<T>(resultExp);
+        }
     }
 }

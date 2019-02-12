@@ -43,19 +43,10 @@ namespace Extensions
 
         public static List<T> Order<T>(this List<T> entities, string sortorder, string sortField)
         {
-            //Since Expression Trees only work with IQueryable(s).
+            //Since Expression Trees only work with IQueryable(s).           
             var query = entities.AsQueryable();
 
-            var type = typeof(T);
-            var property = type.GetProperty(sortField);
-            var parameter = Expression.Parameter(type, "p");
-            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
-            var orderByExp = Expression.Lambda(propertyAccess, parameter);
-            var typeArguments = new Type[] { type, property.PropertyType };
-            var methodName = sortorder.ToLower().Equals("asc") ? "OrderBy" : "OrderByDescending";
-            var resultExp = Expression.Call(typeof(Queryable), methodName, typeArguments, query.Expression, Expression.Quote(orderByExp));
-
-            return query.Provider.CreateQuery<T>(resultExp).ToList();
+            return query.Order(sortorder, sortField).ToList();
         }
 
 
